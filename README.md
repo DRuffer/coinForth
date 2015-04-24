@@ -50,19 +50,19 @@ I haven't had a reason to use PowerShell yet, but this might be the time
 Windows PowerShell
 Copyright (C) 2014 Microsoft Corporation. All rights reserved.
 
-PS C:\Users\Dennis> cd "C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\tools"
-PS C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\tools> python .\amforth-shell.py
-|I=appl_defs: 0 loaded
-|I=Entering amforth interactive interpreter
-|I=getting MCU name..
-|I=successfully loaded register definitions for atmega328p
-|I=getting filenames on the host
-|I=  Reading C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\avr8\devices\atmega328p
-|I=  Reading C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\avr8\lib
-|I=  Reading .
-|I=getting filenames from the controller
-(ATmega328P)>
-(ATmega328P)>
-(ATmega328P)> ver
-amforth 5.8 ATmega328P ok
-(ATmega328P)>
+	PS C:\Users\Dennis> cd "C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\tools"
+	PS C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\tools> python .\amforth-shell.py
+	|I=appl_defs: 0 loaded
+	|I=Entering amforth interactive interpreter
+	|I=getting MCU name..
+	|I=successfully loaded register definitions for atmega328p
+	|I=getting filenames on the host
+	|I=  Reading C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\avr8\devices\atmega328p
+	|I=  Reading C:\Users\Dennis\Documents\Atmel Studio\6.2\coinForth\amforth-5.8\avr8\lib
+	|I=  Reading .
+	|I=getting filenames from the controller
+	(ATmega328P)>
+	(ATmega328P)>
+	(ATmega328P)> ver
+	amforth 5.8 ATmega328P ok
+	(ATmega328P)>
