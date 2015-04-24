@@ -1,0 +1,30 @@
+<!-- make multiple targets with antelope -->
+<project name="launchpad430" basedir="." default="Help">
+    <import file="../msp-build.xml"/>
+    <property name="mcu" value="msp430g2553"/>
+    <property name="programmer" value="mspdebug"/>
+
+
+    <target name="launchpad430.hex" description="Hexfiles for TI launchpad430">
+      <tstamp>
+        <format property="touch.time" pattern="dd.MMM.yyyy hh:mm:ss" locale="en,UK"
+              offset="-5" unit="hour"/>
+      </tstamp>
+      <nakenasm projectname="launchpad430" mcu="${mcu}"/> 
+      <echo>${touch.time}</echo>
+    </target>
+
+    <target name="launchpad430" depends="launchpad430.hex" description="launchpad430 launchpad430">
+        <echo>Uploading Hexfiles for TI LP</echo>
+        <mspdebug
+		    mcu="${mcu}"
+		    projectname="launchpad430"/>
+        <echo>Finished on ${fintim}</echo>
+    </target>
+
+
+    <target name="compile" depends="launchpad430.hex">
+
+    </target>
+
+</project>

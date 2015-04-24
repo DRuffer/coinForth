@@ -1,0 +1,60 @@
+<!-- make multiple targets with antelope -->
+<project name="Macros and Commands for ANT" basedir="." default="Help">
+        <target name="Help" description="use ant -p for more">
+	    <echo message="use ant -p for a list of available targets"/>
+	    <echo message="and look at programmer.properties for available programmers"/>
+	</target>
+
+        <!-- generic target to clean up directory -->
+	<target name="clean" description="Delete all generated files" >
+	    <delete verbose="true">
+	       <fileset dir="." includes="*.hex"/>
+	       <fileset dir="." includes="*.lst"/>
+	       <fileset dir="." includes="*.obj"/>
+	       <fileset dir="." includes="*.cof"/>
+	       <fileset dir="." includes="*.map"/>	       
+	    </delete>
+	</target>
+
+    <target name="git-info">
+	<git-branch output="branch" />
+	<length property="length" string="${branch}"/>
+        <copy tofile="words/git-info.asm" file="../../common/words/git-info.tmpl" overwrite="true">
+          <filterset>
+            <filter token="BRLEN" value="${length}"/>
+            <filter token="BRNAME" value="${branch}"/>
+          </filterset>
+        </copy>
+	
+    </target>
+
+    <target name="build-info">
+        <tstamp>
+          <format property="touch.time" pattern="MMM dd, yyyy HH:mm:ss" locale="C"/>
+        </tstamp>
+	<length property="touch.length" string="${touch.time}"/>
+        <copy tofile="words/build-info.asm" file="../../common/words/build-info.tmpl" overwrite="true">
+          <filterset>
+            <filter token="TSTAMPLEN" value="${touch.length}"/>
+            <filter token="TSTAMP" value="${touch.time}"/>
+          </filterset>
+        </copy>
+	
+    </target>
+	
+
+    <macrodef name="git-branch">
+	<attribute name="output" />
+	<sequential>
+	    <exec executable="git" outputproperty="branch" >
+		<arg value="rev-parse"/>
+		<arg value="--abbrev-ref"/>
+		<arg value="HEAD"/>
+                <env key="LANG" value="C"/>
+	    </exec>
+            <property name="@{output}" value="${branch}"/>
+	</sequential>
+    </macrodef>
+
+    <loadproperties srcfile="../programmer.properties"/>
+</project>

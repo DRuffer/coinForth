@@ -1,0 +1,2 @@
+    HEADER(XT_LMARK,5,"<mark",DOCOLON)
+        DW XT_IHERE,XT_EXIT

@@ -1,0 +1,9 @@
+
+HEADER(XT_TURNKEY,7,"turnkey",DOCOLON)
+  .dw XT_UP_FETCH
+  .dw XT_DOLITERAL
+  .dw USER_TURNKEY
+  .dw XT_PLUS
+  .dw XT_FETCH
+  .dw XT_EXECUTE
+  .dw XT_EXIT
