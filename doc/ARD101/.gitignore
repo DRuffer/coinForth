@@ -1,0 +1,10 @@
+*.aux
+*.idx
+*.log
+*.lyx~
+*.nw
+*.out
+*.toc
+comment.cut
+desktop.ini
+Thumbs.db

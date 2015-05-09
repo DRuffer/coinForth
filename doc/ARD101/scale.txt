@@ -1,0 +1,17 @@
+\ Play musical scale                      14Apr14
+chop-scale
+marker chop-scale
+CP @  \ sequence of notes, pauses and times
+   1047 , 500 , 0 , 500 , 1175 , 500 , 0 , 500 ,
+   1319 , 500 , 0 , 500 , 1397 , 500 , 0 , 500 ,
+   1568 , 500 , 0 , 500 , 1760 , 500 , 0 , 500 ,
+   1976 , 500 , 0 , 500 , 2093 , 500 , 0 , 500 ,
+      0 ,   0 ,  \ Null terminators
+CONSTANT scale
+
+: notes ( a -- ) \ Play sequence of notes, pauses and times
+   begin  dup I@ >r  2 + dup I@ >r  2+
+      r> r> 2dup or while  ?dup if
+         Hertz note  else  ms
+      then  repeat  drop ;
+flush

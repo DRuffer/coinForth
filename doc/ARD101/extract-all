@@ -1,0 +1,6 @@
+echo "Extract all scripts..."
+sedArgs="s/\(.*\)\.idx:.*entry{\(.*\)|hyper.*/\1 \2/g"
+find . -type f -name \*idx |\
+xargs grep "indexentry" |\
+sed -e "$sedArgs" |\
+xargs -n 2 ./extract

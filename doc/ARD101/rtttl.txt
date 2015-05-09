@@ -1,0 +1,76 @@
+\ rtttl.txt to Demo Ring Tone Text Transfer Language      DaR 2014-04-14
+chop-rtttl
+marker chop-rtttl
+decimal
+: <?> ( n -- )   cr .s drop ;
+variable duration
+variable octave
+variable beats
+variable default
+variable 'store
+: storage ( a -- )   'store @ abort" Defaults sequence error"  'store ! ;
+: store ( -- )   default @ ?dup if  'store @ ?dup if  !
+      else  1 abort" Defaults storage error"  then
+   then  0 'store !  0 default ! ;
+: digit ( c -- )   ( 0 ) 48 - default @ 10 * + default ! ;
+: defaults ( a n -defaults- ) \ Sets the default values
+   4 duration !  6 octave !  63 beats !
+   0 'store !  0 default !
+   for aft  count 6 <?>
+      dup bl - if \ not a space
+         dup ( d ) 100 = if  duration storage  else
+         dup ( o ) 111 = if  octave storage  else
+         dup ( b ) 98 = if  beats storage  else
+         dup ( , ) 44 = if  store  else
+         dup ( 0 ) 48 ( 9 ) 57 1+ within if
+             dup digit  else
+         dup ( = ) 61 - abort" Invalid default character"
+      then then then then then then  drop
+   then next  drop  store 7 <?> ;
+variable this-note
+variable this-octave
+variable this-duration
+variable this-note-time
+: beat-time ( -- )   60000 0 beats @ this-duration @ * um/mod swap drop
+   this-note-time ! ;
+: new-note ( -- )   this-note @ 0< 0 = abort" Not a new note" ;
+: base-note ( c -- )   new-note  ( c ) 99 - 7 mod this-note !
+   beat-time ;
+: rest ( -- )   new-note  7 this-note !  beat-time ;
+: sharp ( -- )   1 this-octave +! ;
+: dotted ( -- )   this-note-time @ ?dup 0 = abort" Invalid dotted note"
+   dup 2/ + this-note-time ! ;
+: digits ( c -- )   ( 0 ) 48 -  this-note @ 0< if \ before note
+      this-duration @ dup 1 = over 3 = or if
+         10 * +  else  drop  then  this-duration !
+   else  2* this-octave !  then ;
+: save ( -- )   this-note @ dup 0< 0 = if  dup 7 < if
+         this-octave @ dup 0 18 within 0 = abort" Invalid octave"
+         9 <?> + pitches + @ ?dup 0 = abort" Invalid note"
+      else  drop 0  then  ,  this-note-time @ ,
+   else  drop  then ;
+: name ( cp dp -- )   dup count type ."  =" c@ negate allot . ;
+: notes ( a n -- )   for aft  count 8 <?>
+      -1 this-note !  octave @ 2* this-octave !
+      duration @ this-duration !
+      dup bl - if \ not a space
+         dup ( p ) 112 = if  rest  else
+         dup ( # ) 35 = if  sharp  else
+         dup ( . ) 46 = if  dotted  else
+         dup ( a ) 97 ( h ) 104 within if
+            dup base-note  else
+         dup ( 0 ) 48 ( 9 ) 57 1+ within if
+            dup digits  else
+         dup ( " ) 34 - abort" Invalid note command"
+      then then then then then then  drop
+   then next  drop  save ;
+: rtttl" ( -melody- ) \ Creates named sequence of notes, pauses and times
+   \ save addr and name for the end
+   cp @  ( : ) 58 word dup c@ 1 <?> 1+ allot
+   ( : ) 58 word count 2 <?> defaults  begin
+      ( , ) 44 word count 3 <?> ?dup while
+         notes  repeat 4 <?> drop  name 5 <?> ;
+flush
+rtttl" melody:d=4, o=3, b=60:c4, 8g, 8g, a, g, p, b, c4"
+\ rtttl" Imperial:d=4, o=5, b=100:e, e, e, 8c, 16p, 16g, e, 8c,
+\   16p, 16g, e, p, b, b, b, 8c6, 16p, 16g, d#, 8c, 16p, 16g, e, 8p"

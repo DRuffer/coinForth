@@ -1,0 +1,6 @@
+echo "Extract script $2 from $1.lyx..."
+rm -f $1.nw
+lyx -e literate $1.lyx
+notangle -t4 -R$2 $1.nw > $2
+chmod a+x $2
+

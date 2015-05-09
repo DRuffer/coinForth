@@ -1,0 +1,5 @@
+echo "Make $1 PDF release notes..."
+./final $1
+pdftk $1.pdf stamp Preliminary.pdf output out.pdf
+rm $1.pdf
+mv out.pdf $1.pdf

@@ -1,0 +1,8 @@
+lyx -e latex $1.lyx
+if [ $? == 0 ]; then
+   lyx -e pdf $1.lyx
+else # noweb conversion can't be called in cygwin
+   lyx -e literate $1.lyx
+   noweave -delay -index "$1.nw" > "$1.tex"
+   pdflatex $1 latex=pdflatex
+fi

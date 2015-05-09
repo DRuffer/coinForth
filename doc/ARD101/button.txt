@@ -1,0 +1,10 @@
+\ button.txt to Demo Digital input      DaR 2014-02-17
+chop-button
+marker chop-button
+4 value buttonPin \ Use digital pin 12 for the button pin
+: states ( --- read state of button )
+   PortB buttonPin 2dup PoBiIn  PoBiRead
+   begin  PortB buttonPin PoBiRead  2dup - if
+         cr ." The button state is "  dup . swap
+   then  drop  ?key until  drop ;
+flush
