@@ -1,0 +1,214 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Defining and using Arrays &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="General Code Examples" href="General.html" />
+    <link rel="next" title="Blocks" href="Blocks.html" />
+    <link rel="prev" title="General Code Examples" href="General.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="defining-and-using-arrays">
+<span id="arrays"></span><h1>Defining and using Arrays<a class="headerlink" href="#defining-and-using-arrays" title="Permalink to this headline">¶</a></h1>
+<p>The traditional approach is the following:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">create </span><span class="nf">my-array</span> <span class="mi">42</span> <span class="k">cells allot</span>
+</pre></div>
+</div>
+<p>This creates the dictionary entry named my-array and
+allocates 42 cells in RAM. BUT: the my-array dictionary entry
+is not connected to the allocated RAM. The correct solution is:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">variable</span> <span class="nc">my-array</span>  <span class="mi">42</span> <span class="k">cells allot</span>
+</pre></div>
+</div>
+<p>This makes the dictionary entry named my-array, sets up the
+link to the RAM address and allocates an <em>additional</em>
+amount of 42 cells in RAM.</p>
+<p>Forth 200x introduced a new word named
+<a class="reference external" href="http://www.forth200x.org/buffer.html">Buffer:</a>.
+With it the above code turns into</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mi">43</span> <span class="kn">buffer:</span> <span class="nc">my-array</span>
+</pre></div>
+</div>
+<p>please note the different sizes! The <tt class="file docutils literal"><span class="pre">buffer:</span></tt>-implementation
+allocates the exact number of bytes whereas the <tt class="file docutils literal"><span class="pre">variable</span></tt> version
+adds the given size parameter to the 1 cell it allocates anyways.</p>
+<p>The use of the array is quite simple:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">my-array-@</span> <span class="k">cells </span><span class="nf">my-array</span> <span class="k">+ @ ;</span>
+<span class="kn">:</span> <span class="nc">my-array-!</span> <span class="k">cells </span><span class="nf">my-array</span> <span class="k">+ ! ;</span>
+</pre></div>
+</div>
+<div class="section" id="arrays-of-structures">
+<h2>Arrays of structures<a class="headerlink" href="#arrays-of-structures" title="Permalink to this headline">¶</a></h2>
+<p>This example uses structures. Structures can be
+used after including of the <tt class="file docutils literal"><span class="pre">structures.frt</span></tt>
+file. First a hash data structure consisting of
+two elements is defined. This structure is used
+to create an array of a few elements afterwards.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">begin-structure </span><span class="nf">hash</span>
+ <span class="k">field: </span><span class="nf">hash.key</span>
+ <span class="k">field: </span><span class="nf">hash.value</span>
+<span class="k">end-structure</span>
+
+<span class="c1">\ inspired by CELLS</span>
+<span class="c1">\ ( n -- size )</span>
+<span class="c1">\ calculates the size of n items of the</span>
+<span class="c1">\ type hash</span>
+<span class="kn">:</span> <span class="nc">hash-cells</span> <span class="nf">hash</span> <span class="k">* ;</span>
+
+<span class="c1">\ define a hash-array</span>
+<span class="kn">:</span> <span class="nc">hash:</span>
+    <span class="nf">hash-cells</span> <span class="kn">buffer:</span>
+  <span class="nc">does&gt;</span>
+    <span class="k">swap </span><span class="nf">hash-cells</span>  <span class="k">+</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>The helper word <tt class="docutils literal"><span class="pre">hash-cells</span></tt> calculates the size of the
+data structure in terms of byes, just like the standard
+word <tt class="docutils literal"><span class="pre">cells</span></tt> does it.</p>
+<p>Now we&#8217;re using the words (using the amforth-shell).
+First define an array of 4 hash pairs. After that store
+a key/value pair at a particular position and retrieve
+it again later.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">(ATmega16)&gt; 4 hash: my-hash</span>
+<span class="go">  ok</span>
+<span class="go">(ATmega16)&gt; 42 3 my-hash hash.key !</span>
+<span class="go">  ok</span>
+<span class="go">(ATmega16)&gt; 4711 3 my-hash hash.value !</span>
+<span class="go">  ok</span>
+<span class="go">(ATmega16)&gt; 3 my-hash hash.key @ .</span>
+<span class="go">  42  ok</span>
+<span class="go">(ATmega16)&gt; 3 my-hash hash.value @ .</span>
+<span class="go">  4711  ok</span>
+<span class="go">(ATmega16)&gt;</span>
+</pre></div>
+</div>
+<p>If you place the data structure in a different memory (e.g. the EEPROM) adapt the
+code accordingly. <tt class="docutils literal"><span class="pre">buffer:</span></tt> needs to be replaced with a similiar allocation word and
+<tt class="docutils literal"><span class="pre">&#64;</span></tt>/<tt class="docutils literal"><span class="pre">!</span></tt> with the proper memory access words. Remember, memory is not always 2 bytes per
+cell.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="Structures.html#structures"><em>Structures</em></a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Arrays.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

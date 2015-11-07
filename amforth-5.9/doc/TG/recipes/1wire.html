@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dallas 1-Wire Devices &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Hardware Modules" href="Hardware.html" />
+    <link rel="next" title="Digital Ports" href="Digital-Ports.html" />
+    <link rel="prev" title="Hardware Modules" href="Hardware.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dallas-1-wire-devices">
+<span id="wire"></span><h1>Dallas 1-Wire Devices<a class="headerlink" href="#dallas-1-wire-devices" title="Permalink to this headline">¶</a></h1>
+<p>Dallas 1-Wire devices use 1 wire (besides ground level) to connect a peripheral
+device with the hostmaster. A common use case are the temperature sensors
+DS18[S|B]20. The communication protocol between the device and the micro controller
+is simple but at some points very timing sensible.</p>
+<p>The typical wiring is shown in the picture. The pull up resistor is recommended as
+well as the connection to VCC.</p>
+<div class="figure align-right">
+<img alt="../../_images/1wire-basic.png" src="../../_images/1wire-basic.png" />
+</div>
+<p>This recipe is based upon work from Brad Rodriguez for the 4€4th project. He split
+the 1-wire module into two parts: a bit level layer for all the dirty, time critical
+work with only 2 small assembly words, and all other stuff in portable forth code.
+Despite the fact, that he uses another controller type, the forth code remained
+almost the same.</p>
+<p>To use the 1-wire module new AmForth hexfiles have to be created with the
+file <tt class="file docutils literal"><span class="pre">drivers/1wire.asm</span></tt> included into your project master file (e.g.
+<tt class="file docutils literal"><span class="pre">template.asm</span></tt>) All configuration is done with 2 constants that are set
+in the same file. They define, which pin is connected to the 1-wire bus.
+There are no defaults</p>
+<div class="highlight-none"><div class="highlight"><pre>; Port and Pin for the 1-wire bus.
+.equ OW_BIT=4
+.equ OW_PORT=PORTE
+
+.include &quot;drivers/1wire.asm&quot;
+</pre></div>
+</div>
+<p>After burning the new system into the controller, two new words are
+available: <strong class="command">1w.reset</strong> and <strong class="command">1w.slot</strong>. The <strong class="command">1w.reset</strong>
+reinitializes the 1-wire bus and gives a flag, whether at least one device is
+present or not. It would not make much sense to continue, if no device is
+recognized.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">1wirejob</span> <span class="kt">...</span> <span class="mi">1</span><span class="nf">w.reset</span> <span class="k">if</span>
+    <span class="nf">do-the-job</span>
+  <span class="k">then </span><span class="kt">...</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>The <strong class="command">1w.slot</strong> writes the LSB to the 1-wire bus and reads
+one bit back, if a 1 was written. It turns off all interrupts for approx
+60 microseconds to achieve the correct timing. The lower byte of the
+TOS is rotated so repeated calls to <strong class="command">1w.slot</strong> can transfer
+all bits of a bytes without further code. It is probably the smartest
+word of the whole package.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">1w.touch</span> <span class="c1">( c1 -- c2 )</span>
+    <span class="mi">1</span><span class="nf">w.slot</span> <span class="mi">1</span><span class="nf">w.slot</span> <span class="mi">1</span><span class="nf">w.slot</span> <span class="mi">1</span><span class="nf">w.slot</span>
+    <span class="mi">1</span><span class="nf">w.slot</span> <span class="mi">1</span><span class="nf">w.slot</span> <span class="mi">1</span><span class="nf">w.slot</span> <span class="mi">1</span><span class="nf">w.slot</span> <span class="k">;</span>
+
+<span class="kn">:</span> <span class="nc">1w.put</span> <span class="c1">( c -- )</span> <span class="mi">1</span><span class="nf">w.touch</span> <span class="k">drop ;</span>
+<span class="kn">:</span> <span class="nc">1w.get</span> <span class="c1">( -- c )</span> <span class="mh">$ff</span> <span class="mi">1</span><span class="nf">w.touch</span> <span class="k">;</span>
+</pre></div>
+</div>
+<div class="section" id="wire-tools">
+<h2>1-Wire Tools<a class="headerlink" href="#wire-tools" title="Permalink to this headline">¶</a></h2>
+<p>The first useful tool is the low level <strong class="command">1w.reset</strong>.
+It checks whether at least one 1-wire device is present and
+working or not. Other useful tools are in the file
+<tt class="file docutils literal"><span class="pre">1wire.frt</span></tt>. They perform a ROM search to print all
+ROM id&#8217;s of the connected devices.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">(ATmega1280)&gt; hex 1w.showids</span>
+
+<span class="go"> 10 11 E5 68  2  8  0 2A</span>
+<span class="go"> 28 4C 75 CC  2  0  0 CD</span>
+<span class="go">ok</span>
+<span class="go">(ATmega1280)&gt;</span>
+</pre></div>
+</div>
+<p>Code specialized for temperature sensors is in the file
+<tt class="file docutils literal"><span class="pre">1wire-temp.frt</span></tt>. Keep in mind, that at least 2 different
+sensor types are available with different result encoding’s. The
+code is not currently capable to take care of the differences.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> hex create sensor2 <span class="m">28</span> , 4C , <span class="m">75</span> , CC , <span class="m">2</span> , <span class="m">0</span> , <span class="m">0</span> , CD ,
+<span class="go">ok</span>
+<span class="gp">&gt;</span> decimal sensor2 1w.convert <span class="m">750</span> ms sensor2 readtemp temp&gt;pad pad count <span class="nb">type</span>
+<span class="go">18.0 ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="possible-improvements">
+<h2>Possible Improvements<a class="headerlink" href="#possible-improvements" title="Permalink to this headline">¶</a></h2>
+<p>The module opens the door to the 1-wire world. It is by far not complete
+or finished. Some things could (or should?) be done better. Feel free to
+improve them and share them, please.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/1wire.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

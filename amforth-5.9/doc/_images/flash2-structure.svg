@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="17cm" height="30cm" viewBox="38 29 338 599" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="40" y="40" width="200" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="40" width="200" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="91.6" y="60.95">
+    <tspan x="91.6" y="60.95">Interrupt Vectors</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="40" y="80" width="200" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="80" width="200" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="91.6" y="100.95">
+    <tspan x="91.6" y="100.95">Startup code</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="39.2928" y="117.757" width="200" height="37"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="39.2928" y="117.757" width="200" height="37"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="82.4142" y="142.293">
+    <tspan x="82.4142" y="142.293">Inner Interpreter</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="40" y="237.5" width="200" height="242.5"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="237.5" width="200" height="242.5"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="107.071" y="305.954">
+    <tspan x="107.071" y="305.954">Free Flash</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="249.734" y1="40.1792" x2="291.6" y2="40.95"/>
+    <polygon style="fill: #000000" points="242.236,40.0412 252.326,35.2261 249.734,40.1792 252.142,45.2244 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="242.236,40.0412 252.326,35.2261 249.734,40.1792 252.142,45.2244 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="249.734" y1="237.712" x2="286" y2="238.5"/>
+    <polygon style="fill: #000000" points="242.236,237.549 252.342,232.767 249.734,237.712 252.125,242.765 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="242.236,237.549 252.342,232.767 249.734,237.712 252.125,242.765 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="291.6" y="40.95">
+    <tspan x="291.6" y="40.95">0x00</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="291.6" y="160.95">
+    <tspan x="291.6" y="160.95"></tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="292" y="233.5">
+    <tspan x="292" y="233.5">DP</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="39" y="156" width="200" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="39" y="156" width="200" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="95" y="174">
+    <tspan x="95" y="174">Dictionary</tspan>
+    <tspan x="95" y="190">dict_appl.inc</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="39" y="196" width="200" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="39" y="196" width="200" height="40"/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="94" y="217">
+    <tspan x="94" y="217">Dictionary</tspan>
+    <tspan x="94" y="233">dict_appl_core.inc</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="249.736" y1="620" x2="300" y2="620"/>
+    <polygon style="fill: #000000" points="242.236,620 252.236,615 249.736,620 252.236,625 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="242.236,620 252.236,615 249.736,620 252.236,625 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="300" y="620">
+    <tspan x="300" y="620">FLASH_END</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="131.364,239.084 131.364,249.084 126.364,249.084 136.364,259.084 146.364,249.084 141.364,249.084 141.364,239.084 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="131.364,239.084 131.364,249.084 126.364,249.084 136.364,259.084 146.364,249.084 141.364,249.084 141.364,239.084 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="131.364,239.084 131.364,249.084 126.364,249.084 136.364,259.084 146.364,249.084 141.364,249.084 141.364,239.084 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="40" y="580" width="200" height="40"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="580" width="200" height="40"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="249.736" y1="480" x2="280" y2="480"/>
+    <polygon style="fill: #000000" points="242.236,480 252.236,475 249.736,480 252.236,485 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="242.236,480 252.236,475 249.736,480 252.236,485 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="280" y="480">
+    <tspan x="280" y="480">0x1FFFF</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="40" y="480" width="200" height="100"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="40" y="480" width="200" height="100"/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="249.736" y1="580" x2="280" y2="580"/>
+    <polygon style="fill: #000000" points="242.236,580 252.236,575 249.736,580 252.236,585 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="242.236,580 252.236,575 249.736,580 252.236,585 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="280" y="580">
+    <tspan x="280" y="580">NRWW</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="100" y="520">
+    <tspan x="100" y="520">unused flash</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="80" y="600">
+    <tspan x="80" y="600">Bootsector with API</tspan>
+  </text>
+</svg>

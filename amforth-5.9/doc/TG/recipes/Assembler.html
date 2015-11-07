@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Forth Assembler &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Programming and Debugging" href="Programming.html" />
+    <link rel="next" title="Build Timestamp" href="Build-Timestamp.html" />
+    <link rel="prev" title="Programming and Debugging" href="Programming.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="forth-assembler">
+<span id="assembler"></span><h1>Forth Assembler<a class="headerlink" href="#forth-assembler" title="Permalink to this headline">¶</a></h1>
+<p>Amforth is written in assembly language. Writing
+assembly words usually requires a rebuild of the
+hex files and flashing them to the controller.
+Lubos Pekny developed an assembler that runs
+within amforth and does not require a change
+of the amforth sources. Its syntax is a mixture
+of the standard Atmel assembly and forth. The
+mnemonics are close to Atmel&#8217;s. The forth influence
+leads to a postfix notation and that the words
+that do the actual code generation end with a
+comma.</p>
+<div class="section" id="start">
+<h2>Start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h2>
+<p>To use it, load the file <tt class="file docutils literal"><span class="pre">lib/assembler.frt</span></tt> and
+its dependencies into a running amforth. The assembler uses
+word lists to organize itself. The assembler supports all
+common mnemonics regardless of the controller type.</p>
+<p>The assembler words are in a seperate word list.
+To activate it, the following sequence is typically used:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">forth only also assembler</span>
+</pre></div>
+</div>
+<p>This resets the word list order and adds the assembler
+word list. After successfully compiling the assembler
+word, the word list can be removed with <tt class="docutils literal"><span class="pre">previous</span></tt>.</p>
+</div>
+<div class="section" id="simple-example">
+<h2>Simple Example<a class="headerlink" href="#simple-example" title="Permalink to this headline">¶</a></h2>
+<p>The example uses the assembler for words that could easily be
+written in plain forth. Nevertheless an implementation in
+assembler is done. The code itself it taken from a posting on
+<a class="reference external" href="http://roboforum.ru/forum58/topic4406-75.html">Roboforum.RU</a></p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$2F</span> <span class="kn">constant</span> <span class="nc">tccr1a</span>
+<span class="mh">$2E</span> <span class="kn">constant</span> <span class="nc">tccr1b</span>
+
+<span class="c1">\ stop timer1</span>
+<span class="c1">\ : t1&gt; 0 TCCR1 c! ;</span>
+ <span class="k">code </span><span class="nf">t1&gt;</span>
+       <span class="nf">tccr1b</span> <span class="nf">R2</span> <span class="nf">out,</span>
+ <span class="nf">end-code</span>
+
+ <span class="c1">\ start timer1 @ normal mode, prescaler=8 ( 1us counter @8MHz )</span>
+ <span class="c1">\ : &lt;t1 2 TCCR1 ! ;</span>
+ <span class="k">code </span><span class="nf">&lt;t1</span>
+       <span class="nf">R17</span>    <span class="mi">2</span>   <span class="nf">ldi,</span>
+       <span class="nf">tccr1a</span> <span class="nf">R2</span>  <span class="nf">out,</span>
+       <span class="nf">tccr1b</span> <span class="nf">R17</span> <span class="nf">out,</span>
+ <span class="nf">end-code</span>
+</pre></div>
+</div>
+<p>The new words can be used just like a ordinary forth words.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\  stop timer1 &amp; zero counter</span>
+<span class="kn">:</span> <span class="nc">&lt;t1&gt;</span>  <span class="nf">t1&gt;</span> <span class="mi">0</span> <span class="k">dup </span><span class="nf">TCNT1H</span> <span class="k">c! </span><span class="nf">TCNT1L</span> <span class="k">c! </span>  <span class="k">;</span>
+
+<span class="c1">\  show t1 counter</span>
+<span class="kn">:</span> <span class="nc">.t1</span>
+        <span class="nf">TCNT1L</span> <span class="k">c@ </span><span class="nf">TCNT1H</span> <span class="k">c@ </span><span class="mi">8</span> <span class="k">lshift + dup</span>
+        <span class="s">.&quot;</span> <span class="s">(0x</span><span class="nf">&quot;</span> <span class="kt">.</span><span class="nf">x</span> <span class="s">.&quot;</span> <span class="s">)</span><span class="nf">&quot;</span> <span class="k">bl emit u. </span><span class="s">.&quot;</span> <span class="s">us</span><span class="nf">&quot;</span>
+
+        <span class="nf">TIFR</span> <span class="k">dup c@ </span><span class="mh">$4</span> <span class="k">and dup </span>     <span class="c1">\ test  TOV1 flag</span>
+        <span class="k">if bl emit </span><span class="s">.&quot;</span> <span class="s">overrun</span><span class="nf">&quot;</span>
+           <span class="k">over c@ or swap c! </span>     <span class="c1">\ clear TOV1 by writing&#39;1&#39;</span>
+        <span class="k">else drop drop then cr</span>
+        <span class="k">;</span>
+
+ <span class="c1">\ timing test using timer1, xt - executable address</span>
+  <span class="kn">:</span> <span class="nc">?us</span>   <span class="nf">&lt;t1&gt;</span> <span class="nf">&lt;t1</span> <span class="k">execute </span><span class="nf">t1&gt;</span> <span class="kt">.</span><span class="nf">t1</span> <span class="k">; </span>  <span class="c1">( *x xt -- *y )</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Assembler.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

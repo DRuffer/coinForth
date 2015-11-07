@@ -1,0 +1,185 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tracer &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Programming and Debugging" href="Programming.html" />
+    <link rel="next" title="Upgrade AmForth" href="Upgrade-Amforth.html" />
+    <link rel="prev" title="Testing" href="Testing.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tracer">
+<span id="id1"></span><h1>Tracer<a class="headerlink" href="#tracer" title="Permalink to this headline">¶</a></h1>
+<p>Sometimes it is useful to watch a word working. A simple trace utility that
+prints the name of the word and the stack content at the beginning helps to
+get important information.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ flag to dynamically turn trace output</span>
+<span class="c1">\ on and off</span>
+<span class="kn">variable</span> <span class="nc">tracing?</span>
+<span class="kn">:</span> <span class="nc">trace:on</span> <span class="mi">-1</span> <span class="nf">tracing?</span> <span class="k">! ;</span>
+<span class="kn">:</span> <span class="nc">trace:off</span> <span class="mi">0</span> <span class="nf">tracing?</span> <span class="k">! ;</span>
+<span class="kn">:</span> <span class="nc">tracer</span> <span class="nf">tracing?</span> <span class="k">@ if cr </span><span class="no">itype </span><span class="k">cr .s else drop drop then ;</span>
+
+<span class="c1">\ save the name of the word for use in tracer</span>
+<span class="kn">:</span> <span class="nc">:</span> <span class="k">&gt;in @ &gt;r </span><span class="kn">:</span> <span class="nc">r&gt;</span> <span class="k">&gt;in !</span>
+   <span class="k">parse-name postpone sliteral postpone </span><span class="nf">tracer</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>After loading these few lines into the controller, every word being
+defined afterwards prints it&#8217;s name and the stack content at runtime.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> : foo <span class="m">1</span> <span class="p">;</span>
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> : bar <span class="m">2</span> foo <span class="p">;</span>
+<span class="go">  ok</span>
+<span class="gp">&gt;</span> : baz <span class="m">3</span> bar <span class="p">;</span>
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> trace:on
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> baz
+
+<span class="go">baz</span>
+
+<span class="go">bar</span>
+<span class="go">0 2221 3</span>
+
+<span class="go">foo</span>
+<span class="go">0 2219 2</span>
+<span class="go">1 2221 3</span>
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> .s
+<span class="go">0 2217 1</span>
+<span class="go">1 2219 2</span>
+<span class="go">2 2221 3</span>
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> trace:off
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> baz
+<span class="go"> ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+<p>It requires amforth version 4.7 and up. (sliteral is missing in earlier
+versions).</p>
+<p>This tracer is based on posts from Emma Ledwidge and Gerry in the
+usenet group comp.lang.forth in January 2012.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Tracer.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

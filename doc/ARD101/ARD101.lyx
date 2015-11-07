@@ -1,30 +1,31 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
 \begin_document
 \begin_header
-\textclass literate-article
+\textclass article
 \begin_preamble
 \input{ConfigARD101.tex}
 \end_preamble
 \use_default_options true
 \begin_modules
+noweb
 customHeadersFooters
 \end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
-\inputencoding latin1
+\inputencoding iso8859-1
 \fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
+\font_math auto
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
-
 \graphics dvips
 \default_output_format default
 \output_sync 0
@@ -44,15 +45,24 @@ customHeadersFooters
 \pdf_pdfusetitle true
 \papersize default
 \use_geometry true
-\use_amsmath 1
-\use_esint 1
-\use_mhchem 1
-\use_mathdots 1
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
 \cite_engine basic
+\cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
+\justification true
 \use_refstyle 0
 \index Index
 \shortcut idx
@@ -92,9 +102,9 @@ Public Domain
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="2">
-<features islongtable="true" longtabularalignment="center">
-<column alignment="none" valignment="top" width="0">
-<column alignment="none" valignment="top" width="0">
+<features rotate="0" islongtable="true" longtabularalignment="center">
+<column alignment="none" valignment="top">
+<column alignment="none" valignment="top">
 <row>
 <cell multicolumn="1" alignment="none" valignment="top" topline="true" usebox="none" special="c">
 \begin_inset Text
@@ -194,7 +204,7 @@ Make sure the ConfigARD101.tex file is setup properly before exporting to
 \end_layout
 
 \begin_layout Section
-OSEPP 101 Arduino Basics Starter Kit
+OSEPP 101 Arduino Basics Starter Kitz
 \end_layout
 
 \begin_layout Standard
@@ -450,7 +460,7 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset CommandInset label
@@ -647,7 +657,7 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1488,7 +1498,7 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1788,7 +1798,7 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-\begin_inset Caption
+\begin_inset Caption Standard
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1951,93 +1961,122 @@ ok
 Tutorial1
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial1.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial1.ino
+\end_layout
+
 \end_inset
 
 /* Tutorial 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 Blink
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 Turns on an LED on for one second, then off for one second, repeatedly.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 This example code is in the public domain.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // Pin 13 has an LED connected on most Arduino boards.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // give it a name:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int led = 13;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // the setup routine runs once when you press reset:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {              
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // initialize the digital pin as an output.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 pinMode(led, OUTPUT);    
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // the loop routine runs over and over again forever:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 delay(1000);               // wait for a second
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 digitalWrite(led, LOW);    // turn the LED off by making the voltage LOW
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 delay(1000);               // wait for a second
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -2061,71 +2100,94 @@ flasher.txt
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<flasher.txt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+flasher.txt
+\end_layout
+
 \end_inset
 
 
 \backslash
  FLASHER.txt to Demo LED control              WFR 2011-01-27 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( must have io-core.txt installed )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chop-flasher
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 marker chop-flasher  ( a forget point)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 $23 value PortB  $26 value PortC  $29 value PortD
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   5 value LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : 1-cycle  ( ms_delay ---   flash LED on then off )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     PortB LED PoBiHi   dup ms   PortB LED PoBiLo   ms ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : many  ( on_time flashes ---   produce controlled LED flashes)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     PortB LED PoBiOut ( set LED pin as output)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     for aft  dup 1-cycle then next drop ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( use 'many' leading with on-time and # of flashes )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( end of flasher.txt )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 flush
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -2168,89 +2230,115 @@ In amforth-5.8, the original flasher that was mentioned above is no longer
  found, so I need to create it.
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<flasher.frt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+flasher.frt
+\end_layout
+
 \end_inset
 
 
 \backslash
  flasher.frt to Demo LED control
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 0 constant false  #include io-core.f
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  requires: in application master file
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    .set WANT_PORTB = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    .set WANT_PORTC = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    .set WANT_PORTD = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    .set WANT_TIMER_COUNTER_0 = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    .set WANT_SPI = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #include timer0.frt  #include timer.frt
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 $23 value PortB  $26 value PortC  $29 value PortD
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   5 value LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : 1-cycle  ( ms_delay ---   flash LED on then off )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     PortB LED PoBiHi   dup ms   PortB LED PoBiLo   ms ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : many  ( on_time flashes ---   produce controlled LED flashes)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     PortB LED PoBiOut ( set LED pin as output)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     for aft  dup 1-cycle then next drop ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( use 'many' leading with on-time and # of flashes )
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -2297,330 +2385,386 @@ io-core.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<io-core.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+io-core.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  Port Input Output for AmForth                  DaR 28Mar14
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  loaded as  io-core.f
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Modified for 328eForth, 23mar11cht
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Modified for SwiftX, daruffer@gmail.com
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  manually begin with chop-io entered
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : mask ( bit# --- port_mask  convert bit to 8 bit mask)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      1 swap lshift  ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : DDR  
 \backslash
  port --- port' adjust input port# to DDR
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     1- ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : Input 
 \backslash
  port --- port adjust input port# to output
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     2 - ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : RegFrom 
 \backslash
  Reg mask --- value  read masked bits from register
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
         
 \backslash
  To read all bits:  PortB true RegFrom -> value
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      swap c@  and ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : RegTo 
 \backslash
  Reg mask new ---  write masked new into register
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      over and >r   invert over c@ and   r> or  swap c! ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiI/O  
 \backslash
  port bit direction --- configure bit in/out
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     rot DDR   rot mask   rot RegTo 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiOut  
 \backslash
  port bit --- configure as output
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     true  PoBiI/O ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiRead  
 \backslash
  port bit --- value  read bit value from port
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      swap Input swap mask RegFrom ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiHi  
 \backslash
  port bit --- set port bit 0..7 high
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      mask true  RegTo ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiLo   
 \backslash
  port bit --- clear port bit 0..7 low
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      mask false RegTo ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiIn   
 \backslash
  port bit --- configure as input,  no pull-up
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     2dup false PoBiI/O   PoBiLo ( pullup inactive) ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : PoBiInPu 
 \backslash
  port bit --- configure as input with pull-up
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     2dup false PoBiI/O   PoBiHi ( pullup active) ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  read bits from register  Reg#         select      RegFrom
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  write bits to register   Reg#         select bits RegTo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  write 1-bit to register  Reg#   5 mask true       RegTo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  write 0-bit to register  Reg#   5 mask false      RegTo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  configure bits as output PortB DDR    select True RegTo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  write bits to output     PortB Output select bits RegTo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  configure bit as output  PortB     LED            PoBiOut
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  bit as input with pullup PortB     Switch3        PoBiInPu
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  read bit from port       PortB     Switch3        PoBiRead
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  write 1-bit to port      PortB     LED            PoBiHi
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  write 0-bit to port      PortB     LED            PoBiLo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Note, when initializing a 16 bit register, TCNT1 etc.
  it
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
   must be written directly hi/lo not using RegTo.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
   The proper form to clear is:    TCNT1hi false c!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
                          then:    TCNT1lo false c!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
                                   
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  end of io-core.txt
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -2689,145 +2833,187 @@ status open
 Tutorial2
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial2.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial2.ino
+\end_layout
+
 \end_inset
 
 /*
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 Tutorial 2 Digital Output
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int LED0  = 2;     // Use digital pin 2 to drive the white LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int LED1  = 3;     // Use digital pin 3 to drive the yellow LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int LED2  = 4;     // Use digital pin 4 to drive the green LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int LED3  = 5;     // Use digital pin 5 to drive the red LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // initialize digital pin 2 to 5 as output:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(LED0, OUTPUT);  
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(LED1, OUTPUT);  
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(LED2, OUTPUT);  
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(LED3, OUTPUT);  
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop(){
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Toggle each LED at a time with a 500ms delay
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED0, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED0, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED1, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED1, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500); 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED2, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED2, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500); 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED3, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(LED3, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500); 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -2844,85 +3030,109 @@ cycle.txt
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<cycle.txt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+cycle.txt
+\end_layout
+
 \end_inset
 
 
 \backslash
  cycle.txt to Demo multiple LED control      DaR 2014-02-16
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chop-cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 marker chop-cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Define LED port bits and flashing order
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CREATE LEDS   4 2* 1 + allot 
 \backslash
  Number of LEDS, then order
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : 
 \backslash
 LEDS ( --- Initialize the RAM array )   4 LEDS C!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count 2* PortD fill 
 \backslash
  Overfill the Port addresses to save code
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    2 LEDS 1 + C!  3 LEDS 3 + C!  4 LEDS 5 + C!  5 LEDS 7 + C! ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : cycle ( time port bit --- flash LED on then off )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    2dup PoBiHi  rot dup ms  rot rot PoBiLo  ms ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : cycles ( time cycles --- produce cycles of LED flashes )   
 \backslash
 LEDS
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count for aft  count >r count r> PoBiOut  then next drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    for aft  LEDS count for aft  count >r count >r over r> r>
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          cycle  then next  drop  then next  drop ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 flush
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -3031,73 +3241,94 @@ cycle.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<cycle.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+cycle.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  cycle.f to Demo multiple LED control      DaR 2014-03-29
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Define LED port bits and flashing order
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CREATE LEDS   4 2* 1 + allot 
 \backslash
  Number of LEDS, then order
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : 
 \backslash
 LEDS ( --- Initialize the RAM array )   4 LEDS C!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count 2* PortD fill 
 \backslash
  Overfill the Port addresses to save code
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    2 LEDS 1 + C!  3 LEDS 3 + C!  4 LEDS 5 + C!  5 LEDS 7 + C! ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : cycle ( time port bit --- flash LED on then off )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    2dup PoBiHi  rot dup ms  rot rot PoBiLo  ms ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : cycles ( time cycles --- produce cycles of LED flashes )   
 \backslash
 LEDS
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count 0 do  count >r count r> PoBiOut  loop  drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 do  LEDS count 0 do  count >r count >r over r> r>
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          cycle  loop  drop  loop  drop ;
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -3160,93 +3391,122 @@ http://tinyurl.com/megobz3/tutorial-3-using-digital-input/
 Tutorial3
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial3.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial3.ino
+\end_layout
+
 \end_inset
 
 /*
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 Tutorial 3 Digital Input
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 const int buttonPin = 12;     // Use digital pin 12 for the button pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int buttonState = 0;          // variable for storing the button status
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // initialize the pushbutton pin as an input:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(buttonPin, INPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // initialize the serial port;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Serial.begin(9600);  // start serial for output 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop(){
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // read the state of the pushbutton value:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   buttonState = digitalRead(buttonPin);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Output button state
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Serial.print("The button state is ");
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Serial.println(buttonState);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Delay 1000ms
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(1000);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3263,58 +3523,77 @@ button.txt
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<button.txt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+button.txt
+\end_layout
+
 \end_inset
 
 
 \backslash
  button.txt to Demo Digital input      DaR 2014-02-17
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chop-button
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 marker chop-button
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 4 value buttonPin 
 \backslash
  Use digital pin 12 for the button pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : states ( --- read state of button )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortB buttonPin 2dup PoBiIn  PoBiRead
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    begin  PortB buttonPin PoBiRead  2dup - if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          cr ." The button state is "  dup .
  swap
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    then  drop  ?key until  drop ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 flush
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -3385,46 +3664,62 @@ button.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<button.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+button.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  button.f to Demo Digital input      DaR 2014-03-29
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 4 value buttonPin 
 \backslash
  Use digital pin 12 for the button pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : states ( --- read state of button )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortB buttonPin 2dup PoBiIn  PoBiRead
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    begin  PortB buttonPin PoBiRead
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       2dup = while  nip  repeat
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    cr ." The button state is " .
  drop ;
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -3474,263 +3769,334 @@ http://tinyurl.com/megobz3/tutorial-4-an-led-game/
 Tutorial4
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial4.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial4.ino
+\end_layout
+
 \end_inset
 
 /*
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Tutorial 4 Digital Input and Output Game
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   In this game, the LED will loop from white, yellow, green, red
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   then back to white.
   The goal is to press the push button at the exact
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   moment when the green LED is ON.
  Each time you got it right, the LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   will speed up and the difficulty will increase.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int currentLED = 2;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int delayValue = 200;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // initialize digital pin 12 as input;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(12, INPUT);   // button input
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // initialize digital pin 2 to 5 as output:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(2, OUTPUT);   // white LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(3, OUTPUT);   // yellow LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(4, OUTPUT);   // green LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(5, OUTPUT);   // red LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int checkInput() { 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   if (digitalRead(12) == 0) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     return 1;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   } else {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     return 0;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop(){
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Check if the button is press at the right moment
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   if (digitalRead(12) == 0) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     if (currentLED == 4) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        // Blink the correct (green) LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(4, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(4, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(4, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(4, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        // Speed up the LEDs
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delayValue = delayValue - 20; 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     } else {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        // Blink the wrong LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(currentLED, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(currentLED, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(currentLED, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        digitalWrite(currentLED, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
        delay(200);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Loop LED from white > yellow > green > red
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(currentLED, HIGH);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(delayValue);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   digitalWrite(currentLED, LOW);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(delayValue);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   currentLED = currentLED + 1;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   if (currentLED > 5) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      currentLED = 2;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -3747,109 +4113,141 @@ game.txt
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<game.txt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+game.txt
+\end_layout
+
 \end_inset
 
 
 \backslash
  game.txt Digital Input and Output Game      DaR 2014-02-20
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chop-game
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 marker chop-game
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 variable delayValue
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : game ( --- cycles LEDs and check button presses )   
 \backslash
 LEDS
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count for aft  count >r count r> PoBiOut  then next drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortB buttonPin PoBiIn  200 delayValue !
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    begin  LEDS count for aft  count >r count r>
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          2dup delayValue @ rot rot cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          PortB buttonPin PoBiRead 0 = if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             rot dup LEDS count 1 - 2* + = if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                delayValue @ 20 - dup 0 = if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                   ." You win!" 2drop drop exit
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                then  delayValue !
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             then  rot rot
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             2dup 200 rot rot cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             2dup 200 rot rot cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          then
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          2drop  ?key if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             drop exit
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          then
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    then next  drop  again ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 flush 
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -3908,89 +4306,116 @@ game.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<game.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+game.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  game.f Digital Input and Output Game      DaR 2014-03-29
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 variable delayValue
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : game ( --- cycles LEDs and check button presses )   
 \backslash
 LEDS
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count 0 do  count >r count r> PoBiOut  loop  drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortB buttonPin PoBiIn  200 delayValue !
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    begin  LEDS count 0 do  count >r count r>
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          2dup delayValue @ rot rot cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          PortB buttonPin PoBiRead 0 = if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             rot dup LEDS count 1 - 2* + = if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                delayValue @ 20 - dup 0 = if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                   ." You win!" 2drop drop exit
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                then  delayValue !
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             then  rot rot
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             2dup 200 rot rot cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
             2dup 200 rot rot cycle
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          then  2drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       loop  drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    again ;
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -4063,98 +4488,128 @@ http://tinyurl.com/megobz3/tutorial-5-building-voltage-meter/
 Tutorial5
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial5.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial5.ino
+\end_layout
+
 \end_inset
 
 /*
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Tutorial 5: Volt Meter
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int sensorPin = A0;    // select the analog input pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int sensorValue = 0;   // variable to store the value coming from the sensor
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 float sensorVoltage = 0; // variable to store the voltage coming from the
  sensor
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Serial.begin(9600);  // start serial for output
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Read the value from the analog input pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // A value of 1023 = 5V, a value of 0 = 0V
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   int sensorValue = analogRead(sensorPin);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // Convert sensor value to voltage
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   float sensorVoltage= sensorValue*(5.0/1023.0);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // print sensor value
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Serial.print("The voltage is ");
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   Serial.println(sensorVoltage);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // delay by 1000 milliseconds:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(1000);                 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -4171,45 +4626,61 @@ volts.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<volts.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+volts.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  volts.f to Demo Analog input      DaR 2014-03-29
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 0 value analogPin 
 \backslash
  Use analog pin 0 for the voltage pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : volts ( --- read state of pot )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortC analogPin PoBiInPu
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    $40 ADMux c!  $C3 ADCSra c!  ADCL @
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    cr ." The voltage is "  500 1023 */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 <# # # $2E hold # #> type space ;
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -4265,141 +4736,182 @@ http://tinyurl.com/megobz3/tutorial-6-using-buzzer-to-play-a-melody/
 Tutorial6a
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial6a.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial6a.ino
+\end_layout
+
 \end_inset
 
 /*   Tutorial 6a: Simple Scale Sweep */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int buzzerPin = 8;    // Using digital pin 8
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_C6  1047
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_D6  1175
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_E6  1319
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_F6  1397
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_G6  1568
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_A6  1760
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_B6  1976
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #define NOTE_C7  2093
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // nothing to setup
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   //tone(pin, frequency, duration)
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_C6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_D6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_E6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_F6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_G6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_A6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_B6, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   tone(buzzerPin, NOTE_C7, 500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(500);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -4424,212 +4936,251 @@ The eForth system ha this tone generation code, which uses pin 6 on PortD,
  This really is so much easier than figuring out the code.
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<tone.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+tone.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  Audio tone generator                      30Mar14
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Modified for 328eForth, 23mar11cht
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Modified for SwiftX by daruffer@gmail.com
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Must have io-core.f installed
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 6 value Tone-out 
 \backslash
  PortD bit 6
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 binary
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : setup-osc 
 \backslash
  prescale limit  ---  limit 1..255, prescale 1..5
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortD   Tone-out                  PoBiOut 
 \backslash
  setup output pin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    OCR0A   true      rot ( limit   ) RegTo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    TCCR0A  11000011  01000010        RegTo   
 \backslash
  CTC mode
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
            00000101  min    0  max    
 \backslash
  form TCCR0B prescale
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    TCCR0B  00001111 rot ( prescale ) RegTo ;  
 \backslash
  and tone on
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : tone-off 
 \backslash
   ---  end output tone setting prescale to zeros
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    TCCR0B  00000111  false RegTo ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 decimal
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 78 value Limit   4 value Prescale  
 \backslash
  400 Hz tone parameters
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : ud/mod ( ud1 n -- rem ud2 ) >R 0 R@ UM/MOD R> SWAP >R UM/MOD R> ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : Hertz   
 \backslash
  frequency --- load Limit and Prescale
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     $1200 $7A ( 8000000.
  ) rot ud/mod  
 \backslash
  total scale as rem double-quot
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     dup            if ( >16 bits)  1024  5 else
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     over $C000 and if ( >14 bits)   256  4 else
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     over $F800 and if ( >10 bits)    64  3 else
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     over $FF00 and if ( > 8 bits)     8  2 else   1  1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                       then then then then
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       to Prescale   um/mod to Limit  drop drop ( two remainders ) ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : tone-on   
 \backslash
  ---  begin tone from fixed presets
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      Prescale  Limit  setup-osc ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : note  
 \backslash
  duration ---    generate timed tone for duration msec.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
      tone-on  ms  tone-off ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  End of tone.f
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -4696,77 +5247,98 @@ scale.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<scale.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+scale.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  Play musical scale                      13Apr14
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CREATE scale 
 \backslash
  sequence of notes, pauses and times
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1047 , 500 , 0 , 500 , 1175 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1319 , 500 , 0 , 500 , 1397 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1568 , 500 , 0 , 500 , 1760 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1976 , 500 , 0 , 500 , 2093 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       0 ,   0 ,  
 \backslash
  Null terminators
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : notes ( a -- ) 
 \backslash
  Play sequence of notes, pauses and times
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    begin  dup 2@  2dup or while  ?dup if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          Hertz note  else  ms
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       then  2 cells +
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    repeat  drop ;
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -4836,89 +5408,114 @@ scale.txt
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<scale.txt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+scale.txt
+\end_layout
+
 \end_inset
 
 
 \backslash
  Play musical scale                      14Apr14
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chop-scale
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 marker chop-scale
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CP @  
 \backslash
  sequence of notes, pauses and times
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1047 , 500 , 0 , 500 , 1175 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1319 , 500 , 0 , 500 , 1397 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1568 , 500 , 0 , 500 , 1760 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1976 , 500 , 0 , 500 , 2093 , 500 , 0 , 500 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       0 ,   0 ,  
 \backslash
  Null terminators
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CONSTANT scale
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Plain Layout
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : notes ( a -- ) 
 \backslash
  Play sequence of notes, pauses and times
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    begin  dup I@ >r  2 + dup I@ >r  2+
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       r> r> 2dup or while  ?dup if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          Hertz note  else  ms
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       then  repeat  drop ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 flush
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -4941,492 +5538,627 @@ ms
 Tutorial6b
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<pitches.h>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+pitches.h
+\end_layout
+
 \end_inset
 
 /*************************************************
-\begin_inset Newline newline
-\end_inset
-
- * Public Constants
-\begin_inset Newline newline
-\end_inset
-
- *************************************************/
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B0  31
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C1  33
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS1 35
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D1  37
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS1 39
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E1  41
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F1  44
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS1 46
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G1  49
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS1 52
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A1  55
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS1 58
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B1  62
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C2  65
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS2 69
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D2  73
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS2 78
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E2  82
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F2  87
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS2 93
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G2  98
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS2 104
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A2  110
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS2 117
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B2  123
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C3  131
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS3 139
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D3  147
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS3 156
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E3  165
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F3  175
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS3 185
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G3  196
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS3 208
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A3  220
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS3 233
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B3  247
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C4  262
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS4 277
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D4  294
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS4 311
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E4  330
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F4  349
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS4 370
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G4  392
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS4 415
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A4  440
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS4 466
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B4  494
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C5  523
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS5 554
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D5  587
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS5 622
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E5  659
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F5  698
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS5 740
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G5  784
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS5 831
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A5  880
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS5 932
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B5  988
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C6  1047
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS6 1109
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D6  1175
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS6 1245
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E6  1319
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F6  1397
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS6 1480
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G6  1568
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS6 1661
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A6  1760
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS6 1865
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B6  1976
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C7  2093
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS7 2217
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D7  2349
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS7 2489
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_E7  2637
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_F7  2794
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_FS7 2960
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_G7  3136
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_GS7 3322
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_A7  3520
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_AS7 3729
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_B7  3951
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_C8  4186
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_CS8 4435
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_D8  4699
-\begin_inset Newline newline
-\end_inset
-
-#define NOTE_DS8 4978
-\begin_inset Newline newline
-\end_inset
-
-@
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Plain Layout
 
-<<Tutorial6b.ino>>=
-\begin_inset Newline newline
+ * Public Constants
+\end_layout
+
+\begin_layout Plain Layout
+
+ *************************************************/
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B0  31
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C1  33
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS1 35
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D1  37
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS1 39
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E1  41
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F1  44
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS1 46
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G1  49
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS1 52
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A1  55
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS1 58
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B1  62
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C2  65
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS2 69
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D2  73
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS2 78
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E2  82
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F2  87
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS2 93
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G2  98
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS2 104
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A2  110
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS2 117
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B2  123
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C3  131
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS3 139
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D3  147
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS3 156
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E3  165
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F3  175
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS3 185
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G3  196
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS3 208
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A3  220
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS3 233
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B3  247
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C4  262
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS4 277
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D4  294
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS4 311
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E4  330
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F4  349
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS4 370
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G4  392
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS4 415
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A4  440
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS4 466
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B4  494
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C5  523
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS5 554
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D5  587
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS5 622
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E5  659
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F5  698
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS5 740
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G5  784
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS5 831
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A5  880
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS5 932
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B5  988
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C6  1047
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS6 1109
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D6  1175
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS6 1245
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E6  1319
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F6  1397
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS6 1480
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G6  1568
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS6 1661
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A6  1760
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS6 1865
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B6  1976
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C7  2093
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS7 2217
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D7  2349
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS7 2489
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_E7  2637
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_F7  2794
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_FS7 2960
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_G7  3136
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_GS7 3322
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_A7  3520
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_AS7 3729
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_B7  3951
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_C8  4186
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_CS8 4435
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_D8  4699
+\end_layout
+
+\begin_layout Plain Layout
+
+#define NOTE_DS8 4978
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial6b.ino
+\end_layout
+
 \end_inset
 
 /* Tutorial 6b: Playing an Melody */
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 #include "pitches.h"
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // notes in the melody:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int melody[] = {    NOTE_C4, NOTE_G3,NOTE_G3, NOTE_A3, NOTE_G3,0, NOTE_B3,
  NOTE_C4};
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // note durations: 4 = quarter note, 8 = eighth note, etc.:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 int noteDurations[] = {4, 8, 8, 4,4,4,4,4 };
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // iterate over the notes of the melody:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   for (int thisNote = 0; thisNote < 8; thisNote++) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     // to calculate the note duration, take one second
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     // divided by the note type.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     //e.g.
  quarter note = 1000 / 4, eighth note = 1000/8, etc.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     int noteDuration = 1000/noteDurations[thisNote];
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     tone(8, melody[thisNote],noteDuration);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     // to distinguish the notes, set a minimum time between them.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     // the note's duration + 30% seems to work well:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     int pauseBetweenNotes = noteDuration * 1.30;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     delay(pauseBetweenNotes);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     // stop the tone playing:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     noTone(8);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   // no need to repeat the melody.
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -5443,123 +6175,158 @@ pitches.txt
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<pitches.txt>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+pitches.txt
+\end_layout
+
 \end_inset
 
 
 \backslash
  pitches.txt to Demo Musical notes      DaR 2014-04-14
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  See: http://www.phy.mtu.edu/~suits/notefreqs.html
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chop-pitches
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 marker chop-pitches
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CP @ 
 \backslash
  3 dimentional array of note frequencies
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 (        C      D      E      F      G      A      B )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 0 )   16 ,   18 ,   21 ,   22 ,   24 ,   27 ,   31 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # )   17 ,   19 ,    0 ,   23 ,   26 ,   29 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 1 )   33 ,   37 ,   41 ,   44 ,   49 ,   55 ,   62 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # )   35 ,   39 ,    0 ,   46 ,   52 ,   58 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 2 )   65 ,   73 ,   82 ,   87 ,   98 ,  110 ,  123 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # )   69 ,   78 ,    0 ,   93 ,  104 ,  117 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 3 )  131 ,  147 ,  165 ,  175 ,  196 ,  220 ,  247 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # )  139 ,  156 ,    0 ,  185 ,  208 ,  233 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 4 )  262 ,  294 ,  330 ,  349 ,  392 ,  440 ,  494 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # )  277 ,  311 ,    0 ,  370 ,  415 ,  466 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 5 )  523 ,  587 ,  659 ,  698 ,  784 ,  880 ,  988 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # )  554 ,  622 ,    0 ,  740 ,  831 ,  932 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 6 ) 1047 , 1175 , 1319 , 1397 , 1568 , 1760 , 1976 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # ) 1109 , 1245 ,    0 , 1480 , 1661 , 1865 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 7 ) 2093 , 2349 , 2637 , 2794 , 3136 , 3520 , 3951 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # ) 2217 , 2489 ,    0 , 2960 , 3322 , 3729 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( 8 ) 4186 , 4699 , 5274 , 5588 , 6272 ,    0 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ( # ) 4435 , 4978 ,    0 , 5920 ,    0 ,    0 ,    0 ,
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CONSTANT pitches
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 flush
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -5608,173 +6375,222 @@ http://tinyurl.com/megobz3/tutorial-7-counting-down-with-a-7-segment-led/
 Tutorial7
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<Tutorial7.ino>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Tutorial7.ino
+\end_layout
+
 \end_inset
 
 //  Tutorial 7: 7 Segment LED
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 //
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // Define the LED digit patterns, from 0 - 9
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // Note that these patterns are for common anode displays
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // 0 = LED on, 1 = LED off:
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 // Digital pin: 2,3,4,5,6,7,8
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 //              a,b,c,d,e,f,g
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 byte seven_seg_digits[10][7] = { { 0,0,0,0,0,0,1 },  // = 0
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 1,0,0,1,1,1,1 },  // = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,0,1,0,0,1,0 },  // = 2
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,0,0,0,1,1,0 },  // = 3
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 1,0,0,1,1,0,0 },  // = 4
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,1,0,0,1,0,0 },  // = 5
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,1,0,0,0,0,0 },  // = 6
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,0,0,1,1,1,1 },  // = 7
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,0,0,0,0,0,0 },  // = 8
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                  { 0,0,0,1,1,0,0 }   // = 9
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
                                };
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void setup() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(2, OUTPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(3, OUTPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(4, OUTPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(5, OUTPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(6, OUTPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(7, OUTPUT);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   pinMode(8, OUTPUT); }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void sevenSegWrite(byte digit) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   byte pin = 2;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   for (byte segCount = 0; segCount < 7; ++segCount) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     digitalWrite(pin, seven_seg_digits[digit][segCount]);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
     ++pin;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 void loop() {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   for (byte count = 10; count > 0; --count) {
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    delay(1000);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    sevenSegWrite(count - 1);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   }
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
   delay(3000);
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 }
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -5791,165 +6607,203 @@ count.f
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<count.f>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+count.f
+\end_layout
+
 \end_inset
 
 
 \backslash
  count.f to Demo 7-segment LED control      DaR 2014-04-08
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
  Define LED segment port bits and segment order
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CREATE LEDS   7 2* 1 + allot 
 \backslash
  Number of segments, then order
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : 
 \backslash
 LEDS ( --- Initialize the RAM array )   7 LEDS C!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count 2* PortD fill 
 \backslash
  Overfill the Port addresses to save code
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    2 LEDS 1 + C!  3 LEDS 3 + C!  4 LEDS 5 + C!  5 LEDS 7 + C!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    6 LEDS 9 + C!  7 LEDS 11 + C!  0 LEDS 13 + C!
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    PortB LEDS 14 + C! ; 
 \backslash
  Last segment on PortB
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 CREATE SEGS 
 \backslash
  Try flash based array on SwiftX
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 1 c, 
 \backslash
  = 0
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1 c, 0 c, 0 c, 1 c, 1 c, 1 c, 1 c, 
 \backslash
  = 1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 0 c, 1 c, 0 c, 0 c, 1 c, 0 c, 
 \backslash
  = 2
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 0 c, 0 c, 0 c, 1 c, 1 c, 0 c, 
 \backslash
  = 3
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    1 c, 0 c, 0 c, 1 c, 1 c, 0 c, 0 c, 
 \backslash
  = 4
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 1 c, 0 c, 0 c, 1 c, 0 c, 0 c, 
 \backslash
  = 5
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 1 c, 0 c, 0 c, 0 c, 0 c, 0 c, 
 \backslash
  = 6
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 0 c, 0 c, 1 c, 1 c, 1 c, 1 c, 
 \backslash
  = 7
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 0 c, 
 \backslash
  = 8
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 c, 0 c, 0 c, 1 c, 1 c, 0 c, 0 c, 
 \backslash
  = 9
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : sevenSegWrite ( digit --- turn on the segments for the given digit )
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count  rot over * SEGS +  -rot 0 do
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       swap count >r  swap count >r count r>  r> if
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
          PoBiHi  else  PoBiLo
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
       then
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    loop  2drop ;
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 : counts ( time cycles --- produce cycles of digits )   
 \backslash
 LEDS
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    LEDS count 0 do  count >r count r> PoBiOut  loop  drop
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    0 do  10 dup 0 do  dup i - 1- sevenSegWrite  over ms
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    loop  drop  loop  drop ;
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -5992,41 +6846,57 @@ final
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<final>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+final
+\end_layout
+
 \end_inset
 
 lyx -e latex $1.lyx
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 if [ $? == 0 ]; then
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    lyx -e pdf $1.lyx
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 else # noweb conversion can't be called in cygwin
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    lyx -e literate $1.lyx
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    noweave -delay -index "$1.nw" > "$1.tex"
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
    pdflatex $1 latex=pdflatex fi
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -6043,33 +6913,47 @@ preliminary
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<preliminary>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+preliminary
+\end_layout
+
 \end_inset
 
 echo "Make $1 PDF release notes..."
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 ./final $1
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 pdftk $1.pdf stamp Preliminary.pdf output out.pdf
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 rm $1.pdf
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 mv out.pdf $1.pdf
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -6077,33 +6961,47 @@ Each of these scripts can be pulled out manually given the default * script
  defined below.
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<*>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+*
+\end_layout
+
 \end_inset
 
 echo "Extract script $2 from $1.lyx..."
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 rm -f $1.nw
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 lyx -e literate $1.lyx
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 notangle -t4 -R$2 $1.nw > $2
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 chmod a+x $2
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard
@@ -6121,15 +7019,25 @@ extract-all
 
 \end_layout
 
-\begin_layout Scrap
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
 
-<<extract-all>>=
-\begin_inset Newline newline
+\begin_layout Plain Layout
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+extract-all
+\end_layout
+
 \end_inset
 
 echo "Extract all scripts..."
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 sedArgs="s/
 \backslash
@@ -6146,8 +7054,9 @@ sedArgs="s/
 1 
 \backslash
 2/g"
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 find .
  -type f -name 
@@ -6155,26 +7064,30 @@ find .
 *idx |
 \backslash
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 xargs grep "indexentry" |
 \backslash
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 sed -e "$sedArgs" |
 \backslash
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
+
+\begin_layout Plain Layout
 
 xargs -n 2 ./extract
-\begin_inset Newline newline
+\end_layout
+
 \end_inset
 
-@
+
 \end_layout
 
 \begin_layout Standard

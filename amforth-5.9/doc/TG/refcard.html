@@ -1,0 +1,1345 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Reference Card &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../index.html" />
+    <link rel="next" title="History" href="../history.html" />
+    <link rel="prev" title="Recognizers" href="../Recognizers.html" />
+    <link rel="stylesheet" href="../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="reference-card">
+<span id="refcard"></span><h1>Reference Card<a class="headerlink" href="#reference-card" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="general">
+<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<p>AmForth is a 16bit ITC forth. It is almost compatible with
+the forth standards from 1994 and 200x. It runs on the
+bare metal controller with no further dependencies.
+The interpreter operates on whitespace delimited words.
+The compiler is a single pass compiler that writes
+directly to the flash based dictionary.</p>
+<p>There are three distinct address spaces for flash,
+eeprom and RAM. Flash is addressed word wise (16 bits
+per address unit), RAM  and EEPROM is accessed byte
+wise (8bits per address unit). The standard return stack
+has 40 cells, the data stack is limited by the available
+RAM size.</p>
+<p>Numbers can be prefixed by $ to indicate hexadecimal,
+% for binary and # for decimal numbers. A trailing
+dot is used for double cell numbers.</p>
+<p>Words not found here are not part of the compileable core
+system. Their forth sources are in the <tt class="file docutils literal"><span class="pre">/lib</span></tt> directory,
+usually named after the word name: e.g. <strong class="command">2dup</strong> is
+defined in a file named <tt class="file docutils literal"><span class="pre">2dup.frt</span></tt>.</p>
+</div>
+<div class="section" id="arithmetics">
+<h2>Arithmetics<a class="headerlink" href="#arithmetics" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">1-</strong>
+( n1 &#8211; n2 )
+optimized decrement</li>
+<li><strong class="command">1+</strong>
+( n1|u1 &#8211; n2|u2 )
+optimized increment</li>
+<li><strong class="command">2/</strong>
+( n1 &#8211; n2 )
+arithmetic shift right</li>
+<li><strong class="command">2*</strong>
+( n1 &#8211; n2 )
+arithmetic shift left, filling with zero</li>
+<li><strong class="command">abs</strong>
+( n1 &#8211; u1 )
+get the absolute value</li>
+<li><strong class="command">&gt;&lt;</strong>
+( n1 &#8211; n2 )
+exchange the bytes of the TOS</li>
+<li><strong class="command">cell+</strong>
+( a-addr1 &#8211; a-addr2 )
+add the size of an address-unit to a-addr1</li>
+<li><strong class="command">cells</strong>
+( n1 &#8211; n2 )
+n2 is the size in address units of n1 cells</li>
+<li><strong class="command">d2/</strong>
+( d1 &#8211; d2 )
+shift a double cell value right</li>
+<li><strong class="command">d2*</strong>
+( d1 &#8211; d2 )
+shift a double cell left</li>
+<li><strong class="command">dabs</strong>
+( d &#8211; ud )
+double cell absolute value</li>
+<li><strong class="command">dinvert</strong>
+( d1 &#8211; d2)
+invert all bits in the double cell value</li>
+<li><strong class="command">d-</strong>
+( d1 d2 &#8211; d3 )
+subtract d2 from d1</li>
+<li><strong class="command">dnegate</strong>
+( d1 &#8211; d2 )
+double cell negation</li>
+<li><strong class="command">d+</strong>
+( d1 d2 &#8211; d3)
+add 2 double cell values</li>
+<li><strong class="command">invert</strong>
+( n1 &#8211; n2)
+1-complement of TOS</li>
+<li><strong class="command">log2</strong>
+( n1 &#8211; n2 )
+logarithm to base 2 or highest set bitnumber</li>
+<li><strong class="command">lshift</strong>
+( n1 n2 &#8211; n3)
+logically shift n1 left n2 times</li>
+<li><strong class="command">-</strong>
+( n1|u1 n2|u2 &#8211; n3|u3 )
+subtract n2 from n1</li>
+<li><strong class="command">mod</strong>
+( n1 n2 &#8211; n3)
+divide n1 by n2 giving the remainder n3</li>
+<li><strong class="command">m*</strong>
+( n1 n2 &#8211; d)
+multiply 2 cells to a double cell</li>
+<li><strong class="command">+</strong>
+( n1 n2 &#8211; n3)
+add n1 and n2</li>
+<li><strong class="command">+!</strong>
+( n a-addr &#8211; )
+add n to content of RAM address a-addr</li>
+<li><strong class="command">popcnt</strong>
+( n1 &#8211; n2 )
+count the Number of 1 bits (population count)</li>
+<li><strong class="command">rshift</strong>
+( n1 n2 &#8211; n3 )
+shift n1 n2-times logically right</li>
+<li><strong class="command">/</strong>
+( n1 n2 &#8211; n3)
+divide n1 by n2. giving the quotient</li>
+<li><strong class="command">/mod</strong>
+( n1 n2 &#8211; rem quot)
+signed division n1/n2 with remainder and quotient</li>
+<li><strong class="command">*</strong>
+( n1 n2 &#8211; n3 )
+multiply routine</li>
+<li><strong class="command">true</strong>
+( &#8211; -1 )
+leaves the value -1 (true) on TOS</li>
+<li><strong class="command">ud/mod</strong>
+( d1 n &#8211; rem ud2 )
+unsigned double cell division with remainder</li>
+<li><strong class="command">um/mod</strong>
+( ud u2 &#8211; rem quot)
+unsigned division ud / u2 with remainder</li>
+<li><strong class="command">um*</strong>
+( u1 u2 &#8211; d)
+multiply 2 unsigned cells to a double cell</li>
+<li><strong class="command">u/mod</strong>
+(u1 u2 &#8211; rem quot)
+unsigned division with remainder</li>
+<li><strong class="command">0</strong>
+( &#8211; 0 )
+place a value 0 on TOS</li>
+</ul>
+</div>
+<div class="section" id="character-io">
+<h2>Character IO<a class="headerlink" href="#character-io" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">bl</strong>
+( &#8211; 32 )
+put ascii code of the blank to the stack</li>
+<li><strong class="command">cr</strong>
+( &#8211; )
+cause subsequent output appear at the beginning of the next line</li>
+<li><strong class="command">emit</strong>
+( c &#8211; )
+fetch the emit vector and execute it. should emit a character from TOS</li>
+<li><strong class="command">emit?</strong>
+( &#8211; f )
+fetch emit? vector and execute it. should return the ready-to-send condition</li>
+<li><strong class="command">key</strong>
+( &#8211; c )
+fetch key vector and execute it, should leave a single character on TOS</li>
+<li><strong class="command">key?</strong>
+( &#8211; f)
+fetch key? vector and execute it. should turn on key sender, if it is disabled/stopped</li>
+<li><strong class="command">space</strong>
+( &#8211; )
+emits a space (bl)</li>
+<li><strong class="command">spaces</strong>
+( n &#8211; )
+emits n space(s) (bl)</li>
+<li><strong class="command">type</strong>
+( addr n &#8211; )
+print a RAM based string</li>
+</ul>
+</div>
+<div class="section" id="compare">
+<h2>Compare<a class="headerlink" href="#compare" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">d=</strong>
+( n1 n2 &#8211; flag )
+compares two double cell values</li>
+<li><strong class="command">d0&gt;</strong>
+( d &#8211; flag )
+compares if a double double cell number is greater 0</li>
+<li><strong class="command">d0&lt;</strong>
+( d &#8211; flag )
+compares if a double double cell number is less than 0</li>
+<li><strong class="command">=</strong>
+( n1 n2 &#8211; flag )
+compares two values for equality</li>
+<li><strong class="command">0=</strong>
+( n &#8211; flag )
+compare with 0 (zero)</li>
+<li><strong class="command">&gt;</strong>
+( n1 n2 &#8211; flag )
+flag is true if n1 is greater than n2</li>
+<li><strong class="command">0&gt;</strong>
+( n1 &#8211; flag )
+true if n1 is greater than 0</li>
+<li><strong class="command">0&lt;</strong>
+( n1 &#8211; flag)
+compare with zero</li>
+<li><strong class="command">max</strong>
+( n1 n2 &#8211; n1|n2 )
+compare two values, leave the bigger one</li>
+<li><strong class="command">min</strong>
+( n1 n2 &#8211; n1|n2 )
+compare two values leave the smaller one</li>
+<li><strong class="command">&lt;&gt;</strong>
+( n1 n2 &#8211; flag)
+true if n1 is not equal to n2</li>
+<li><strong class="command">0&lt;&gt;</strong>
+( n &#8211; flag )
+true if n is not zero</li>
+<li><strong class="command">u&gt;</strong>
+( u1 u2 &#8211; flag )
+true if u1 &gt; u2 (unsigned)</li>
+<li><strong class="command">u&gt;=</strong>
+( u1 u2 &#8211; flag )
+compare two unsigned numbers, returns true flag if u1 is greater then or equal to u2</li>
+<li><strong class="command">u&lt;</strong>
+( u1 u2 &#8211; flasg)
+true if u1 &lt; u2 (unsigned)</li>
+<li><strong class="command">u&lt;=</strong>
+( u1 u2 &#8211; flag )
+compare two unsigned numbers, returns true flag if u1 is less then or equal to u2</li>
+<li><strong class="command">within</strong>
+( n min max &#8211; f)
+check if n is within min..max</li>
+</ul>
+</div>
+<div class="section" id="compiler">
+<h2>Compiler<a class="headerlink" href="#compiler" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">2literal</strong>
+( &#8211; x1 x2 )
+(C: x1 x2 &#8211; )
+compile a cell pair literal in colon definitions</li>
+<li><strong class="command">again</strong>
+( &#8211; )
+(C: dest &#8211; )
+compile a jump back to dest</li>
+<li><strong class="command">ahead</strong>
+( f &#8211; )
+(C: &#8211; orig )
+do a unconditional branch</li>
+<li><strong class="command">\</strong>
+( &#8220;ccc&lt;eol&gt;&#8221; &#8211; )
+everything up to the end of the current line is a comment</li>
+<li><strong class="command">begin</strong>
+( &#8211; )
+(C: &#8211; dest )
+put the next location for a transfer of control onto the control flow stack</li>
+<li><strong class="command">[compile]</strong>
+( &#8211; c )
+(C: &#8220;&lt;space&gt;name&#8221; &#8211; )
+Append the compilation semantics of &#8220;name&#8221; to the dictionary, if any</li>
+<li><strong class="command">[&#8216;]</strong>
+( &#8211; xt )
+(C: &#8220;&lt;space&gt;name&#8221; &#8211; )
+what &#8216; does in the interpreter mode, do in colon definitions</li>
+<li><strong class="command">code</strong>
+( &#8211; )
+(C: cchar &#8211; )
+create named entry in the dictionary, XT is the data field</li>
+<li><strong class="command">:</strong>
+( &#8211; )
+(C: &#8220;&lt;spaces&gt;name&#8221; &#8211; )
+create a named entry in the dictionary, XT is DO_COLON</li>
+<li><strong class="command">:noname</strong>
+( &#8211; xt )
+create an unnamed entry in the dictionary, XT is DO_COLON</li>
+<li><strong class="command">constant</strong>
+( &#8211; x )
+(C: x &#8220;&lt;spaces&gt;name&#8221; &#8211; )
+create a constant in the dictionary</li>
+<li><strong class="command">do</strong>
+( n1 n2 &#8211; )
+(R: &#8211; loop-sys )
+(C: &#8211; do-sys )
+start do .. [+]loop</li>
+<li><strong class="command">(create)</strong>
+( &#8211;  )
+(C: &#8220;&lt;spaces&gt;name&#8221; &#8211; )
+parse the input and create an empty vocabulary entry without XT and data field (PF)</li>
+<li><strong class="command">does&gt;</strong>
+( i*x &#8211; j*y )
+(R: nest-sys1 &#8211; )
+(C: colon-sys1 &#8211; colon-sys2 )
+organize the XT replacement to call other colon code</li>
+<li><strong class="command">.&#8217;&#8216;</strong>
+( &#8211; )
+(C: &#8220;ccc&lt;quote&gt;&#8221; &#8211; )
+compiles string into dictionary to be printed at runtime</li>
+<li><strong class="command">Edefer</strong>
+( c&lt;name&gt; &#8211; )
+creates a defer vector which is kept in eeprom.</li>
+<li><strong class="command">else</strong>
+(C: orig1 &#8211; orig2 )
+(C: orig1 &#8211; orig2 )
+resolve the forward reference and place a new unresolved forward reference</li>
+<li><strong class="command">end-code</strong>
+( &#8211; )
+finish a code definition</li>
+<li><strong class="command">exit</strong>
+( &#8211; )
+(R: nest-sys &#8211; )
+end of current colon word</li>
+<li><strong class="command">header</strong>
+( addr len wid &#8211; nfa )
+creates the vocabulary header without XT and data field (PF) in the wordlist wid</li>
+<li><strong class="command">i</strong>
+( &#8211; n )
+(R: loop-sys &#8211; loop-sys)
+current loop counter</li>
+<li><strong class="command">if</strong>
+( f &#8211; )
+(C: &#8211; orig )
+start conditional branch</li>
+<li><strong class="command">immediate</strong>
+( &#8211; )
+set immediate flag for the most recent word definition</li>
+<li><strong class="command">j</strong>
+( &#8211; n )
+(R: loop-sys1 loop-sys2 &#8211; loop-sys1 loop-sys2)
+loop counter of outer loop</li>
+<li><strong class="command">[</strong>
+( &#8211;  )
+enter interpreter mode</li>
+<li><strong class="command">leave</strong>
+( &#8211; )
+(R: loop-sys &#8211; )
+immediatly leave the current DO..LOOP</li>
+<li><strong class="command">literal</strong>
+( &#8211; n )
+(C: n &#8211; )
+compile a literal in colon defintions</li>
+<li><strong class="command">loop</strong>
+(R: loop-sys &#8211; )
+(R: loop-sys &#8211; )
+(C: do-sys &#8211; )
+compile (loop) and resolve the backward branch</li>
+<li><strong class="command">(</strong>
+( &#8220;ccc&lt;paren&gt;&#8221; &#8211; )
+skip everything up to the closing bracket on the same line</li>
+<li><strong class="command">+loop</strong>
+( n &#8211; )
+(R: loop-sys &#8211; loop-sys| )
+(C: do-sys &#8211; )
+compile (+loop) and resolve branches</li>
+<li><strong class="command">postpone</strong>
+( &#8220;&lt;space&gt;name&#8221; &#8211;  )
+Append the compilation semantics of &#8220;name&#8221; to the dictionary</li>
+<li><strong class="command">?do</strong>
+( n1|u1 n2|u2 &#8211; )
+(C: &#8211; do-sys)
+start a ?do .. [+]loop control structure</li>
+<li><strong class="command">]</strong>
+( &#8211;  )
+enter compiler mode</li>
+<li><strong class="command">Rdefer</strong>
+( c&lt;name&gt; &#8211; )
+creates a RAM based defer vector</li>
+<li><strong class="command">recurse</strong>
+( &#8211; )
+compile the XT of the word currently being defined into the dictionary</li>
+<li><strong class="command">repeat</strong>
+( &#8211;  )
+(C: orig dest &#8211; )
+continue execution at dest, resolve orig</li>
+<li><strong class="command">s,</strong>
+( addr len &#8211; )
+compiles a string from RAM to Flash</li>
+<li><strong class="command">;</strong>
+( &#8211; )
+finish colon defintion, compiles (exit) and returns to interpret state</li>
+<li><strong class="command">s&#8217;&#8216;</strong>
+( &#8211; addr len)
+(C: &lt;cchar&gt; &#8211; )
+compiles a string to flash, at runtime leaves ( &#8211; flash-addr count) on stack</li>
+<li><strong class="command">then</strong>
+( &#8211; )
+(C: orig &#8211; )
+finish if</li>
+<li><strong class="command">unloop</strong>
+( &#8211; )
+(R: loop-sys &#8211; )
+remove loop-sys, exit the loop and continue execution after it</li>
+<li><strong class="command">until</strong>
+( f &#8211; )
+(C: dest &#8211; )
+finish begin with conditional branch, leaves the loop if true flag at runtime</li>
+<li><strong class="command">user</strong>
+( n cchar &#8211; )
+create a dictionary entry for a user variable at offset n</li>
+<li><strong class="command">variable</strong>
+( cchar &#8211; )
+create a dictionary entry for a variable and allocate 1 cell RAM</li>
+<li><strong class="command">while</strong>
+( f &#8211; )
+(C: dest &#8211; orig dest )
+at runtime skip until repeat if non-true</li>
+<li><strong class="command">wlscope</strong>
+( addr len &#8211; addr&#8217; len&#8217; wid )
+dynamically place a word in a wordlist. The word name may be changed.</li>
+</ul>
+</div>
+<div class="section" id="conversion">
+<h2>Conversion<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">d&gt;s</strong>
+( d1 &#8211; n1 )
+shrink double cell value to single cell.</li>
+<li><strong class="command">s&gt;d</strong>
+( n1 &#8211; d1 )
+extend (signed) single cell value to double cell</li>
+</ul>
+</div>
+<div class="section" id="dictionary">
+<h2>Dictionary<a class="headerlink" href="#dictionary" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>:command:``
+( n &#8211; )
+compile 16 bit into flash at DP</li>
+<li><strong class="command">compile</strong>
+( &#8211; )
+read the following cell from the dictionary and append it to the current dictionary position.</li>
+<li><strong class="command">create</strong>
+( &#8211; a-addr )
+(C: &#8220;&lt;spaces&gt;name&#8221; &#8211; )
+create a dictionary header. XT is (constant), with the address of the data field of name</li>
+<li><strong class="command">reveal</strong>
+( &#8211; )
+makes an entry in a wordlist visible, if not already done.</li>
+<li><strong class="command">&#8216;</strong>
+( &#8220;&lt;spaces&gt;name&#8221; &#8211; XT )
+search dictionary for name, return XT or throw an exception -13</li>
+</ul>
+</div>
+<div class="section" id="environment">
+<h2>Environment<a class="headerlink" href="#environment" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">/hold</strong>
+( &#8211; hldsize )
+size of the pictured numeric output buffer in bytes</li>
+<li><strong class="command">/pad</strong>
+( &#8211; padsize )
+Size of the PAD buffer in bytes</li>
+<li><strong class="command">/user</strong>
+( &#8211; usersize )
+size of the USER area in bytes</li>
+<li><strong class="command">wordlists</strong>
+( &#8211; n )
+maximum number of wordlists in the dictionary search order</li>
+<li><strong class="command">cpu</strong>
+( &#8211; faddr len )
+flash address of the CPU identification string</li>
+<li><strong class="command">forth-name</strong>
+( &#8211; faddr len )
+flash address of the amforth name string</li>
+<li><strong class="command">version</strong>
+( &#8211; n )
+version number of amforth</li>
+<li><strong class="command">mcu-info</strong>
+( &#8211; faddr len )
+flash address of some CPU specific parameters</li>
+</ul>
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">abort</strong>
+( i*x &#8211; )
+(R: j*y &#8211; )
+send an exception -1</li>
+<li><strong class="command">abort&#8217;&#8216;</strong>
+( i*x x1 &#8211; | i*x )
+(R: j*y &#8211; | j*y )
+(C: &#8220;ccc&lt;quote&gt;&#8221; &#8211; )
+check flag. If true display the parsed text and throw exception -2</li>
+<li><strong class="command">catch</strong>
+( i*x xt &#8211; j*x 0 | i*x n )
+execute XT and check for exceptions.</li>
+<li><strong class="command">handler</strong>
+( &#8211; a-addr )
+USER variable used by catch/throw</li>
+<li><strong class="command">throw</strong>
+( n &#8211; )
+throw an exception</li>
+</ul>
+</div>
+<div class="section" id="extended-vm">
+<h2>Extended VM<a class="headerlink" href="#extended-vm" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">a&#64;</strong>
+( &#8211; n2 )
+Read memory pointed to by register A (Extended VM)</li>
+<li><strong class="command">a&#64;-</strong>
+( &#8211; n )
+Read memory pointed to by register A, decrement A by 1 cell (Extended VM)</li>
+<li><strong class="command">a&#64;+</strong>
+( &#8211; n )
+Read memory pointed to by register A, increment A by 1 cell (Extended VM)</li>
+<li><strong class="command">a!</strong>
+( n &#8211; )
+Write memory pointed to by register A (Extended VM)</li>
+<li><strong class="command">a!-</strong>
+( &#8211; n2 )
+Write memory pointed to by register A, decrement A by 1 cell (Extended VM)</li>
+<li><strong class="command">a!+</strong>
+( &#8211; n2 )
+Write memory pointed to by register A, increment A by 1 cell (Extended VM)</li>
+<li><strong class="command">a&gt;</strong>
+( n1 &#8211; n2 )
+read the A register (Extended VM)</li>
+<li><strong class="command">b&#64;</strong>
+( &#8211; n2 )
+Read memory pointed to by register B (Extended VM)</li>
+<li><strong class="command">b&#64;-</strong>
+( &#8211; n )
+Read memory pointed to by register B, decrement B by 1 cell (Extended VM)</li>
+<li><strong class="command">b&#64;+</strong>
+( &#8211; n )
+Read memory pointed to by register B, increment B by 1 cell (Extended VM)</li>
+<li><strong class="command">b!</strong>
+( n &#8211; )
+Write memory pointed to by register B (Extended VM)</li>
+<li><strong class="command">b!-</strong>
+( &#8211; n2 )
+Write memory pointed to by register B, decrement B by 1 cell (Extended VM)</li>
+<li><strong class="command">b!+</strong>
+( &#8211; n2 )
+Write memory pointed to by register B, increment B by 1 cell (Extended VM)</li>
+<li><strong class="command">b&gt;</strong>
+( n1 &#8211; n2 )
+read the B register (Extended VM)</li>
+<li><strong class="command">na&#64;</strong>
+( n1 &#8211; n2 )
+Read memory pointed to by register A plus offset (Extended VM)</li>
+<li><strong class="command">na!</strong>
+( n offs &#8211; )
+Write memory pointed to by register A plus offset (Extended VM)</li>
+<li><strong class="command">nb&#64;</strong>
+( n1 &#8211; n2 )
+Read memory pointed to by register B plus offset (Extended VM)</li>
+<li><strong class="command">nb!</strong>
+( n offs &#8211; )
+Write memory pointed to by register B plus offset (Extended VM)</li>
+<li><strong class="command">&gt;a</strong>
+( n &#8211; )
+Write to A register (Extended VM)</li>
+<li><strong class="command">&gt;b</strong>
+( n &#8211; )
+Write to B register (Extended VM)</li>
+</ul>
+</div>
+<div class="section" id="interpreter">
+<h2>Interpreter<a class="headerlink" href="#interpreter" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">fail:d</strong>
+( &#8211; addr )
+Method to print a double cell number and throw exception &#8220;invalid postpone&#8221;</li>
+<li><strong class="command">fail:i</strong>
+( &#8211; addr )
+Method to print a number and throw exception &#8220;invalid postpone&#8221;</li>
+<li><strong class="command">fail:s</strong>
+( addr len &#8211; )
+default failure action for strings. Prints the string and throws exception -13.</li>
+<li><strong class="command">get-recognizers</strong>
+( &#8211; recn .. rec0 n)
+Get the current recognizer list</li>
+<li><strong class="command">rec:num</strong>
+( addr len &#8211; f )
+recognizer for integer numbers</li>
+<li><strong class="command">rec:word</strong>
+( addr len &#8211; f )
+recognizer searching the dictionary</li>
+<li><strong class="command">r:dnum</strong>
+( &#8211; addr )
+Method table for double cell integers</li>
+<li><strong class="command">r:fail</strong>
+( &#8211; addr )
+there is no parser for this recognizer, this is the default and failsafe part</li>
+<li><strong class="command">r:num</strong>
+( &#8211; addr )
+Method table for single cell integers</li>
+<li><strong class="command">r:word</strong>
+( addr len &#8211; f )
+Methode table for find recognizer</li>
+<li><strong class="command">set-recognizers</strong>
+( recn .. rec0 n &#8211; )
+replace the recognizer list</li>
+</ul>
+</div>
+<div class="section" id="interrupt">
+<h2>Interrupt<a class="headerlink" href="#interrupt" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">int&#64;</strong>
+( i &#8211; xt )
+fetches XT from interrupt vector i</li>
+<li><strong class="command">-int</strong>
+( &#8211; )
+turns off all interrupts</li>
+<li><strong class="command">+int</strong>
+( &#8211;  )
+turns on all interrupts</li>
+<li><strong class="command">int!</strong>
+( xt i &#8211; )
+stores XT as interrupt vector i</li>
+<li><strong class="command">int-trap</strong>
+( i &#8211;  )
+trigger an interrupt</li>
+<li><strong class="command">#int</strong>
+( &#8211; n )
+number of interrupt vectors (0 based)</li>
+</ul>
+</div>
+<div class="section" id="logic">
+<h2>Logic<a class="headerlink" href="#logic" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">and</strong>
+( n1 n2 &#8211; n3 )
+bitwise and</li>
+<li><strong class="command">negate</strong>
+( n1 &#8211; n2 )
+2-complement</li>
+<li><strong class="command">not</strong>
+( flag &#8211; flag&#8217; )
+identical to 0=</li>
+<li><strong class="command">or</strong>
+( n1 n2 &#8211; n3 )
+logical or</li>
+<li><strong class="command">xor</strong>
+( n1 n2 &#8211; n3)
+exclusive or</li>
+</ul>
+</div>
+<div class="section" id="mcu">
+<h2>MCU<a class="headerlink" href="#mcu" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">!&#64;spi</strong>
+( n1 &#8211; n2 )
+SPI exchange of 2 bytes, high byte first</li>
+<li><strong class="command">bm-clear</strong>
+( bitmask byte-addr &#8211;  )
+clear bits set in bitmask on byte at addr</li>
+<li><strong class="command">bm-set</strong>
+( bitmask byte-addr &#8211;  )
+set bits from bitmask on byte at addr</li>
+<li><strong class="command">bm-toggle</strong>
+( bitmask byte-addr &#8211;  )
+toggle bits set in bitmask on byte at addr</li>
+<li><strong class="command">n&#64;spi</strong>
+( addr len &#8211; )
+read len bytes from SPI to addr</li>
+<li><strong class="command">n!spi</strong>
+( addr len &#8211; )
+write len bytes to SPI from addr</li>
+<li><strong class="command">rx?-poll</strong>
+( &#8211; f)
+check if a character can be appended to output queue using register poll</li>
+<li><strong class="command">rx-poll</strong>
+(c &#8211; )
+wait for one character and read it from the terminal connection using register poll</li>
+<li><strong class="command">c!&#64;spi</strong>
+( txbyte &#8211; rxbyte)
+SPI exchange of 1 byte</li>
+<li><strong class="command">tx?-poll</strong>
+( &#8211; f)
+check if a character can be send using register poll</li>
+<li><strong class="command">tx-poll</strong>
+(c &#8211; )
+check availability and send one character to the terminal using register poll</li>
+<li><strong class="command">ubrr</strong>
+( &#8211; v)
+returns usart UBRR settings</li>
+<li><strong class="command">+usart</strong>
+( &#8211; )
+initialize usart</li>
+<li><strong class="command">wdr</strong>
+( &#8211; )
+calls the MCU watch dog reset instruction</li>
+</ul>
+</div>
+<div class="section" id="memory">
+<h2>Memory<a class="headerlink" href="#memory" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">c&#64;</strong>
+( a-addr - c1 )
+fetch a single byte from memory mapped locations</li>
+<li><strong class="command">cmove</strong>
+(addr-from addr-to n &#8211; )
+copy data in RAM, from lower to higher addresses</li>
+<li><strong class="command">cmove&gt;</strong>
+(addr-from addr-to n &#8211; )
+copy data in RAM from higher to lower addresses.</li>
+<li><strong class="command">c!</strong>
+( c a-addr &#8211; )
+store a single byte to RAM address</li>
+<li><strong class="command">(!i-nrww)</strong>
+( n f-addr &#8211; )
+writes n to flash memory using assembly code (code to be placed in boot loader section)</li>
+<li><strong class="command">&#64;</strong>
+( a-addr &#8211; n )
+read 1 cell from RAM address</li>
+<li><strong class="command">&#64;e</strong>
+( e-addr - n)
+read 1 cell from eeprom</li>
+<li><strong class="command">&#64;i</strong>
+( f-addr &#8211; n1 )
+read 1 cell from flash</li>
+<li><strong class="command">&#64;u</strong>
+( offset &#8211; n )
+read 1 cell from USER area</li>
+<li><strong class="command">fill</strong>
+( a-addr u c &#8211; )
+fill u bytes memory beginning at a-addr with character c</li>
+<li><strong class="command">!</strong>
+( n addr &#8211; )
+write n to RAM memory at addr, low byte first</li>
+<li><strong class="command">!e</strong>
+( n e-addr &#8211; )
+write n (2bytes) to eeprom address</li>
+<li><strong class="command">!u</strong>
+( n offset &#8211; )
+write n to USER area at offset</li>
+</ul>
+</div>
+<div class="section" id="multitasking">
+<h2>Multitasking<a class="headerlink" href="#multitasking" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">cas</strong>
+( new old addr &#8211; f )
+Atomic Compare and Swap: store new at addr and set f to true if contents of addr is equal to old.</li>
+<li><strong class="command">pause</strong>
+( &#8211; )
+Fetch pause vector and execute it. may make a context/task switch</li>
+</ul>
+</div>
+<div class="section" id="numeric-io">
+<h2>Numeric IO<a class="headerlink" href="#numeric-io" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">base</strong>
+( &#8211; a-addr )
+location of the cell containing the number conversion radix</li>
+<li><strong class="command">bin</strong>
+( &#8211; )
+set base for number conversion to 2</li>
+<li><strong class="command">d.</strong>
+( d &#8211; )
+singed PNO with double cell numbers</li>
+<li><strong class="command">d.r</strong>
+( d w &#8211; )
+singed PNO with double cell numbers, right aligned in width w</li>
+<li><strong class="command">decimal</strong>
+( &#8211; )
+set base for numeric conversion to 10</li>
+<li><strong class="command">digit?</strong>
+( c &#8211; (number|)
+tries to convert a character to a number, set flag accordingly</li>
+<li><strong class="command">.</strong>
+( n &#8211; )
+singed PNO with single cell numbers</li>
+<li><strong class="command">.r</strong>
+( n w &#8211; )
+singed PNO with single cell numbers, right aligned in width w</li>
+<li><strong class="command">hex</strong>
+( &#8211; )
+set base for number conversion to 16</li>
+<li><strong class="command">hld</strong>
+( &#8211; addr )
+pointer to current write position in the Pictured Numeric Output buffer</li>
+<li><strong class="command">hold</strong>
+( c &#8211; )
+prepend character to pictured numeric output buffer</li>
+<li><strong class="command">&lt;#</strong>
+( &#8211; )
+initialize the pictured numeric output conversion process</li>
+<li><strong class="command">number</strong>
+(addr len &#8211; [n|d size] f)
+convert a string at addr to a number</li>
+<li><strong class="command">#</strong>
+( d1 &#8211; d2 )
+pictured numeric output: convert one digit</li>
+<li><strong class="command">#&gt;</strong>
+( d1 &#8211; addr count )
+Pictured Numeric Output: convert PNO buffer into an string</li>
+<li><strong class="command">#s</strong>
+( d &#8211; 0 )
+pictured numeric output: convert all digits until 0 (zero) is reached</li>
+<li><strong class="command">sign</strong>
+( n &#8211; )
+place a - in HLD if n is negative</li>
+<li><strong class="command">&gt;number</strong>
+( ud1 c-addr1 u1 &#8211; ud2 c-addr2 u2 )
+convert a string to a number  c-addr2/u2 is the unconverted string</li>
+<li><strong class="command">ud.</strong>
+( ud &#8211; )
+unsigned PNO with double cell numbers</li>
+<li><strong class="command">ud.r</strong>
+( ud w &#8211; )
+unsigned PNO with double cell numbers, right aligned in width w</li>
+<li><strong class="command">u.</strong>
+( u &#8211; )
+unsigned PNO with single cell numbers</li>
+<li><strong class="command">u.r</strong>
+( u w &#8211; )
+unsigned PNO with single cells numbers, right aligned in width w</li>
+<li><strong class="command">u0.r</strong>
+( ud n &#8211; )
+Print n digits, fill in preceeding zeros if needed</li>
+</ul>
+</div>
+<div class="section" id="search-order">
+<h2>Search Order<a class="headerlink" href="#search-order" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">also</strong>
+( &#8211; )
+Duplicate first entry in the current search order list</li>
+<li><strong class="command">definitions</strong>
+( &#8211; )
+Make the compilation word list the same as the current first word list in the search order.</li>
+<li><strong class="command">forth</strong>
+( &#8211; )
+replace the search order list with the system default list</li>
+<li><strong class="command">forth-wordlist</strong>
+( &#8211; wid )
+get the system default word list</li>
+<li><strong class="command">get-current</strong>
+( &#8211; wid)
+get the wid of the current compilation word list</li>
+<li><strong class="command">get-order</strong>
+( &#8211; widn .. wid0 n)
+Get the current search order word list</li>
+<li><strong class="command">only</strong>
+( &#8211; )
+replace the order list with the system default list</li>
+<li><strong class="command">order</strong>
+( &#8211; )
+print the wids of the current word list and the search order</li>
+<li><strong class="command">previous</strong>
+( &#8211; )
+remove the first entry in the search order list</li>
+<li><strong class="command">search-wordlist</strong>
+( c-addr len wid &#8211; [ 0 ] | [ xt [-1|1]] )
+searches the word list wid for the word at c-addr/len</li>
+<li><strong class="command">search-wordlist</strong>
+( c-addr len wid &#8211; [ 0 ] | [ xt [-1|1]] )
+searches the word list wid for the word at c-addr/len</li>
+<li><strong class="command">set-current</strong>
+( wid &#8211; )
+set current word list to the given word list wid</li>
+<li><strong class="command">set-order</strong>
+( widn .. wid0 n &#8211; )
+replace the search order list</li>
+<li><strong class="command">wordlist</strong>
+( &#8211; wid )
+create a new, empty wordlist</li>
+</ul>
+</div>
+<div class="section" id="stack">
+<h2>Stack<a class="headerlink" href="#stack" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">2drop</strong>
+( x1 x2 &#8211;  )
+Remove the 2 top elements</li>
+<li><strong class="command">2dup</strong>
+( x1 x2 &#8211; x1 x2 x1 x2 )
+Duplicate the 2 top elements</li>
+<li><strong class="command">2r&#64;</strong>
+( &#8211; d)
+(R: d &#8211; d )
+fetch content of TOR</li>
+<li><strong class="command">2r&gt;</strong>
+( &#8211; x1 x2 )
+(R: x1 x2 &#8211;)
+move DTOR to TOS</li>
+<li><strong class="command">2swap</strong>
+( x1 x2 x3 x4 &#8211; x3 x4 x1 x2 )
+Exchange the two top cell pairs</li>
+<li><strong class="command">2&gt;r</strong>
+( x1 x2 &#8211; )
+(R: &#8211; x1 x2)
+move DTOS to TOR</li>
+<li><strong class="command">depth</strong>
+( &#8211; n )
+number of single-cell values contained in the data stack before n was placed on the stack.</li>
+<li><strong class="command">drop</strong>
+( n &#8211; )
+drop TOS</li>
+<li><strong class="command">dup</strong>
+( n &#8211; n n )
+duplicate TOS</li>
+<li><strong class="command">nip</strong>
+( n1 n2 &#8211; n2 )
+Remove Second of Stack</li>
+<li><strong class="command">nr&gt;</strong>
+( &#8211; xn .. x0 n )
+(R: xn .. x0 n &#8211; )
+move n items from return stack to data stack</li>
+<li><strong class="command">n&gt;r</strong>
+( xn .. x0 n &#8211; )
+(R: &#8211; xn .. x0 n)
+move n items from data stack to return stack</li>
+<li><strong class="command">over</strong>
+( x1 x2 &#8211; x1 x2 x1 )
+Place a copy of x1 on top of the stack</li>
+<li><strong class="command">pick</strong>
+( xu ... x1 x0 u &#8211; xu ... x1 x0 xu )
+access the stack as an array and fetch the u-th element as new TOS</li>
+<li><strong class="command">?dup</strong>
+( n1 &#8211; [ n1 n1 ] | 0)
+duplicate TOS if non-zero</li>
+<li><strong class="command">rot</strong>
+( n1 n2 n3 &#8211; n2 n3 n1)
+rotate the three top level cells</li>
+<li><strong class="command">rp0</strong>
+( &#8211; addr)
+start address of return stack</li>
+<li><strong class="command">rp&#64;</strong>
+(  &#8211; n)
+current return stack pointer address</li>
+<li><strong class="command">rp!</strong>
+( addr  &#8211; )
+(R: &#8211; x*y)
+set return stack pointer</li>
+<li><strong class="command">r&#64;</strong>
+( &#8211; n)
+(R: n &#8211; n )
+fetch content of TOR</li>
+<li><strong class="command">r&gt;</strong>
+( &#8211; n )
+(R: n &#8211;)
+move TOR to TOS</li>
+<li><strong class="command">sp</strong>
+( &#8211; addr)
+address of user variable to store top-of-stack for inactive tasks</li>
+<li><strong class="command">sp0</strong>
+( &#8211; addr)
+start address of the data stack</li>
+<li><strong class="command">sp&#64;</strong>
+(  &#8211; addr )
+current data stack pointer</li>
+<li><strong class="command">sp!</strong>
+( addr &#8211; i*x)
+set data stack pointer to addr</li>
+<li><strong class="command">swap</strong>
+( n1 n2 &#8211; n2 n1)
+swaps the two top level stack cells</li>
+<li><strong class="command">&gt;r</strong>
+( n &#8211; )
+(R: &#8211; n)
+move TOS to TOR</li>
+<li><strong class="command">tuck</strong>
+( n1 n2 &#8211; n2 n1 n2 )
+Copy the first (top) stack item below the second stack item.</li>
+</ul>
+</div>
+<div class="section" id="string">
+<h2>String<a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">compare</strong>
+( r-addr r-len f-addr f-len &#8211;  f)
+compares two strings in RAM</li>
+<li><strong class="command">cscan</strong>
+( addr1 n1 c &#8211; addr1 n2 )
+Scan string at addr1/n1 for the first occurance of c, leaving addr1/n2, char at n2 is first non-c character</li>
+<li><strong class="command">cskip</strong>
+( addr1 n1 c &#8211; addr2 n2 )
+skips leading occurancies in string at addr1/n1 leaving addr2/n2 pointing to the 1st non-c character</li>
+<li><strong class="command">parse</strong>
+( char &#8220;ccc&lt;char&gt;&#8221; &#8211; c-addr u )
+in input buffer parse ccc delimited string by the delimiter char.</li>
+<li><strong class="command">parse-name</strong>
+( &#8220;&lt;name&gt;&#8221; &#8211; c-addr u )
+In the SOURCE buffer parse whitespace delimited string. Returns string address within SOURCE.</li>
+<li><strong class="command">place</strong>
+( addr1 len1 addr2 &#8211; )
+copy string as counted string</li>
+<li><strong class="command">/string</strong>
+( addr1 u1 n &#8211; addr2 u2 )
+adjust string from addr1 to addr1+n, reduce length from u1 to u2 by n</li>
+<li><strong class="command">sliteral</strong>
+(C: addr len &#8211; )
+(C: addr len &#8211; )
+compiles a string to flash, at runtime leaves ( &#8211; flash-addr count) on stack</li>
+<li><strong class="command">tolower</strong>
+( C &#8211;  c)
+if C is an uppercase letter convert it to lowercase</li>
+<li><strong class="command">toupper</strong>
+( c &#8211; C )
+if c is a lowercase letter convert it to uppercase</li>
+</ul>
+</div>
+<div class="section" id="system">
+<h2>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">accept</strong>
+( addr +n1 &#8211; +n2 )
+receive a string of at most n1 characters at addr until n2 characters are reveived or cr/lf detected.</li>
+<li><strong class="command">allot</strong>
+( n &#8211; )
+allocate or release memory in RAM</li>
+<li><strong class="command">built</strong>
+( &#8211; )
+prints the date and time the hex file was generated</li>
+<li><strong class="command">cold</strong>
+( i*x &#8211; )
+(R: j*y &#8211; )
+start up amforth.</li>
+<li><strong class="command">defer&#64;</strong>
+( xt1 &#8211; xt2 )
+returns the XT associated with the given XT</li>
+<li><strong class="command">defer!</strong>
+( xt1 xt2 &#8211; )
+stores xt1 as the xt to be executed when xt2 is called</li>
+<li><strong class="command">(defer)</strong>
+( i*x &#8211; j*x )
+runtime of defer</li>
+<li><strong class="command">do-recognizer</strong>
+(addr len &#8211; i*x r:table | r:fail)
+walt the recognizer stack</li>
+<li><strong class="command">(value)</strong>
+( &#8211; n )
+runtime of value</li>
+<li><strong class="command">Edefer&#64;</strong>
+( xt1 &#8211; xt2 )
+does the real defer&#64; for eeprom defers</li>
+<li><strong class="command">Edefer!</strong>
+( xt1 xt2 &#8211; )
+does the real defer! for eeprom defers</li>
+<li><strong class="command">execute</strong>
+( xt &#8211; )
+execute XT</li>
+<li><strong class="command">f_cpu</strong>
+( &#8211; d )
+put the cpu frequency in Hz on stack</li>
+<li><strong class="command">interpret</strong>
+(i*x - j*x )
+Interpret SOURCE word by word.</li>
+<li><strong class="command">is</strong>
+( xt1 c&lt;char&gt; &#8211; )
+stores xt into defer or compiles code to do so at runtime</li>
+<li><strong class="command">nfa&gt;lfa</strong>
+( nfa &#8211; lfa )
+get the link field address from the name field address</li>
+<li><strong class="command">?execute</strong>
+( xt|0 &#8211; )
+execute XT if non-zero</li>
+<li><strong class="command">quit</strong>
+( &#8211; )
+main loop of amforth. accept - interpret in an endless loop</li>
+<li><strong class="command">Rdefer&#64;</strong>
+( xt1 &#8211; xt2 )
+The defer&#64; for ram defers</li>
+<li><strong class="command">Rdefer!</strong>
+( xt1 xt2 &#8211; )
+The defer! for ram defers</li>
+<li><strong class="command">refill</strong>
+( &#8211; f )
+refills the input buffer</li>
+<li><strong class="command">refill-tib</strong>
+( &#8211; f )
+refills the input buffer</li>
+<li><strong class="command">source</strong>
+( &#8211; addr n )
+address and current length of the input buffer</li>
+<li><strong class="command">source-tib</strong>
+( &#8211; addr n )
+address and current length of the input buffer</li>
+<li><strong class="command">Udefer&#64;</strong>
+( xt1 &#8211; xt2 )
+does the real defer&#64; for user based defers</li>
+<li><strong class="command">Udefer!</strong>
+( xt1 xt2 &#8211; )
+does the real defer! for user based defers</li>
+<li><strong class="command">warm</strong>
+( nx* &#8211; )
+(R: ny* &#8211; )
+initialize amforth further. executes turnkey operation and go to quit</li>
+</ul>
+</div>
+<div class="section" id="system-value">
+<h2>System Value<a class="headerlink" href="#system-value" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">dp</strong>
+( &#8211; f-addr )
+address of the next free dictionary cell</li>
+<li><strong class="command">ehere</strong>
+( &#8211; e-addr )
+address of the next free address in eeprom</li>
+<li><strong class="command">environment</strong>
+( &#8211; wid)
+word list identifier of the environmental search list</li>
+<li><strong class="command">here</strong>
+( &#8211; addr )
+address of the next free data space (RAM) cell</li>
+<li><strong class="command">(marker)</strong>
+( &#8211; e-addr )
+The eeprom address until which MARKER saves and restores the eeprom data.</li>
+<li><strong class="command">!i</strong>
+( n addr &#8211; )
+Deferred action to write a single 16bit cell to flash</li>
+<li><strong class="command">turnkey</strong>
+( &#8211; n*y )
+Deferred action during startup/reset</li>
+</ul>
+</div>
+<div class="section" id="system-variable">
+<h2>System Variable<a class="headerlink" href="#system-variable" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">&gt;in</strong>
+( &#8211; a-addr )
+pointer to current read position in input buffer</li>
+<li><strong class="command">latest</strong>
+( &#8211; addr )
+system LATEST</li>
+<li><strong class="command">#tib</strong>
+( &#8211; addr )
+variable holding the number of characters in TIB</li>
+<li><strong class="command">pad</strong>
+( &#8211; a-addr )
+Address of the temporary scratch buffer.</li>
+<li><strong class="command">state</strong>
+( &#8211; addr )
+system state</li>
+<li><strong class="command">tib</strong>
+( &#8211; addr )
+terminal input buffer address</li>
+<li><strong class="command">up&#64;</strong>
+( &#8211; addr )
+get user area pointer</li>
+<li><strong class="command">up!</strong>
+( addr &#8211; )
+set user area pointer</li>
+</ul>
+</div>
+<div class="section" id="time">
+<h2>Time<a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">1ms</strong>
+( &#8211; )
+busy waits (almost) exactly 1 millisecond</li>
+<li><strong class="command">ms</strong>
+( n &#8211; )
+busy waits the specified amount of milliseconds</li>
+</ul>
+</div>
+<div class="section" id="tools">
+<h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">bounds</strong>
+( addr len &#8211; addr+len addr )
+convert a string to an address range</li>
+<li><strong class="command">[char]</strong>
+( &#8211; c )
+(C: &#8220;&lt;space&gt;name&#8221; &#8211; )
+skip leading space delimites, place the first character of the word on the stack</li>
+<li><strong class="command">char</strong>
+( &#8220;&lt;spaces&gt;name&#8221; &#8211; c )
+copy the first character of the next word onto the stack</li>
+<li><strong class="command">.s</strong>
+( &#8211; )
+stack dump</li>
+<li><strong class="command">ee&gt;ram</strong>
+( e-addr r-addr len &#8211; )
+copy len cells from eeprom to ram</li>
+<li><strong class="command">find-name</strong>
+( addr len &#8211;  0 | xt -1 | xt 1 )
+search wordlists for the name from string addr/len</li>
+<li><strong class="command">icompare</strong>
+( r-addr r-len f-addr f-len &#8211;  f)
+compares string in RAM with string in flash</li>
+<li><strong class="command">icount</strong>
+( addr &#8211; addr+1 n )
+get count information out of a counted string in flash</li>
+<li><strong class="command">init-user</strong>
+( &#8211; )
+setup the default user area from eeprom</li>
+<li><strong class="command">itype</strong>
+( addr n &#8211;  )
+reads string from flash and prints it</li>
+<li><strong class="command">noop</strong>
+( &#8211; )
+do nothing</li>
+<li><strong class="command">n&#64;e</strong>
+( ee-addr n &#8211; itemn .. item0)
+Get an array from EEPROM</li>
+<li><strong class="command">n!e</strong>
+( recn .. rec0 n ee-addr &#8211; )
+Write a list to EEPROM</li>
+<li><strong class="command">?stack</strong>
+( &#8211;  )
+check stack underflow, throw exception -4</li>
+<li><strong class="command">show-wordlist</strong>
+( wid &#8211; )
+prints the name of the words in a wordlist</li>
+<li><strong class="command">show-wordlist</strong>
+( wid &#8211; )
+prints the name of the words in a wordlist</li>
+<li><strong class="command">to</strong>
+( n &lt;name&gt; &#8211; )
+store the TOS to the named value (eeprom cell)</li>
+<li><strong class="command">unused</strong>
+( &#8211; n )
+Amount of available RAM (incl. PAD)</li>
+<li><strong class="command">ver</strong>
+( &#8211; )
+print the version string</li>
+<li><strong class="command">word</strong>
+( c &#8211; addr )
+skip leading delimiter character and parse SOURCE until the next delimiter. copy the word to HERE</li>
+<li><strong class="command">words</strong>
+( &#8211; )
+prints a list of all (visible) words in the dictionary</li>
+</ul>
+</div>
+<div class="section" id="tools-ext-2012">
+<h2>Tools Ext (2012)<a class="headerlink" href="#tools-ext-2012" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">name&gt;string</strong>
+( nt &#8211; addr len )
+get a (flash) string from a name token nt</li>
+<li><strong class="command">traverse-wordlist</strong>
+( i*x xt wid &#8211; j*x )
+call the xt for every member of the wordlist wid until xt returns false</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../_sources/TG/refcard.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

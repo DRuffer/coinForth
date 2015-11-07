@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Unbreakable AmForth &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Programming and Debugging" href="Programming.html" />
+    <link rel="next" title="Values" href="Values.html" />
+    <link rel="prev" title="Upgrade AmForth" href="Upgrade-Amforth.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="unbreakable-amforth">
+<span id="unbreakable"></span><h1>Unbreakable AmForth<a class="headerlink" href="#unbreakable-amforth" title="Permalink to this headline">¶</a></h1>
+<p>This recipe gives some hints how to
+protect AmForth from being (partially)
+destroyed and to be able to recover from
+accidents without re-flashing the system.</p>
+<div class="section" id="flash-protection">
+<h2>Flash protection<a class="headerlink" href="#flash-protection" title="Permalink to this headline">¶</a></h2>
+<p>The first line should be a flash protection. It
+prevents the <strong class="command">!i</strong> to write to places
+where it should not. This can be done by creating
+a new word, that does some bounds checking and does
+the final write command only if everything is ok.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ write protect everything up to this command</span>
+<span class="kn">:</span> <span class="nc">save-!i</span> <span class="nf">[</span> <span class="nf">dp</span> <span class="mi">12</span> <span class="k">+ </span><span class="nf">]</span> <span class="k">literal over &lt;</span>
+  <span class="k">if </span><span class="nf">(!i-nrww)</span> <span class="k">else </span><span class="mi">-20</span> <span class="k">throw then ;</span>
+<span class="nf">&#39;</span> <span class="nf">save-!i</span> <span class="k">is </span><span class="no">!i</span>
+</pre></div>
+</div>
+<p>After these few lines, all flash up to this definition
+is now write-protected. All forbidden access will generate
+an exception. The offset added makes sure that our new
+command protects itself as well.</p>
+<p>The code in the NRWW section (file:<cite>dict_appl_core.inc</cite>)
+is already write protected, the controller itself makes
+sure of that. A write attempt to this locations does not
+generate an exception, it will be ignored silently.</p>
+</div>
+<div class="section" id="eeprom-protection">
+<h2>EEPROM protection<a class="headerlink" href="#eeprom-protection" title="Permalink to this headline">¶</a></h2>
+<p>Protect the EEPROM is more difficult. AmForth rewrites
+a few cells during normal development, which makes a simple
+write protection as described for the flash rather useless.
+Furthermore AmForth uses the EEPROM content at very early
+stages in the boot process. Any safety action needs thus be
+hard-coded in <strong class="command">warm</strong> and it will need a trigger to
+start the EEPROM recovery. This could be a check for some
+data or a hardware based information.</p>
+<p>As long as the command prompt works, the data that got saved
+by a <strong class="command">marker</strong> definition is sufficient to reset to
+a working system.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Unbreakable.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

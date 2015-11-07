@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="23cm" height="24cm" viewBox="48 29 451 463" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271.6" y1="71.1" x2="51.6" y2="71.1"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271.6" y1="111.1" x2="51.6" y2="111.1"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="111.6" y="51.1">
+    <tspan x="111.6" y="51.1">0..0x1f Register</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="91.6" y="91.1">
+    <tspan x="91.6" y="91.1">0x20..0x5f IO Register</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="61.6" y="131.1">
+    <tspan x="61.6" y="131.1">0x60 .. RAMSTART </tspan>
+    <tspan x="61.6" y="147.1">IO Register</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="161.6" y1="111.1" x2="161.6" y2="151.1"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="51.6" y1="151.1" x2="161.6" y2="151.1"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="289.6" y="159.1">
+    <tspan x="289.6" y="159.1">RAM_START</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271.6" y1="171.1" x2="51.6" y2="171.1"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="94" y="336">
+    <tspan x="94" y="336">Forth ISR Vectors</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="100" y="303">
+    <tspan x="100" y="303">1st User Area</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="273" y1="349" x2="53" y2="349"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="272" y1="310" x2="52" y2="310"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="100" y="372">
+    <tspan x="100" y="372">Terminal Input Buffer</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="273" y1="395" x2="53" y2="395"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="118.5" y="460.646">
+    <tspan x="118.5" y="460.646">HLD</tspan>
+    <tspan x="118.5" y="476.646">PAD</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271.6" y1="31.1" x2="51.6" y2="31.1"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271" y1="233" x2="51" y2="233"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="106.6" y="217.1">
+    <tspan x="106.6" y="217.1">Data Stack </tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="272.6" y1="278.1" x2="52.6" y2="278.1"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="104.6" y="262.1">
+    <tspan x="104.6" y="262.1">Return Stack</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="217.1,278.1 217.1,263.1 209.6,263.1 224.6,248.1 239.6,263.1 232.1,263.1 232.1,278.1 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="217.1,278.1 217.1,263.1 209.6,263.1 224.6,248.1 239.6,263.1 232.1,263.1 232.1,278.1 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="217.1,278.1 217.1,263.1 209.6,263.1 224.6,248.1 239.6,263.1 232.1,263.1 232.1,278.1 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="214.5,231 214.5,216 207,216 222,201 237,216 229.5,216 229.5,231 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="214.5,231 214.5,216 207,216 222,201 237,216 229.5,216 229.5,231 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="214.5,231 214.5,216 207,216 222,201 237,216 229.5,216 229.5,231 "/>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="224.5,395 224.5,410 217,410 232,425 247,410 239.5,410 239.5,395 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="224.5,395 224.5,410 217,410 232,425 247,410 239.5,410 239.5,395 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="224.5,395 224.5,410 217,410 232,425 247,410 239.5,410 239.5,395 "/>
+  </g>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="52" y1="491" x2="51.6" y2="31.1"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271.6" y1="490.1" x2="270" y2="31"/>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="281.336" y1="278.1" x2="311.6" y2="278.1"/>
+    <polygon style="fill: #000000" points="273.836,278.1 283.836,273.1 281.336,278.1 283.836,283.1 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="273.836,278.1 283.836,273.1 281.336,278.1 283.836,283.1 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="281.336" y1="234.1" x2="311.6" y2="234.1"/>
+    <polygon style="fill: #000000" points="273.836,234.1 283.836,229.1 281.336,234.1 283.836,239.1 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="273.836,234.1 283.836,229.1 281.336,234.1 283.836,239.1 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="311.6" y="226.6">
+    <tspan x="311.6" y="226.6">stackstart</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="309.1" y="272.1">
+    <tspan x="309.1" y="272.1">rstackstart, internal RAM END</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="271.8" y1="491.2" x2="51.8" y2="491.2"/>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="281.536" y1="172.2" x2="311.8" y2="172.2"/>
+    <polygon style="fill: #000000" points="274.036,172.2 284.036,167.2 281.536,172.2 284.036,177.2 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="274.036,172.2 284.036,167.2 281.536,172.2 284.036,177.2 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="284.236" y1="394.736" x2="314.5" y2="394.736"/>
+    <polygon style="fill: #000000" points="276.736,394.736 286.736,389.736 284.236,394.736 286.736,399.736 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="276.736,394.736 286.736,389.736 284.236,394.736 286.736,399.736 "/>
+  </g>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="269.5" y1="435.5" x2="49.5" y2="435.5"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="319" y="440.4">
+    <tspan x="319" y="440.4">HERE (Runtime)</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="308" y="327.9">
+    <tspan x="308" y="327.9">XRAM Start</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="89.5" y="419.4">
+    <tspan x="89.5" y="419.4">Allocated Memory</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="281.736" y1="435.533" x2="315.5" y2="435.646"/>
+    <polygon style="fill: #000000" points="274.236,435.508 284.253,430.541 281.736,435.533 284.219,440.541 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="274.236,435.508 284.253,430.541 281.736,435.533 284.219,440.541 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="318.5" y="397.4">
+    <tspan x="318.5" y="397.4">HERE (initial)</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="273" y1="463.5" x2="53" y2="463.5"/>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="129" y="462.146">
+    <tspan x="129" y="462.146"></tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="126.5" y="466.646">
+    <tspan x="126.5" y="466.646"></tspan>
+  </text>
+</svg>

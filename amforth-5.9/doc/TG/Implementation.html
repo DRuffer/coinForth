@@ -1,0 +1,728 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Implementation &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../index.html" />
+    <link rel="up" title="Technical Guide" href="TG.html" />
+    <link rel="next" title="Tools" href="Tools.html" />
+    <link rel="prev" title="Architecture" href="Architecture.html" />
+    <link rel="stylesheet" href="../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="implementation">
+<h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="memory-allocation">
+<h2>Memory Allocation<a class="headerlink" href="#memory-allocation" title="Permalink to this headline">¶</a></h2>
+<p>The ANS 94 standard defines three major data regions: name space,
+code space and data space. The Atmega system architecture
+uses three memory types too: Flash, RAM and EEPROM. These three
+memory types have their own address space independently from the
+others. Amforth does not unify these address spaces into one.</p>
+<p>Amforth uses the flash memory as the location for all standard data
+spaces: name, code and data space. Contrary to the standard some
+words that should operate on the data space use RAM adresses instead.
+These words are HERE, &#64; (fetch), ! (store) and simimliar. Similiarly
+the so called transient regions are in RAM as well.</p>
+<p>Other words like , (comma) operate on the flash address and thus
+directly in the dictionary.</p>
+</div>
+<div class="section" id="dictionary-management">
+<h2>Dictionary Management<a class="headerlink" href="#dictionary-management" title="Permalink to this headline">¶</a></h2>
+<p>The dictionary can be seen from several points of view. One is
+the split into two memory regions: NRWW and RWW flash. This is
+the hardware view. NRWW flash cannot be read during a flash write
+operation, NRWW means Non-Read-While-Write. This makes it impossible
+to change there anything at runtime. On the other hand is this the place,
+where code resides that can change the RWW (Read-While-Write) part of the
+flash. For AmForth, the command <strong class="command">!i</strong> does this work: It changes
+a single flash cell in the RWW section of the flash. This command hides
+all actions that are necessary to achieve this.</p>
+<p>The NRWW section is usually large enough to hold the interpreter core
+and most (if not all) words coded in assembly (not to be confused with
+the words that are hand-assembled into a execution token list) too.
+Having all of them within a rather small memory region makes it possible
+to use the short-ranged and fast relative jumps instead of slower
+full-range jumps necessary for RWW entries.</p>
+<p>Another point of view to the dictionary is the memory allocation. The key for it
+is the dictionary pointer <strong class="command">dp</strong>. It is a EEPROM based VALUE that stores the
+address of the first unused flash cell. With this pointer it is easy to allocate
+or free flash space at the end of the allocated area. It is not possible to maintain
+&#8220;holes&#8221; in the address range. To append a single number to the dictionary,
+the command <strong class="command">,</strong> is used. It writes the data and increases the DP
+pointer accordingly:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ ( n -- )</span>
+<span class="kn">:</span> <span class="nc">,</span> <span class="nf">dp</span> <span class="no">!i </span><span class="nf">dp</span> <span class="k">1+ to </span><span class="nf">dp</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>To free a flash region, the DP pointer can be set to any value, but a lot
+of care has to be taken, that all other system data is still consistent
+with it.</p>
+<p>The next view point to the dictionary are the wordlists. A wordlist
+is a single linked, searchable list of entries. All wordlists create the forth
+dictionary. A wordlist is identified by its <tt class="docutils literal"><span class="pre">wid</span></tt>, an EEPROM address, that
+contains the address of the first entry. The entries themselves contain a
+pointer to the next entry or ZERO to indicate End-Of-List. When a new entry
+is added to a list it will be the first one of this wordlist afterwards.</p>
+<p>A new wordlist is easily created: Simply reserve an EEPROM cell and
+initialize its content with 0:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">wordlist</span> <span class="c1">( -- wid )</span>
+    <span class="nf">ehere</span> <span class="mi">0</span> <span class="k">over </span><span class="no">!e</span>
+    <span class="k">dup cell+ to </span><span class="nf">ehere</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>This <tt class="docutils literal"><span class="pre">wid</span></tt> is used to create new entries. The basic procedure to do it
+is <strong class="command">create</strong>:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">create</span>
+  <span class="nf">(create)</span> <span class="nf">reveal</span>
+  <span class="k">postpone </span><span class="nf">(constant)</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">(create)</strong> parses the current source to get a space delimited string.
+The next step is to determine, into which wordlists the new entry will be placed
+and finally, the new entry is created, but it is still invisible:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">(create)</span>
+    <span class="k">parse-name</span>
+    <span class="nf">wlscope</span>
+    <span class="k">dup &gt;r</span>
+    <span class="nf">header</span>
+    <span class="k">r&gt; </span><span class="nf">smudge</span> <span class="k">2! ;</span>
+</pre></div>
+</div>
+<p>The <strong class="command">header</strong> command starts a new dictionary entry. The first action is
+to copy the string from RAM to the flash. The second task is to create the link
+for the wordlist management</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">header</span>
+ <span class="nf">dp</span> <span class="k">&gt;r</span>
+ <span class="c1">\ copy the string from RAM to flash</span>
+ <span class="k">r&gt; </span><span class="no">@e </span><span class="k">,</span>
+ <span class="c1">\ minor housekeeping</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">smudge</strong> is the address of a 4 byte RAM location, that buffers the access information.
+Why not not all words are immediately visible  is something, that the forth standard
+requires. The command <strong class="command">reveal</strong> un-hides the new entry by adjusting the content
+of the wordlist identifier to the address of the new entry:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">reveal</span>
+   <span class="nf">smudge</span> <span class="k">@ ?dup if </span><span class="c1">\ check if valid data</span>
+     <span class="nf">smudge</span> <span class="mi">2</span><span class="k">+ @ </span><span class="no">!e </span><span class="c1">\ update the wid</span>
+     <span class="mi">0</span> <span class="nf">smudge</span> <span class="k">! </span>    <span class="c1">\ invalidate</span>
+   <span class="k">then ;</span>
+</pre></div>
+</div>
+<p>The command <strong class="command">wlscope</strong> can be used to change the wordlist that
+gets the new entry. It is a deferred word that defaults to
+<strong class="command">get-current</strong>.</p>
+<p>The last command <strong class="command">postpone (constant)</strong> writes the runtime
+action, the execution token (XT) into the newly created word. The XT
+is the address of executable machine code that the forth inner interpreter
+calls (see <a class="reference internal" href="Architecture.html#inner-interpreter"><em>Inner Interpreter</em></a>). The machine code for <strong class="command">(constant)</strong>
+puts the address of the flash cell that follows the XT on the data stack.</p>
+</div>
+<div class="section" id="compiler">
+<h2>Compiler<a class="headerlink" href="#compiler" title="Permalink to this headline">¶</a></h2>
+<p>The Amforth Compiler is based upon immediate words. They are always
+executed, regardless of the value in the <strong class="command">state</strong> variable. All
+non-immediate words get compiled verbatim with their respective
+execution token. It is simply appended to the current DP location.</p>
+<p>Immediate words are usually executed (unless some special action such
+as <strong class="command">postpone</strong> is applied). The immediate words do usually
+generate some data or compile it to the dictionary. They are not
+compiled with their execution token.</p>
+<p>There are no optimization steps involved. The XT are written immediately
+into the dictionary (flash).</p>
+</div>
+<div class="section" id="control-structures">
+<h2>Control Structures<a class="headerlink" href="#control-structures" title="Permalink to this headline">¶</a></h2>
+<p>The inner interpreter, the forth virtual machine, can, just like a real CPU,
+only execute words, one after the next. This linear control flow is usually
+not sufficient to do real work. The Forth VM needs to be redirected to other
+places instead of the next one, often depending on runtime decisions.</p>
+<p>Since Edsgar Dijkstra the structured programming is the preferred way to do it.
+AmForth provides all kinds of them: sequences, selections and repetitions. Sequences
+are the simple, linear execution of consecutive words. Selections provide a conditional
+jump over code segments. They are usually implemented with the <strong class="command">ìf</strong> command.
+Multiple selections can be made with <strong class="command">case</strong>. Repetitions can be unlimited or
+limited. Limited Repetitions can use flags and counter/limits to leave the loop.</p>
+<p>There is also support for out-of-band control flow: Exceptions. They provide
+some kind of emergency exits to solve hard problems. They can be catched at any
+level up to the outer text interpreter. It will print a message on the command
+terminal and will wait for commands.</p>
+<div class="section" id="building-blocks">
+<h3>Building Blocks<a class="headerlink" href="#building-blocks" title="Permalink to this headline">¶</a></h3>
+<p>All control structures can be implemented using jumps and conditional jumps.
+Every control operation results in either a forward or a backward jump. Thus
+6 building blocks are needed to create them all: <strong class="command">(branch)</strong>,
+<strong class="command">(0branch)</strong>, <strong class="command">&gt;mark</strong>, <strong class="command">&lt;mark</strong>, <strong class="command">&gt;resolve</strong>
+and <strong class="command">&lt;resolve</strong>. None of them are directly accessible however. Most
+of these words are used in pairs. The data stack is used as the control flow
+stack. At runtime the top-of-stack element is the flag. All words are used in
+immediate words. They are executed at compile time and produce code for the
+runtime action.</p>
+<p><strong class="command">(branch)</strong> is a unconditional jump. It reads the flash cell after the
+command and takes it as the jump destination. Jumps can be at any distance
+in any direction. <strong class="command">(0branch)</strong> reads the Top-Of-Stack element and
+jumps if it is zero (e.g. logically FALSE). If it is non-zero, the jump is not
+made and execution continues with the next XT in the dictionary. In this case,
+the branch destination field is ignored. These two words are implemented in
+assembly. A equivalent forth implementation would be</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">(branch)</span> <span class="k">r&gt; 1+ </span><span class="no">@i </span><span class="k">&gt;r ;</span>
+<span class="kn">:</span> <span class="nc">(0branch)</span> <span class="k">if </span><span class="nf">(branch)</span> <span class="k">else r&gt; 1+ &gt;r then ;</span>
+</pre></div>
+</div>
+<p>Note the chicken-and-egg problem with the conditional branch operation.</p>
+<p>The <strong class="command">mark</strong> words put the jump destination onto the data stack. This
+information is used by the <strong class="command">resolve</strong> words to actually complete the
+operation. The <strong class="command">&lt;mark</strong> additionally reserves one flash cell.
+The <strong class="command">&lt;resolve</strong> stores the information for the backward jump
+at the current location of the dictionary pointer, the <strong class="command">&gt;resolve</strong>
+places the information at the place the <strong class="command">&gt;mark</strong> has reserved and
+completes the forward jump. Every mark needs to be paired with the <em>right</em>
+resolve.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">&gt;mark</span> <span class="nf">dp</span> <span class="mi">-1</span> <span class="k">, ;</span>
+<span class="kn">:</span> <span class="nc">&gt;resolve</span> <span class="nf">?stack</span> <span class="nf">dp</span> <span class="k">swap </span><span class="no">!i </span><span class="k">;</span>
+
+<span class="kn">:</span> <span class="nc">&lt;mark</span> <span class="nf">dp</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">&lt;resolve</span> <span class="nf">?stack</span> <span class="k">, ;</span>
+</pre></div>
+</div>
+<p>The place holder -1 in <strong class="command">&gt;mark</strong> prevents a flash erase cycle when the
+jump is resolved using the <strong class="command">!i</strong> in <strong class="command">&gt;resolve</strong>. The
+<strong class="command">?stack</strong> checks for the existence of a data stack entry,
+not for a plausible value. It the data stack is empty, an
+exception -4 is thrown.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">?stack</span> <span class="k">depth 0&lt; if </span><span class="mi">-4</span> <span class="k">throw then ;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="highlevel-structures">
+<h3>Highlevel Structures<a class="headerlink" href="#highlevel-structures" title="Permalink to this headline">¶</a></h3>
+<p>The building blocks described above create the standard control
+structures: conditional execution and various loop constructs.</p>
+<div class="section" id="conditional-execution">
+<h4>Conditional Execution<a class="headerlink" href="#conditional-execution" title="Permalink to this headline">¶</a></h4>
+<p>The conditional execution compiles a forward
+jump to another location. The jump destination
+is resolved with <strong class="command">then</strong>. An <strong class="command">else</strong>
+terminates the first jump and starts a new one for the
+final <strong class="command">then</strong>. This way an alternate code block
+is executed at runtime depending on the flag given to
+the <strong class="command">if</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">if</span>   <span class="k">postpone </span><span class="nf">(0branch)</span> <span class="nf">&gt;mark</span> <span class="k">; immediate</span>
+<span class="kn">:</span> <span class="nc">else</span> <span class="k">postpone </span><span class="nf">(branch)</span>  <span class="nf">&gt;mark</span> <span class="k">swap </span><span class="nf">&gt;resolve</span> <span class="k">; immediate</span>
+<span class="kn">:</span> <span class="nc">then</span> <span class="nf">&gt;resolve</span> <span class="k">; immediate</span>
+</pre></div>
+</div>
+<p>There is a rarely used variant of the <strong class="command">if</strong> command, that compiles
+an unconditional forward branch: <strong class="command">ahead</strong>. It needs to be paired with
+a <strong class="command">then</strong> to resolve the branch destination too. An
+<strong class="command">else</strong> would not make any sense, but is syntactically ok.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">ahead</span> <span class="k">postpone </span><span class="nf">(branch)</span> <span class="nf">&gt;mark</span> <span class="k">; immediate</span>
+</pre></div>
+</div>
+<p>There are more variants of multiple selections possible. The
+<strong class="command">case</strong> structure is based upon nested <strong class="command">if</strong>&#8216;s. Computed
+goto&#8217;s can be implemented with jump tables whith execution tokens as code
+blocks. Examples are in the <tt class="file docutils literal"><span class="pre">lib</span></tt> directory.</p>
+</div>
+<div class="section" id="conditional-loops">
+<h4>Conditional Loops<a class="headerlink" href="#conditional-loops" title="Permalink to this headline">¶</a></h4>
+<p>The loop commands create a structure for repeated execution of
+code blocks. A loop starts with a <strong class="command">begin</strong>
+to which the program flow can jump back any time.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">begin</span> <span class="nf">&lt;mark</span> <span class="k">; immediate</span>
+</pre></div>
+</div>
+<p>The first group of loop command are created with <strong class="command">again</strong> and
+<strong class="command">until</strong>. They basically differ from each with the branch
+command they compile:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">until</span> <span class="k">postpone </span><span class="nf">(0branch)</span> <span class="nf">&lt;resolve</span> <span class="k">; immediate</span>
+<span class="kn">:</span> <span class="nc">again</span> <span class="k">postpone </span><span class="nf">(branch)</span> <span class="nf">&lt;resolve</span> <span class="k">; immediate</span>
+</pre></div>
+</div>
+<p>The other loop construct starts with <strong class="command">begin</strong> too. The
+control flow is further organized with <strong class="command">while</strong> and
+<strong class="command">repeat</strong>. <strong class="command">while</strong> checks wether a flag is true
+and leaves the loop while <strong class="command">repeat</strong> unconditionally repeats
+it. Multiple <strong class="command">while</strong> &#8216;s  are possible, they have to be
+terminated properly with a <strong class="command">then</strong> for each of them (except
+the one, which is terminated with the <strong class="command">repeat</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">while</span> <span class="k">postpone </span><span class="nf">(0branch)</span> <span class="nf">&gt;mark</span> <span class="k">swap ; immediate</span>
+<span class="kn">:</span> <span class="nc">repeat</span> <span class="k">again </span><span class="nf">&gt;resolve</span> <span class="k">; immediate</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="counted-loops">
+<h4>Counted Loops<a class="headerlink" href="#counted-loops" title="Permalink to this headline">¶</a></h4>
+<p>Counted loops repeat a sequence of words for some predefined
+number of iterations. It is possible to exit prematurely. The
+standard loop checks for the exit condition after the loop body
+has been executed. A special variant (?DO) does it once at the
+beginning and may skip the loop body completely. To actually
+implement the loop and its possible exit points a separate LEAVE
+stack (named after the LEAVE forth word) is used at compile time.
+It receives all premature exit points which are resolved when
+compiling LOOP (or +LOOP).</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">endloop</span>
+ <span class="nf">&lt;resolve</span> <span class="c1">\ standard backward loop</span>
+ <span class="c1">\ now resolve the premature exits from the leave stack</span>
+ <span class="k">begin </span><span class="nf">l&gt;</span> <span class="k">?dup while postpone then repeat ;</span>
+
+<span class="kn">:</span> <span class="nc">do</span> <span class="k">postpone </span><span class="nf">(do)</span> <span class="nf">&lt;mark</span> <span class="mi">0</span> <span class="nf">&gt;l</span> <span class="k">; immediate</span>
+<span class="kn">:</span> <span class="nc">loop</span> <span class="k">postpone </span><span class="nf">(loop)</span> <span class="nf">endloop</span> <span class="k">; </span> <span class="k">immediate</span>
+<span class="kn">:</span> <span class="nc">+loop</span> <span class="k">postpone </span><span class="nf">(+loop)</span> <span class="nf">endloop</span> <span class="k">; immediate</span>
+<span class="kn">:</span> <span class="nc">leave</span> <span class="k">postpone unloop postpone ahead </span><span class="nf">&gt;l</span> <span class="k">; immediate</span>
+</pre></div>
+</div>
+<p><strong class="command">unloop</strong> is an assembly word dropping the loop
+counter and loop limit information from the return stack.</p>
+<p>The <strong class="command">?do</strong> works differently. It uses the
+<strong class="command">do</strong> and the leave stack to achieve its
+goals.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kt">...</span> <span class="nf">?docheck</span> <span class="k">if do </span><span class="kt">...</span> <span class="k">loop then </span><span class="kt">....</span>
+</pre></div>
+</div>
+<p>The helper word <strong class="command">?docheck</strong> checks the loop
+numbers and creates a well prepared stack content.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ helper word</span>
+<span class="kn">:</span> <span class="nc">?docheck</span> <span class="c1">( count limit -- count limit true | false )</span>
+    <span class="k">2dup </span><span class="nf">=</span> <span class="k">dup &gt;r if 2drop then r&gt; invert ;</span>
+
+<span class="kn">:</span> <span class="nc">?do</span> <span class="k">postpone </span><span class="nf">?docheck</span>
+    <span class="k">postpone if </span><span class="c1">\ here we create the forward branch</span>
+    <span class="k">postpone do </span><span class="c1">\ initialite leave stack</span>
+    <span class="k">swap </span><span class="nf">&gt;l</span>     <span class="c1">\ put the IF destination on the leave stack</span>
+<span class="k">; immediate</span>
+</pre></div>
+</div>
+<p>The runtime action of <strong class="command">do</strong> (the <strong class="command">(do)</strong>)
+puts two information onto the return stack: The modified loop
+counter abd  the loop limit. The loop index and the loop limit
+are modified by adding 0x8000 to both numbers. That makes
+it easy to check the boundary cross required by Forth by simply
+checking the controller overflow check. The price to pay is
+a slightly slower access to the loop index (I and J).</p>
+<p>The runtime of <strong class="command">loop</strong> (the <strong class="command">(loop)</strong>)
+checks the limits and with <strong class="command">0branch</strong> decides whether to
+repeat the loop body with the next loop counter value or to exit
+the loop body. If the loop has terminated, it cleans up the return
+stack. The <strong class="command">+loop</strong> works almost identically, except that
+it reads the loop counter increment from the data stack.</p>
+<p>The access to the loop counters within the loops is done with <strong class="command">i</strong>
+and <strong class="command">j</strong>. Since the return stack is used to manage the loop runtime,
+it is necessary to clean it up. This is done with either <strong class="command">unloop</strong>
+or <strong class="command">leave</strong>. Note that <strong class="command">unloop</strong> does not leave the loop!</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="standard-wordlists">
+<h1>Standard Wordlists<a class="headerlink" href="#standard-wordlists" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ans94-words">
+<h2>ANS94 Words<a class="headerlink" href="#ans94-words" title="Permalink to this headline">¶</a></h2>
+<p>amforth implements most or all words from the ANS94 word
+sets. Most words are already included in the standard
+setup, others are loadable from files in the <tt class="file docutils literal"><span class="pre">lib/ans94</span></tt>
+directory. A floating point library is available from the
+community repository. Words from the word set FILE-ACCESS
+are dropped completely. The others are at least partially
+implemented.</p>
+<div class="section" id="core-and-core-ext">
+<h3>Core and Core EXT<a class="headerlink" href="#core-and-core-ext" title="Permalink to this headline">¶</a></h3>
+<p>All words from the CORE word set are available. CORE EXT drops
+the (deprecated) words <strong class="command">C&#8221;</strong>, <strong class="command">CONVERT</strong>,
+<strong class="command">EXPECT</strong>, <strong class="command">SPAN</strong> and  <strong class="command">ROLL</strong>.</p>
+<p>Loop counters are checked on signed compares.</p>
+</div>
+<div class="section" id="block">
+<h3>Block<a class="headerlink" href="#block" title="Permalink to this headline">¶</a></h3>
+<p>Amforth has almost complete block support to work
+with the flash memory and I2C eeprom devices.</p>
+<p>Since version 5.4.</p>
+<p>To work with different back end systems, a layered
+structure is used. The low level hardware access words
+<tt class="docutils literal"><span class="pre">load-buffer</span></tt> and <tt class="docutils literal"><span class="pre">save-buffer</span></tt> are deferred words
+that are called with a RAM buffer location (addr/len pair)
+and the block number. All thay have to do is to transfer
+the buffer content from/to the back end storage. The
+highlevel words from the BLOCK wordset do the buffer
+management and provide the user visible API.</p>
+</div>
+<div class="section" id="double-number">
+<h3>Double Number<a class="headerlink" href="#double-number" title="Permalink to this headline">¶</a></h3>
+<p>Double cell numbers work as expected. Not all words
+are implemented. Entering them directly using the
+dot- notation work for dots at the end of the number,
+not if the dot is somewhere within it.</p>
+</div>
+<div class="section" id="exception">
+<h3>Exception<a class="headerlink" href="#exception" title="Permalink to this headline">¶</a></h3>
+<p>Exceptions are fully supported. The words
+<strong class="command">ABORT</strong> and <strong class="command">ABORT&#8221;</strong>
+use them internally.</p>
+<p>The implementation is based upon a variable HANDLER
+which holds the current return stack pointer
+position. This variable is a USER variable.</p>
+</div>
+<div class="section" id="facility">
+<h3>Facility<a class="headerlink" href="#facility" title="Permalink to this headline">¶</a></h3>
+<p>The basic system uses the <strong class="command">KEY?</strong>
+and <strong class="command">EMIT?</strong> words as deferred words
+in the USER area.</p>
+<p>The word <strong class="command">MS</strong> is implemented with the word
+<strong class="command">1MS</strong> that busy waits almost exactly 1 millisecond.
+The calculation is based upon the frequency specified at
+compile time. There are variants which are multitasking
+friendly but less accurate.</p>
+<p>The words <strong class="command">EKEY</strong> and <strong class="command">EKEY&gt;CHAR</strong>
+are not implemented.</p>
+<p>To control a VT100 terminal the words
+<strong class="command">AT-XY</strong> and <strong class="command">PAGE</strong>
+are written in forth code. They emit the ANSI
+control codes according to the VT100 terminal codes.</p>
+</div>
+<div class="section" id="file-access">
+<h3>File Access<a class="headerlink" href="#file-access" title="Permalink to this headline">¶</a></h3>
+<p>amforth does not have filesystem support. It does
+not contain any words from this word set.</p>
+</div>
+<div class="section" id="floating-point">
+<h3>Floating Point<a class="headerlink" href="#floating-point" title="Permalink to this headline">¶</a></h3>
+<p>amforth has a loadable floating point library. It contains
+the basic words to deal with single precision floats. The floats
+are managed on the standard data stack. After loading the library
+floats can be entered directly at the command prompt. Some speed
+sensitive words are available as assembly code as well.</p>
+</div>
+<div class="section" id="locals">
+<h3>Locals<a class="headerlink" href="#locals" title="Permalink to this headline">¶</a></h3>
+<p>The locals support offers a single local value
+with the name X. It can easily expanded to
+support more by the user.</p>
+<p>From version 5.4.</p>
+</div>
+<div class="section" id="id1">
+<h3>Memory Allocation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>amforth does not support the words from the memory
+allocation word set.</p>
+</div>
+<div class="section" id="programming-tools">
+<h3>Programming Tools<a class="headerlink" href="#programming-tools" title="Permalink to this headline">¶</a></h3>
+<p>Variants of the words <strong class="command">.S</strong>, <strong class="command">?</strong>
+and <strong class="command">DUMP</strong> are implemented or can easily
+be done. The word <strong class="command">SEE</strong> is available as well.</p>
+<p><strong class="command">STATE</strong> works as specified.</p>
+<p>The word <strong class="command">WORDS</strong> does not sort the word list
+and does not take care of screen sizes.</p>
+<p>The words <strong class="command">;CODE</strong> and <strong class="command">ASSEMBLER</strong>
+are not supported. amforth has a loadable assembler
+which can be used with the words <strong class="command">CODE</strong>
+and <strong class="command">END-CODE</strong>.</p>
+<p>The control stack commands <strong class="command">CS-ROLL</strong> and
+<strong class="command">CS-PICK</strong> are not implemented. The
+compiler words operate with the more traditional
+<strong class="command">MARK</strong> / <strong class="command">RESOLVE</strong> word pairs.</p>
+<p><strong class="command">FORGET</strong>
+is not implemented since it would be nearly impossible to
+reset the search order word list with reasonable efforts.
+The better way is using <strong class="command">MARKER</strong>
+from the library.</p>
+<p>An EDITOR is not implemented.</p>
+<p><strong class="command">[IF]</strong>, <strong class="command">[ELSE]</strong>
+and <strong class="command">[THEN]</strong> are not implemented.</p>
+</div>
+<div class="section" id="word-lists-and-search-order">
+<h3>Word Lists and Search Order<a class="headerlink" href="#word-lists-and-search-order" title="Permalink to this headline">¶</a></h3>
+<p>Amforth supports the ANS Search Order word list. A word list consist of a linked list
+of words in the dictionary. There are no limits on the number of word lists
+defined. Only the length of the active search order is limited: There can be
+up to 8 entries at any given moment. This limit can be changed at compile
+time in the application definition file.</p>
+<p>Internally the word list identifier is the address where the word list start
+address is stored in the EEPROM. Creating a new word list means to allocate
+a new EEPROM cell. Since the ANS standard does not give named word list
+there is library code available that uses the old fashioned vocabulary.</p>
+</div>
+<div class="section" id="strings">
+<h3>Strings<a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h3>
+<p>All words from the strings word set are supported since version 5.4.</p>
+</div>
+</div>
+<div class="section" id="forth-2012">
+<h2>Forth 2012<a class="headerlink" href="#forth-2012" title="Permalink to this headline">¶</a></h2>
+<p>amforth provides the following extensions from the
+forth 2012 standard</p>
+<dl class="docutils">
+<dt><a class="reference external" href="http://www.forth200x.org/deferred.html">Defer and IS</a></dt>
+<dd><strong class="command">defer</strong> gives the possibility of vectored execution. Amforth
+has 3 different kind of such vectors, varying in how they are stored: EEPROM, RAM
+or the USER area. The EEPROM makes it possible to save the settings permanently,
+the RAM enables frequent changes. Finally the user area is for multitasking.</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/buffer.html">Buffer:</a></dt>
+<dd>The buffer allocates a named memory (RAM) region. It is superior to
+the usual create foo xx allot since amforth has a non-unified
+memory model and the code snippet does not the same as an unified memory
+model forth (with the dictionary being at the same memory as the allot
+command works).</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/parse-name.html">Parse-Name</a></dt>
+<dd>Fully supported</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/n-to-r.html">n&gt;r and nr&gt;</a></dt>
+<dd>Fully supported</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/number-prefixes.html">Number Prefixes</a></dt>
+<dd>The number base can be specified by prepending the $, # or % signs.
+Single characters as &#8216;a&#8217; are not supported.</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/structures.html">Structures</a></dt>
+<dd>Fully supported</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/synonym.htmlSynynom">Synonyms</a></dt>
+<dd>Fully supported</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/traverse-wordlist.html">Traverse-wordlist</a></dt>
+<dd>Iterating over a wordlist works. The name&gt;xy words are not supported.</dd>
+<dt><a class="reference external" href="http://www.forth200x.org/2value.html">Values</a></dt>
+<dd>The additional value definitions are supported. A way to implement
+own value data items is provided.</dd>
+</dl>
+</div>
+<div class="section" id="amforth">
+<h2>Amforth<a class="headerlink" href="#amforth" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cold">
+<h3>COLD<a class="headerlink" href="#cold" title="Permalink to this headline">¶</a></h3>
+<p>The startup code is in the file <tt class="file docutils literal"><span class="pre">cold.asm</span></tt>.
+It gets called directly from the address 0 vector.</p>
+<p>This assembly part of the startup code creates the basic runtime environment
+to start the virtual forth machine. It sets up the stack pointers and
+the user pointer and places the forth instruction pointer on the
+word WARM. Then it boots the forth virtual machine
+by jumping to the inner interpreter.</p>
+<p>The start addresses of the stacks are placed to the user area
+for later use as well.</p>
+</div>
+<div class="section" id="warm">
+<h3>WARM<a class="headerlink" href="#warm" title="Permalink to this headline">¶</a></h3>
+<p>The word <strong class="command">WARM</strong> is the high level part of the
+forth VM initialization. When called from
+within forth it is the equivalent to a RESET.
+<strong class="command">WARM</strong> initializes the <strong class="command">PAUSE</strong>
+deferred word to do nothing, calls the application defined
+TURNKEY action and finally hands over to <strong class="command">QUIT</strong>.</p>
+</div>
+<div class="section" id="turnkey">
+<h3>TURNKEY<a class="headerlink" href="#turnkey" title="Permalink to this headline">¶</a></h3>
+<p>The turnkey is a EEPROM deferred word that
+points to an application specific startup word.</p>
+<p>Its main task is to initialize the character IO to enable
+the forth interpreter to interact with the command prompt. The
+examples shipped with amforth do this by &#8220;opening&#8221; the serial
+port, switching to decimal number conversion and setting up the
+character IO deferred words (KEY, EMIT etc).</p>
+</div>
+<div class="section" id="quit">
+<h3>QUIT<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h3>
+<p><strong class="command">QUIT</strong> initializes both data and return stack pointers by reading
+them from the user area and enters the traditional ACCEPT &#8211; INTERPRET
+loop that never ends. It provides the topmost exception catcher as
+well. Depending on the exception thrown, it prints an error message
+and restarts itself.</p>
+</div>
+<div class="section" id="mcu-access">
+<h3>MCU Access<a class="headerlink" href="#mcu-access" title="Permalink to this headline">¶</a></h3>
+<p>amforth provides wrapper words for the
+micro controller instructions
+<strong class="command">SLEEP</strong> and <strong class="command">WDR</strong>
+(watch dog reset). To work properly, the MCU needs
+more configuration. amforth itself does not call
+these words.</p>
+</div>
+<div class="section" id="assembler">
+<h3>Assembler<a class="headerlink" href="#assembler" title="Permalink to this headline">¶</a></h3>
+<p>Lubos Pekny has written an assembler for amforth. To support it, amforth
+provides the two words <strong class="command">CODE</strong> and <strong class="command">END-CODE</strong>. The first
+creates a dictionary entry and sets the code field to the data filed address. The
+interpreter will thus jump directly into the data field assuming some machine
+code there. The word <strong class="command">END-CODE</strong> places a JUMP NEXT into
+the data field. This finishes the machine instruction execution and jumps back
+to the forth interpreter.</p>
+</div>
+<div class="section" id="memories">
+<h3>Memories<a class="headerlink" href="#memories" title="Permalink to this headline">¶</a></h3>
+<p>Atmega micro controller have three different types of
+memory. RAM, EEPROM and Flash. The words <strong class="command">&#64;</strong>
+and <strong class="command">!</strong> work on the RAM address space (which
+includes IO Ports and the CPU register), the words
+<strong class="command">&#64;e</strong> and <strong class="command">!e</strong> operate on the EEPROM and
+<strong class="command">&#64;i</strong> and <strong class="command">!i</strong> deal with the flash
+memory. All these words transfer one cell (2 bytes)
+between the memory and the data stack. The address
+is always the native address of the target storage:
+byte-based for EEPROM and RAM, word-based for flash.
+Therefore the flash addresses 64 KWords or 128 KBytes
+address space.</p>
+<p>External RAM shares the normal RAM address space
+after initialization (which can be done in the
+turnkey action). It is accessible without further
+changes.</p>
+<p>For RAM only there is the special word pair
+<strong class="command">c&#64;</strong>/<strong class="command">c!</strong> which operate with
+the lower half of a stack cell. The upper byte
+is either ignored or set to 0 (zero).</p>
+<p>All other types of external memory need special
+handling, which may be masked with the block word
+set.</p>
+</div>
+<div class="section" id="input-output">
+<h3>Input Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h3>
+<p>amforth uses character terminal IO. A serial console is
+used. All IO is based upon the standard words
+<strong class="command">EMIT</strong>/<strong class="command">EMIT?</strong> and
+<strong class="command">KEY</strong>/<strong class="command">KEY?</strong>. Additionally the word
+<strong class="command">/KEY</strong> is used to signal the sender to stop.
+All these words are deferred words in the USER area
+and can be changed with the <strong class="command">IS</strong> command.</p>
+<p>The predefined words use an interrupt driven IO with
+a buffer for input and output. They do not implement
+a handshake procedure (XON/XOFF or CTS/RTS). The
+default terminal device is selected at compile time.</p>
+<p>These basic words include a call to the
+<strong class="command">PAUSE</strong> command to enable the
+use of multitasking.</p>
+<p>Other IO depend on the hardware connected to the
+micro controller. Code exists to use LCD and TV
+devices. CAN, USB or I2C are possible as well.
+Another use of the redirect feature is the
+following: consider some input data in external
+EEPROM (or SD-Cards). To read it, the words
+<strong class="command">KEY</strong> and <strong class="command">KEY?</strong>
+can be redirected to fetch the data from them.</p>
+</div>
+<div class="section" id="id2">
+<h3>Strings<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Strings can be stored in two areas: RAM and FLASH.
+It is not possible to distinguish between the
+storage areas based on the addresses found on the
+data stack, it&#8217;s up to the developer to keep track.</p>
+<p>Strings are stored as counted strings with a 16 bit
+counter value (1 flash cell)
+Strings in flash are compressed: two consecutive
+characters (bytes) are placed into one flash cell. The standard
+word <strong class="command">S&#8221;</strong> copies the string from the RAM into
+flash using the word <strong class="command">S,</strong>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../_sources/TG/Implementation.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

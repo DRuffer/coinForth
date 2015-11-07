@@ -1,0 +1,942 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>History &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="index.html" />
+    <link rel="prev" title="Reference Card" href="TG/refcard.html" />
+    <link rel="stylesheet" href="_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="history">
+<h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="release-5-5">
+<h2>6.10.2014: release 5.5<a class="headerlink" href="#release-5-5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: Bugfix in <strong class="command">warm</strong> to initialize the interpreter for
+<strong class="command">turnkey</strong>. Thanks to David.</li>
+<li>core: bugfixes for handling some negative numbers in <strong class="command">+loop</strong>
+and <strong class="command">*/</strong>.</li>
+<li>core: simplified assembly primitves for counted loops. They are
+now faster except for <strong class="command">i</strong>. The return stack gets different
+numbers now.</li>
+<li>core: rewrite of <strong class="command">accept</strong>. The user visible change is that the final CR/LF
+is no longer sent here. The forth text interpreter does it elsewhere thus
+the user interface is unchanged.</li>
+<li>core: Fixed a regression introduced after 5.1: a&lt;b is not always the same
+as a-b&lt;0.</li>
+</ul>
+</div>
+<div class="section" id="release-5-4">
+<h2>16.8.2014: release 5.4<a class="headerlink" href="#release-5-4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>lib: Almost complete <a class="reference internal" href="TG/recipes/Blocks.html#blocks"><em>Blocks</em></a> wordset support. Only a few dark corners behave differently.</li>
+<li>lib: renamed TWI to I2C, added many tools for it <a class="reference internal" href="TG/recipes/I2C-Values.html#i2c-values"><em>I2C EEPROM VALUE</em></a>, <a class="reference internal" href="TG/recipes/I2C-Blocks.html#i2c-eeprom-blocks"><em>I2C EEPROM Blocks</em></a> and
+a few more.</li>
+<li>recipes: <a class="reference external" href="http://en.wikipedia.org/wiki/Test-driven_development">Test Driven Development</a>
+with <a class="reference internal" href="TG/recipes/Testing.html#testing"><em>Amforth</em></a>, <a class="reference internal" href="TG/recipes/Conditional-Interpret.html#conditional-interpret"><em>Conditional Interpret</em></a></li>
+<li>lib: Fully support the ANS94 String wordset.</li>
+<li>core: Double cell return stack access words (<strong class="command">2&gt;r</strong> and
+<strong class="command">2r&gt;</strong>) missed the internal swap&#8217;s. Added new <strong class="command">2r&#64;</strong>.</li>
+<li>lib: Limited LOCALs</li>
+</ul>
+</div>
+<div class="section" id="release-5-3">
+<h2>7.5.2013: release 5.3<a class="headerlink" href="#release-5-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: 2nd generation of <a class="reference internal" href="TG/Architecture.html#recognizers"><em>Recognizer</em></a> and their use for native
+<a class="reference internal" href="TG/recipes/Recognizer.html#recognizer"><em>String literals</em></a>.</li>
+<li>core: renamed <strong class="command">edp</strong> to <strong class="command">ehere</strong>. <strong class="command">here</strong>
+points to data space, <strong class="command">ehere</strong>   points to eeprom data space.</li>
+<li>core: merged code for defer&#8217;s and value&#8217;s. Speed improvements
+for defer actions.</li>
+<li>community: MMC/SD-Card from Lubos (So Sorry for beeing late) and
+TCP/IP (<a class="reference internal" href="TG/recipes/Telnet.html#telnet"><em>Telnet</em></a>). Many Thanks to Jens. Speed optimized
+words for SPI in amforth core.</li>
+<li>doc: <a class="reference external" href="http://amforth-installation-ja.readthedocs.org/ja/latest/index.html">Japanese Getting Started</a></li>
+<li>doc: new recipes: <a class="reference internal" href="TG/recipes/Forward.html#forward"><em>Forward Declarations</em></a>, <a class="reference internal" href="TG/recipes/Extended-VM.html#extended-vm"><em>Extended VM</em></a>, <a class="reference internal" href="TG/recipes/Quotations.html#quotations"><em>Quotations</em></a>, <a class="reference internal" href="TG/recipes/Exceptions.html#exceptions"><em>Exceptions</em></a>,
+<a class="reference internal" href="TG/recipes/Coroutines.html#coroutines"><em>Coroutines</em></a>,  updated recipes: <a class="reference internal" href="TG/recipes/SPI.html#spi"><em>Serial Peripheral Interface SPI</em></a>, <a class="reference internal" href="TG/recipes/Arduino-HelloWorld.html#ardiuno-helloworld"><em>Arduino Hello World</em></a></li>
+</ul>
+</div>
+<div class="section" id="release-5-2">
+<h2>23.12.2013: release 5.2<a class="headerlink" href="#release-5-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Improved and extended <a class="reference internal" href="TG/recipes/Values.html#values"><em>Values</em></a></li>
+<li>Forth 2012 <a class="reference external" href="http://www.forth200x.org/traverse-wordlist.html">Traverse-Wordlist</a></li>
+<li>improved documentation</li>
+<li>core: added <strong class="command">d0=</strong> and <strong class="command">0=</strong> as assembly primitives and
+use them in other compare operations. Saves a lot of code space.</li>
+<li>Wordlist entries are now 8bit clean. Words with umlauts or e.g.
+Greek commands work as expected, unless the terminal does not cooperate.
+Thanks to Enoch.</li>
+</ul>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="kn">:</span> <span class="nc">Σ</span>  <span class="mi">0</span> <span class="k">swap </span><span class="mi">0</span>  <span class="k">do </span> <span class="k">+ </span> <span class="k">loop </span> <span class="k">;</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span> <span class="mi">3</span> <span class="nf">Σ</span> <span class="k">.</span>
+ <span class="mi">24</span>  <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="release-5-1">
+<h2>5.4.2013: release 5.1<a class="headerlink" href="#release-5-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: Automatic scoping of words. A system hook can be used to
+use a different wordlist than CURRENT to place a new word in.
+Thanks to Enoch for the idea and the code.</li>
+<li>lib: very flexible CRC8 checksum generator and checker. Thanks to Enoch.</li>
+<li>recipes: <a class="reference internal" href="TG/recipes/Interrupt-Critical-Section.html#interrupt-critical-section"><em>Interrupt Critical Section</em></a>, <a class="reference internal" href="TG/recipes/Unbreakable.html#unbreakable"><em>Unbreakable AmForth</em></a>,
+<a class="reference internal" href="TG/recipes/Efficient-Bitmanipulation.html#efficient-bitmanipulation"><em>Efficient Bit Manipulation</em></a>, <a class="reference internal" href="TG/recipes/Dumps.html#dump-utilities"><em>Dump Utilities</em></a>, <a class="reference internal" href="TG/recipes/Ctrl-C.html#ctrl-c"><em>Ctrl-C</em></a>
+Thanks to Enoch and the others on the mailling list for code and inspiration.</li>
+<li>core: <strong class="command">-int</strong> does no longer leave the SREG register. It
+only turns off the global interrupt flag. Thanks to Enoch.</li>
+<li>lib: major 1-wire enhancements: CRC checks and a better naming
+convention for all words. Thanks to Erich for help and substantial
+contributions.</li>
+<li>appl: added the Arduino Leonardo. avrdude needs a small patch to
+write properly the eeprom on the Atmega32U4.</li>
+<li>core: New <strong class="command">popcnt</strong> (n &#8211; m) counts the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Hamming_weight">Hamming Weight</a>
+of the given number.</li>
+<li>core: renamed <strong class="command">baud</strong> to <strong class="command">ubrr</strong>.</li>
+<li>core: <strong class="command">nfa&gt;lfa</strong> is a factor in a number of words. It
+generates the link field address from a given name field address.</li>
+<li>doc: Farewell docbook XML, welcome reST. All documentation will
+be written in <a class="reference external" href="http://sphinx-doc.org/">reStructured Text</a>.</li>
+<li>lib: Simple Quotations. Their typical use case is</li>
+</ul>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">foo</span> <span class="kt">...</span> <span class="nf">[:</span> <span class="nf">bar</span> <span class="nf">baz</span> <span class="nf">;]</span> <span class="kt">...</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>which is equivalent to</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">:noname </span><span class="nf">bar</span> <span class="nf">baz</span> <span class="k">; </span><span class="nf">Constant#temp#</span>
+<span class="kn">:</span> <span class="nc">foo</span> <span class="kt">...</span> <span class="nf">#temp#</span> <span class="kt">...</span><span class="k">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="release-5-0">
+<h2>27.12.2012: release 5.0<a class="headerlink" href="#release-5-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>lib: Access to <a class="reference internal" href="TG/recipes/1wire.html#wire"><em>Dallas 1-Wire Devices</em></a>.
+Based on code and ideas by Bradford J. Rodriguez for the
+<a class="reference external" href="http://www.4e4th.eu">4€4th project</a>.</li>
+<li>lib: many Arduino ports have more than one purpose. The forth200x
+<a class="reference external" href="http://www.forth200x.org/synonym.html">Synonym</a>
+gives them useful alias names.&lt;/a&gt;</li>
+<li>Arduino: Added definitions for all ports based upon <a class="reference internal" href="TG/recipes/Digital-Ports.html#digital-ports"><em>Digital Ports</em></a>.</li>
+<li>recipes: There are now more than 30 <a class="reference internal" href="TG/Cookbook.html#cookbook"><em>Cookbook</em></a> in the cookbook: many
+debug tools, loop with timeout, porting from C, and interrupts to mention some of them.</li>
+<li>core: autogenerate <strong class="command">sleep</strong> depending on register availability.
+<strong class="command">sleep</strong> on an Atmega32 is very different from an Atmega328p. The parameters for
+calling it at the forth level are the same however. The include list for the assembler
+is expanded with <tt class="file docutils literal"><span class="pre">core/&lt;device&gt;/</span></tt> to find the right <tt class="file docutils literal"><span class="pre">sleep.asm</span></tt> file.</li>
+<li>core: rudimentary error checks in the compiler: There has to be branch destination
+on the stack. If there is nothing, a stack underflow exception gets thrown.</li>
+</ul>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="kn">:</span> <span class="nc">?do</span> <span class="k">i . loop ;</span>
+<span class="nf">??</span> <span class="mi">-4</span> <span class="mi">14</span>
+<span class="k">&gt; </span><span class="kn">:</span> <span class="nc">t2</span> <span class="k">?do i . loop ;</span>
+ <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>core: Number sign may follow the number base prefix as specified in
+<a class="reference external" href="http://www.forth200x.org/number-prefixes.html">Forth200x Number Prefix</a>.
+Added the character # as prefix for decimal as well.</li>
+<li>core: fixed a regression in <strong class="command">toupper</strong> caused by making <strong class="command">within</strong>
+standards compliant. Thanks to Arthur for the fix. <strong class="command">[compile]</strong> fixed as well.</li>
+</ul>
+</div>
+<div class="section" id="release-4-9">
+<h2>27.7.2012: release 4.9<a class="headerlink" href="#release-4-9" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: initialisation of the USER area is now done in WARM. please check your TURNKEY to remove
+the call to it. Thanks to Erich for pointing to.</li>
+<li>core: regenerated the devices files with the part description files from studio v6.
+added bitnames to the forth and python modules (later to be used with the shell).</li>
+<li>tools: completly new shell program with cool upload features from Keith:
+<a class="reference external" href="http://amforth.svn.sourceforge.net/viewvc/amforth/trunk/tools/amforth-shell.py?view=log">amforth-shell</a>
+It has command completion, full command history, automatic controller identification with
+all register names and much more. Updated the <a class="reference internal" href="TG/recipes/Upload.html#upload"><em>Use of the amforth-shell.py utility</em></a> for this task</li>
+<li>lib: re-arranged source files, improved timer modules.</li>
+<li>lib: <strong class="command">case</strong> did not work at all. Thanks to Jan for telling.</li>
+<li>core: the new variable <strong class="command">latest</strong> has the XT of the currently being defined
+colon word.</li>
+<li>core: <strong class="command">unused</strong> should tell the free amount of memory in the area <strong class="command">here</strong>
+points to: RAM. Thanks to Carsten for the hint.</li>
+<li>core: introducing an environment query for basic controller information: memory sizes,
+max dictionary address: <strong class="command">mcu-info</strong>. The structure itself is not yet finalized.
+See at the end of a
+<a class="reference external" href="http://amforth.svn.sourceforge.net/viewvc/amforth/trunk/core/devices/atmega328/device.asm?view=markup">core/&lt;device&gt;/device.asm</a>
+file for details.</li>
+<li>tools: The upload utilities were unable to process absolute filenames (those beginning
+with a /) Thanks to Carsten for the fix.</li>
+</ul>
+</div>
+<div class="section" id="release-4-8">
+<h2>26.3.2012: release 4.8<a class="headerlink" href="#release-4-8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: fixed a bug in <strong class="command">na&#64;</strong> and <strong class="command">nb&#64;</strong> (extended VM registers).</li>
+<li>core: redesigned <strong class="command">to</strong> for use in LOCALs and RAM-based values.</li>
+<li>core: <strong class="command">.s</strong> is stripped down to a single line output of the stack content only.
+Looks better in the call tracer and is more like other forth&#8217;s.</li>
+<li>core: small atxmega updates. Unfortunatly avrdude cannot flash the boot loader
+section as expected.</li>
+<li>core: optional Unified memory address space. <strong class="command">&#64;</strong> and <strong class="command">!</strong> use the
+range from 0 to RAMEND as RAM, from RAMEND+1 upwards the next addresses from EEPROM,
+until EEPROMEND is reached and the remaining addresses from flash.</li>
+<li>core: <strong class="command">environment?</strong> can now be used in colon definitions. changed into
+loadable forth source instead of compile-time assembly.</li>
+<li>core: <strong class="command">itype</strong> now sends proper (e.g. single byte) characters to
+<strong class="command">emit</strong>.</li>
+<li>core: <strong class="command">type</strong> is made more robust against <strong class="command">emit</strong> errors.</li>
+<li>lib: <strong class="command">macro</strong> and a <a class="reference internal" href="TG/recipes/Macros.html#defining-and-using-macros"><em>Defining and using Macros</em></a> recipe
+for using them.</li>
+<li><a class="reference internal" href="TG/recipes/Profiler.html#profiler"><em>Profiler</em></a> to count the number of calls.</li>
+<li>lib: <strong class="command">evaluate</strong> for both RAM and Flash based strings.</li>
+</ul>
+</div>
+<div class="section" id="release-4-7">
+<h2>4.2.2012: release 4.7<a class="headerlink" href="#release-4-7" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>recipes: <a class="reference internal" href="TG/recipes/Multitasking.html#multitasking"><em>Multitasking</em></a>, <a class="reference internal" href="TG/recipes/Reset.html#reason-for-reset"><em>Reason For Reset</em></a> and <a class="reference internal" href="TG/recipes/Tracer.html#tracer"><em>Tracer</em></a></li>
+<li>core: new words from the STRINGS word set: <strong class="command">sliteral</strong> and
+<strong class="command">compare</strong>. Latter is a simplified version of the ANS94 spec:
+max 255 chars, (in)equality tests only.</li>
+<li>core: <strong class="command">source</strong>, <strong class="command">refill</strong> are now deferred words, based on the USER area. <strong class="command">&gt;in</strong>
+likewise. Based on ideas from <a class="reference external" href="http://home.vrweb.de/stephan.becher/forth/doc/chapter11.htm">Strong Forth</a>.</li>
+<li>core: <strong class="command">/key</strong> removed, it can be implemented by changing <strong class="command">refill</strong>.</li>
+<li>lib: The multitasker could not work after power cycles. Thanks to Erich for fixing.</li>
+</ul>
+</div>
+<div class="section" id="release-4-6">
+<h2>6.10.2011: release 4.6<a class="headerlink" href="#release-4-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: <strong class="command">words</strong> shows the <em>first</em> entry in the search order list as
+specified by DPANS94.</li>
+<li>lib: new word <strong class="command">m*/</strong> (d1 n1 n2 &#8211; d2), uses a triple cell intermediate for d1*n1.</li>
+<li>lib: new words <strong class="command">bm-set</strong>, <strong class="command">bm-clear</strong> and <strong class="command">bm-toggle</strong> that
+efficiently change bits in RAM byte addresses. e.g. :command:` %0010 here bm-toggle` changes
+bit 2 in the RAM location at <strong class="command">here</strong>.</li>
+<li>lib: renamed <strong class="command">spirw</strong> to <strong class="command">c!&#64;spi</strong>, new word <strong class="command">!&#64;spi</strong>
+exchanges two bytes via SPI. Follows remotly the memory access word naming conventions.</li>
+</ul>
+</div>
+<div class="section" id="release-4-5">
+<h2>29.6.2011: release 4.5<a class="headerlink" href="#release-4-5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>arduino: re-arranged word placing to maximize usable flash (at least on a duemilanove device, the bigger
+variants like the sanguino and mega* still have room for improvement). The target mega is now called mega128.</li>
+<li>lib: <tt class="file docutils literal"><span class="pre">lib/buffer.frt</span></tt>  implements  <a class="reference external" href="http://www.forth200x.org/buffer.html">buffer:</a>.</li>
+<li>doc: improved refcard. Thanks to Erich for input and patches.</li>
+<li>core: changed API of the <a class="reference external" href="/pr/Recognizer-en.pdf">Recognizer</a>
+to the final addr/len pairs. Do not use counted strings any longer!</li>
+<li>core: new words <strong class="command">find-name</strong> and <strong class="command">parse-name</strong> follow
+<a class="reference external" href="http://www.forth200x.org/parse-name.html">Forth 200x</a>
+and operate on the current input buffer, <strong class="command">word</strong> is no longer used internally. Lots of internal code simplifications.</li>
+<li>core: <strong class="command">(create)</strong> throws exception -16 if no name is given.</li>
+<li>core: exception -42 is really -4 (stack underflow).</li>
+<li>core: <strong class="command">digit?</strong> again. Stack effect now compatible to gforth: <strong class="command">( char &#8211; n true | false)</strong>.
+Current setting of <strong class="command">base</strong> is now taken internally.</li>
+</ul>
+</div>
+<div class="section" id="release-4-4">
+<h2>24.5.2011: release 4.4<a class="headerlink" href="#release-4-4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>examples: added a game of life and a queens puzzle solver.</li>
+<li>core: restructure of the RAM usage. You need to remove the <strong class="command">.set here = ...</strong> line from your
+application definition file (template.asm).</li>
+<li>core: turn <strong class="command">cold</strong> into the main initialization word and <strong class="command">warm</strong> into some
+high level initialization.</li>
+<li>doc: updated Technical Documentation of Recognizers and Interrupt Processing. Reformatted the
+<a class="reference internal" href="TG/refcard.html#refcard"><em>Reference Card</em></a> to a more compact style.</li>
+<li>core: added <strong class="command">n&gt;r</strong> and <strong class="command">nr&gt;</strong> from <a class="reference external" href="http://www.forth200x.org/n-to-r.html">Forth 200x</a>.</li>
+<li>core: Redesign of Interrupt Handling. ISR Routines are still normal Colon Words and
+can deal with every kind of interupts. There are no lost interupts any longer. Based on
+Ideas from Wojciech (Tracker ID 2781547) and Al (mailling list).</li>
+<li>appl: Fixed a regression in the floating point library due to changes in <strong class="command">number</strong> in post 4.0 releases.
+<strong class="command">&gt;float</strong> can now be used as the main part of a recognizer.</li>
+<li>core: added a compile time option WANT_IGNORECASE to make amforth case-insensitve, disabled by default.</li>
+</ul>
+</div>
+<div class="section" id="release-4-3">
+<h2>1.5.2011: release 4.3<a class="headerlink" href="#release-4-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: <strong class="command">u&gt;</strong> had wrong stack effect in case of true result.</li>
+<li>core: <strong class="command">int-trap</strong> triggers an interrupt from software.</li>
+<li>core: <strong class="command">/user</strong> environment query gives the size of the USER area</li>
+<li>core: <strong class="command">sleep</strong> takes the sleep mode as parameter.</li>
+<li>ex: added timer-interrupt.frt as an example for using interrupts with forth.</li>
+<li>pub: Erich has presented amforth at the Fosdem 2011 <a class="reference external" href="/pr/Fosdem2011-slides-amforth.pdf">Slides</a>
+and <a class="reference external" href="/pr/Fosdem2011-proceedings-amforth.pdf">Proceedings</a> (published with permission). Thanks Erich!</li>
+<li>core: simplified <strong class="command">get/set-order</strong> with a changed eeprom content.</li>
+<li>doc: new user guide version from Karl (for version 4.2).</li>
+<li>core: renamed <strong class="command">e&#64;/e!</strong> to <strong class="command">&#64;e/!e</strong> to comply with the
+memory access wordset from forth200x, same with <strong class="command">i&#64;/i!</strong>.</li>
+<li>core: documentation fixes in many files: <a class="reference internal" href="TG/refcard.html#refcard"><em>Reference Card</em></a>.</li>
+<li>core: re-design of the (outer) interpreter using recognizers (dynamically extend the interpeter to
+deal with new semantics. Defined <strong class="command">get/set-recognizer</strong> similiar to <strong class="command">get/set-order</strong>.</li>
+</ul>
+</div>
+<div class="section" id="release-4-2">
+<h2>19.9.2010: release 4.2<a class="headerlink" href="#release-4-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: fixed a regression for <strong class="command">i!</strong> which made <strong class="command">marker</strong> useless
+(among other oddities). Thanks to Marcin for the fix</li>
+<li>core: currently defined colon words are invisible until the final ;.</li>
+<li>applications: Leon contributed a IEEE754 floating point library in plain
+forth, Pito translated some basic words into assembly for speed.</li>
+</ul>
+</div>
+<div class="section" id="release-4-1">
+<h2>2.9.2010: release 4.1<a class="headerlink" href="#release-4-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: new words <strong class="command">2&gt;r</strong>, <strong class="command">2r&gt;</strong> and <strong class="command">2literal</strong>.</li>
+<li>core: converted most of the atmega part definition files with the pd2amforth utility.
+Please report any success / failure.</li>
+<li>doc: set the fuses to make the bootloader size as large as the NRWW size.</li>
+<li>core: abort assembling if flash usage is above limits.</li>
+<li>core: allow double cell numbers in colon definitions. Thanks to Pito for reporting the bug.</li>
+</ul>
+</div>
+<div class="section" id="release-4-0">
+<h2>1.7.2010: release 4.0<a class="headerlink" href="#release-4-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>tools: amforth-upload.py optionally loads a device specific module and replaces
+register definitions with their values prior to sent the code to the controller.
+The device modules are auto-generated from the part description files.</li>
+<li>core: ANS94 mention that HERE points to the data (RAM) region. Re-introduced DP
+as the dictionary (Flash) pointer. <strong class="command">HEAP</strong> is gone. Migrate old HEAP to
+HERE and old HERE to DP.</li>
+<li>core: save and clear the initial value of the MCU Status Register at address 10.</li>
+<li>tools: pd2amforth is now capable to generate the device definition files. It is no
+longer necessary to edit them manually.</li>
+<li>core: finally separated the terminal IO settings from the device definition files.</li>
+<li>core: optionally set <tt class="docutils literal"><span class="pre">WANT_SPI</span></tt> (or any other IO Module) to include the register
+definion names at build time.</li>
+<li>core: massivly restructured the <tt class="file docutils literal"><span class="pre">devices/</span></tt> filesystem entry. Change your application
+files to include <tt class="file docutils literal"><span class="pre">device.asm</span></tt> instead of the device name. Set the include directory
+to the proper subdirectory under <tt class="file docutils literal"><span class="pre">core/devices</span></tt> as well.</li>
+<li>core: dynamically calculate the free space. Do not use all of it however, the data stack may grow.</li>
+</ul>
+<div class="highlight-forth"><div class="highlight"><pre><span class="s">s&quot;</span> <span class="s">/pad</span><span class="nf">&quot;</span> <span class="k">environment?</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>core: Simplified the Pictured Numeric Output words. They now use the memory area below
+<strong class="command">pad</strong> (which is 100 bytes above HEAP) as the buffer region.</li>
+<li>appl: added the arduino board with some example codes. Currently with the
+Mega (Atmega1280), Duemilanove (Atmega328) and Sanguino (Atmega644p) controller types.</li>
+</ul>
+</div>
+<div class="section" id="release-3-9">
+<h2>25.5.2010: release 3.9<a class="headerlink" href="#release-3-9" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>web: updated the Howto page to
+demonstrate <a class="reference internal" href="TG/recipes/Redirect-IO.html#redirect-io"><em>Redirect IO</em></a>.</li>
+<li>core: The Atmega2561 now fully works (incl the compiler).</li>
+<li>core, appl: Andy Kirby donated the device files and a full implemention for
+Arduino Mega with the Atmega1280.</li>
+<li>core: CPU Name, Forthname and Version strings can be accessed as environment queries.</li>
+</ul>
+</div>
+<div class="section" id="release-3-8">
+<h2>25.4.2010: release 3.8<a class="headerlink" href="#release-3-8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: turned <strong class="command">i!</strong> into a deferred word.</li>
+<li>core: fix for <strong class="command">icompare</strong> to make it work with all addr/len strings.
+Bug found and fixed by Michael and Adolf.</li>
+<li>core: re-implemented the <strong class="command">i!</strong> in (mostly) assembly language to ease
+integration into bootloaders.</li>
+<li>core: factor the three prompts into compile time changable words.</li>
+<li>appl: the <tt class="file docutils literal"><span class="pre">dict_minimum.inc</span></tt> und <tt class="file docutils literal"><span class="pre">dict_core.inc</span></tt> files need to be included
+within the application defition files.</li>
+<li>core: <strong class="command">pad</strong> is no longer used by amforth itself.</li>
+<li>core: reorder internal code in <strong class="command">interpret</strong> to get rid of <strong class="command">0=</strong> calls.</li>
+</ul>
+</div>
+<div class="section" id="release-3-7">
+<h2>24.1.2010: release 3.7<a class="headerlink" href="#release-3-7" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: atxmega 128 support (no compiler yet).</li>
+<li>core: new word <strong class="command">&gt;number</strong>. <strong class="command">number</strong> accepts trailing (!)
+dots to enter double cell numbers.</li>
+<li>lib: enhanced multitasker with turnkey support. Thanks to Erich W&amp;auml;lde for
+in depth debugging and testing.</li>
+<li>lib: new word <strong class="command">anew</strong> drops word definitions if already defined, starts
+a new generation.</li>
+<li>core: USER area is now split into system and application user areas, system user
+area is pre-set from EEPROM.</li>
+<li>new: source repository <a class="reference external" href="http://amforth.svn.sourceforge.net/viewvc/amforth/incubator/">Incubator</a>
+for not-yet-ready-but-interesting projects, volunteers welcome.</li>
+</ul>
+</div>
+<div class="section" id="release-3-6">
+<h2>1.10.2009: release 3.6<a class="headerlink" href="#release-3-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: new word <strong class="command">environment</strong>. It provides the environment wordlist identifier,
+thus make it possible to create own environment queries as standard words.</li>
+<li>core: new word <strong class="command">d=</strong>.</li>
+<li>core: amforth runs partially on an atmega2561 and atxmega&#8217;s, there is still no
+working flash store word (<strong class="command">i!</strong>) therefore only the interpreter
+is available yet.</li>
+<li>core: moved the usart init values to appl section.</li>
+<li>core: added a poll-only receive word, selectable at compile
+time. Disable the rx interrupt to use it.</li>
+</ul>
+</div>
+<div class="section" id="release-3-5">
+<h2>1.9.2009: release 3.5<a class="headerlink" href="#release-3-5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: re-structure the usart code, added a non-interrupt based transmit word (TX),
+selectable at compile time.</li>
+<li>lib:  added <strong class="command">xt&gt;nfa</strong> that goes from the XT to the name field address.</li>
+<li>core: bugfix <strong class="command">recurse</strong>.</li>
+<li>core: restructured EEPROM, never depend on fixed
+addresses for system values.</li>
+<li>core: added a <tt class="file docutils literal"><span class="pre">dict_wl.inc</span></tt> file with most
+of the non-core wordlist commands.</li>
+</ul>
+</div>
+<div class="section" id="release-3-4">
+<h2>11.4.2009: release 3.4<a class="headerlink" href="#release-3-4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: renamed the words for the serial terminal to be more generic since they can
+deal with any serial port, not only the first one.</li>
+<li>lib: dropped <strong class="command">forget</strong> since it cannot work with multiple wordlists, fixed
+<strong class="command">marker</strong>.</li>
+<li>core: changed again <strong class="command">digit?</strong> stack effect (and fixed a little bug).</li>
+<li>core: <strong class="command">number</strong> honors a leading &amp;, $ or % sign to temporarily switch to DECIMAL,
+HEX or BIN base resp. Thanks to Michael Kalus for factoring the code.</li>
+</ul>
+</div>
+<div class="section" id="release-3-3">
+<h2>22.2.2009: release 3.3<a class="headerlink" href="#release-3-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: faster <strong class="command">noop</strong>.</li>
+<li>added ANS94 search order wordlist.</li>
+<li>core: <strong class="command">within</strong> had problems with signed boundaries, literal numbers are processed
+faster (again).</li>
+<li>core: improved <strong class="command">digit?</strong> and <strong class="command">number</strong>. They now
+report errors on invalid characters at the wrong position.
+The following strings are no longer valid numbers: &#8211;1 or 0&#64; (in base hex).</li>
+<li>core: <strong class="command">-1 spaces</strong> now prints nothing, Fix from Lothar Schmidt.</li>
+<li>core: <strong class="command">(loop)</strong> (runtime of loop) now checks for equality only, as
+specified in ANS94.</li>
+</ul>
+</div>
+<div class="section" id="release-3-2">
+<h2>10.1.2009: release 3.2<a class="headerlink" href="#release-3-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: bugfix for trailling 0x00 byte during <strong class="command">itype</strong>.</li>
+<li>core: enable use of other usart port than 0.</li>
+<li>pc-host: <a class="reference external" href="http://staton.us/electronics/remote_IO/atmega_bit_whacker.html">Ken Staton</a>
+wrote a nice pc based terminal with upload functionality.</li>
+<li>core: New controllers: ATmega328P and ATmega640.</li>
+<li>core: changed <strong class="command">digit</strong> to <strong class="command">digit?</strong> found in many other forth&#8217;s.</li>
+<li>core: new word <strong class="command">within</strong>.</li>
+<li>core: split application dictionary definition into 2 parts, one for the lower flash, one for the
+upper (NRWW) flash. Both can be empty, but need to exists.</li>
+<li>core: changed some names for internal constants (baudrate -&gt; BAUD) and registers (EEPE vs EEWE).</li>
+<li>core: new directory <tt class="file docutils literal"><span class="pre">drivers/</span></tt> for low level driver functions. Currently only the generic
+ISR and the USART0 interrupt handler.</li>
+</ul>
+</div>
+<div class="section" id="release-3-1">
+<h2>10.11.2008: release 3.1<a class="headerlink" href="#release-3-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: <strong class="command">icompare</strong> now has a similiar stack effect as <strong class="command">compare</strong>.</li>
+<li>core: new word: <strong class="command">environment?</strong>. Supports <strong class="command">/hold</strong> query.</li>
+<li>core: Strings in flash (incl. names in the dictionary)
+contain now 16bit length information, previously only 8 bit.</li>
+</ul>
+</div>
+<div class="section" id="release-3-0">
+<h2>17.10.2008: release 3.0<a class="headerlink" href="#release-3-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: <strong class="command">s&#8221;</strong> new with interpreter semantics.</li>
+</ul>
+<div class="highlight-forth"><div class="highlight"><pre><span class="s">s&quot;</span> <span class="s">hello world</span><span class="nf">&quot;</span> <span class="nf">type`</span>
+</pre></div>
+</div>
+<p>works at the command prompt. The compiled version is</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">hw</span> <span class="s">s&quot;</span> <span class="s">hello world</span><span class="nf">&quot;</span> <span class="no">itype </span><span class="k">;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>core: Placement of Stacks is now an application setting. See example apps.</li>
+<li>core: added VM register A and B. See
+<a class="reference external" href="http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf">Stephen Pelc&#8217; Slides</a>
+for details. Uses Atmega Register R6:R7, R8:R9 resp.</li>
+<li>core: added <strong class="command">cmove</strong> as a primitve.</li>
+<li>core: <strong class="command">f_cpu</strong> used the old (pre-2.7) stack order for double cell values.</li>
+<li>lib: moved some definitions to more appropriate files.</li>
+</ul>
+</div>
+<div class="section" id="release-2-9">
+<h2>1.8.2008: release 2.9<a class="headerlink" href="#release-2-9" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: <strong class="command">heap</strong>, <strong class="command">here</strong> and <strong class="command">edp</strong> are now VALUEs.
+<strong class="command">dp</strong> is gone (use <strong class="command">here</strong>)</li>
+<li>lib: more VT100 sequences.</li>
+<li>core: The TIB location and size are accessible with the VALUEs <strong class="command">TIB</strong> and <strong class="command">TIBSIZE</strong>.</li>
+<li>core: fixed TIBSIZE default configuration.</li>
+<li>lib: created math.frt, contains among others the standard words
+<strong class="command">sm/rem</strong>, <strong class="command">fm/mod</strong>.</li>
+<li>Alexander Guy fixed a bug in <strong class="command">u*/mod</strong>.</li>
+<li>Bernard Mentink adapted Julian Noble&#8217;s Finite State Machine code.</li>
+<li>applications: Lubos Pekny designed a smart computer with a 4line character LCD and a PS/2 keyboard.
+Details are in the <a class="reference external" href="http://amforth.svn.sourceforge.net/viewvc/amforth/applications">Application Repository</a>,
+a video is <a class="reference external" href="http://www.forth.cz/Download/App/LCD+KbdPS2.avi">available</a> as well.</li>
+</ul>
+</div>
+<div class="section" id="release-2-8">
+<h2>27.6.2008: release 2.8<a class="headerlink" href="#release-2-8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: Lubos Pekny found that <strong class="command">-jtag</strong> sometimes used the wrong mcu register.</li>
+<li>core: Bernard Mentink wrote a Atmega128 device file, Thanks alot.</li>
+<li>core: Atmega88 &amp; Atmega168 work too.</li>
+<li>core: Fixed regression for atmega128.</li>
+<li>core: Moved serial interface words to application dictionary (not every amforth installation
+may have a serial terminal).</li>
+<li>library: Updated assembler from Lubos Pekny.</li>
+<li>examples: sieve benchmark, optimized for 1K RAM.</li>
+</ul>
+</div>
+<div class="section" id="release-2-7">
+<h2>5.4.2007: release 2.7<a class="headerlink" href="#release-2-7" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core, lib and sample applications are now in one package.</li>
+<li>restructured repository layout. Now the trunk has most of the sources.</li>
+<li>core: re-arranged the register mapping.</li>
+<li>core: <strong class="command">m*</strong> was in fact <strong class="command">um*</strong>.</li>
+<li>core: double cell numbers changed stack order: TOS is now the
+most significant cell.</li>
+<li>library: new: assembler written by Lubos Pekny,
+<a class="reference external" href="http://www.forth.cz">www.forth.cz</a>. Thank you!</li>
+<li>examples: PWM example from Bruce Wolk. TWI/I2C EEPROM access</li>
+</ul>
+</div>
+<div class="section" id="release-2-6">
+<h2>27.1.2008: release 2.6<a class="headerlink" href="#release-2-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>core: new defining words <strong class="command">code</strong> and <strong class="command">end-code</strong>. <strong class="command">code</strong> starts a new dictionary header
+with the XT set to the data field. The 2nd one appends the <strong class="command">jmp NEXT</strong> call into the dictionary.</li>
+<li>core: removed the pre-assembled <strong class="command">case</strong> / <strong class="command">endcase</strong> words. Added them as forth
+library.</li>
+<li>core: new words <strong class="command">-jtag</strong> (turns off JTAG at runtime) and <strong class="command">-wdt</strong> (turns off
+watch dog timer at runtime. They need to be implemented as primitives due to timing requirements.</li>
+<li>core: <strong class="command">quit</strong>: Keep <strong class="command">base</strong> when handling an exception.</li>
+<li>library: TWI/I2C EEPROM Support.</li>
+</ul>
+</div>
+<div class="section" id="release-2-5">
+<h2>6.12.2007: release 2.5<a class="headerlink" href="#release-2-5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Bug: <strong class="command">hex 8000 .</strong> froze the controller. Now it prints -8000.
+Thanks to Lubos for the hint.</li>
+<li>Moved init of <strong class="command">base</strong> from <strong class="command">quit</strong> to <strong class="command">cold</strong>. <strong class="command">turnkey</strong> be
+used to change it permanently. Thanks to Lubos for the hint.</li>
+<li>nice looking dumper words for RAM/EEPROM/FLASH, dropped idump.asm.</li>
+<li>Extended Upload utility (<tt class="file docutils literal"><span class="pre">tools/amforth-upload.py</span></tt>) from piix:
+include files using following syntax:</li>
+</ul>
+<div class="highlight-none"><div class="highlight"><pre>\ demo file
+#include ans94/marker.frt
+marker empty
+</pre></div>
+</div>
+<ul class="simple">
+<li>usart transmit (<strong class="command">tx0</strong>) made more robust.</li>
+<li>User Area restructured for the new multitasker.</li>
+<li>added documentation: Karl&#8217;s <a class="reference internal" href="UG/amforth_user.html#user-guide"><em>User&#8217;s Manual</em></a>
+and a <a class="reference internal" href="TG/TG.html#technical-guide"><em>Technical Guide</em></a>.</li>
+</ul>
+</div>
+<div class="section" id="release-2-4">
+<h2>11.10.2007: release 2.4<a class="headerlink" href="#release-2-4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added AT90CAN128. Other Atmega128 style controllers should work too.</li>
+<li>lot of fine tuning.</li>
+<li>dropped the assembler device init portion.</li>
+<li>New file: <tt class="file docutils literal"><span class="pre">dict_compiler.inc</span></tt>. Without these words the forth system is (more or less) a
+pure interactive system without extensibility.</li>
+<li>new words <strong class="command">[char]</strong>, <strong class="command">fill</strong>.</li>
+<li>re-arranged usart code. fixed bug when usart baud rate calculation leads to values greater 255.</li>
+<li>renamed <strong class="command">/int</strong> to <strong class="command">-int</strong> and <strong class="command">int</strong> to <strong class="command">+int</strong>, it&#8217;s more fortish ;=)</li>
+</ul>
+</div>
+<div class="section" id="release-2-3">
+<h2>29.7.2007: release 2.3<a class="headerlink" href="#release-2-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>new words <strong class="command">spaces</strong> and <strong class="command">place</strong>.</li>
+<li>Improved <strong class="command">i!</strong>.</li>
+<li>bugfixing runtime parts of <strong class="command">do</strong>/<strong class="command">loop</strong> and co.</li>
+<li>re-coded <strong class="command">find</strong> and <strong class="command">icompare</strong> for better readability.</li>
+<li>eliminated code duplets in some primitives.</li>
+<li>moved usart init from <strong class="command">cold</strong> to application specific turn key action. Added
+error checking in receive module.</li>
+</ul>
+</div>
+<div class="section" id="release-2-2">
+<h2>17.6.2007: release 2.2<a class="headerlink" href="#release-2-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>new download section: application</li>
+<li>optional dictionary is now part of the application, therefore renamed to dict_appl.</li>
+<li>new words: <strong class="command">leave</strong> and <strong class="command">?do</strong>.</li>
+</ul>
+</div>
+<div class="section" id="release-2-1">
+<h2>22.5.2007 release 2.1<a class="headerlink" href="#release-2-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>changed stack effect for <strong class="command">#</strong> to ansi (from single cell value to double cell). Double cell values do not work (yet).</li>
+<li>introduced <strong class="command">deferred</strong> words instead of tick-variables. Works for EEPROM based vectors (turnkey),
+RAM based (<strong class="command">pause</strong>) and User based (<strong class="command">emit</strong> etc) vectors.</li>
+<li>new words: <strong class="command">wdr</strong> (Watchdog reset), <strong class="command">d&gt;</strong> and <strong class="command">d&lt;</strong> (double cell compare).</li>
+</ul>
+</div>
+<div class="section" id="release-2-0">
+<h2>2.5.2007 release 2.0<a class="headerlink" href="#release-2-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>internal restructure of targets.</li>
+<li>new words: <strong class="command">u&gt;</strong> and <strong class="command">u&lt;</strong>.</li>
+<li>bugfixing interrupts.</li>
+<li>new word: <strong class="command">log2</strong> logarithm to base 2, or the number of the highest 1 bit.</li>
+<li>fixed wrong addresses for usart-io (esp. butterfly)</li>
+</ul>
+</div>
+<div class="section" id="release-1-9">
+<h2>25.4.2007 release 1.9<a class="headerlink" href="#release-1-9" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>renamed <tt class="file docutils literal"><span class="pre">dict_low.asm</span></tt> to <tt class="file docutils literal"><span class="pre">dict_minimal.asm</span></tt>.</li>
+<li>new word <strong class="command">parse</strong> ( c &#8211; addr len) parses <strong class="command">source</strong> for char delimited strings.</li>
+<li>new word <strong class="command">sleep</strong> ( &#8211; ) puts the controller into (previously defined) sleep mode.</li>
+<li>new words <strong class="command">s&#8221;</strong> ( &#8211; addr len) parses TIB for &#8221; character and compiles it into flash,
+<strong class="command">s,</strong> ( addr len &#8211; ) does the real copying of the string into flash at <strong class="command">here</strong> together with
+the invisible word <strong class="command">(sliteral)</strong> (&#8211; flash-addr len).</li>
+<li>bugfix: <strong class="command">f_cpu</strong> had wrong word order. Use <strong class="command">swap</strong> as a temporary work around.`</li>
+<li>re-wrote initialisation of usart0 ( baud &#8211; ) to forth code. Startup speed is taken from (eeprom) VALUE <strong class="command">baud0</strong>.</li>
+</ul>
+</div>
+<div class="section" id="release-1-8">
+<h2>10.4.2007 release 1.8<a class="headerlink" href="#release-1-8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>interrupt handling redesigned. Now every interrupt (except those for usart0) can be used.
+<strong class="command">intcounter</strong> is gone. New words are <strong class="command">int&#64;</strong>, <strong class="command">int!</strong> and <strong class="command">#int</strong>.</li>
+<li>double and mixed cell arithmetics.`</li>
+<li>bugfix: proper initialization of data stack pointer. Thanks to Maciej Witkowiak.</li>
+<li>move TOS into register pair.</li>
+</ul>
+</div>
+<div class="section" id="release-1-7">
+<h2>3.4.2007 release 1.7<a class="headerlink" href="#release-1-7" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>new word: <strong class="command">f_cpu</strong> sets a double cell value with the cpu clock rate.</li>
+<li><strong class="command">hld</strong> is now at <strong class="command">pad</strong> to save RAM.</li>
+<li><strong class="command">pad</strong> did return some compile-time stochastic value`</li>
+<li>lots of internal changes.</li>
+<li>optional dictionary: <strong class="command">d-</strong>, <strong class="command">d+</strong>, <strong class="command">s&gt;d</strong> and <strong class="command">d&gt;s</strong>.</li>
+</ul>
+</div>
+<div class="section" id="release-1-6">
+<h2>25.3.2007 release 1.6<a class="headerlink" href="#release-1-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>split <tt class="file docutils literal"><span class="pre">blocks/ans.frt</span></tt> into pieces.</li>
+<li><strong class="command">sign</strong> no longer inserts a space for non-negative values.</li>
+<li>new word: <strong class="command">/key</strong>. It is vectorized via
+<strong class="command">&#8216;/key</strong> and gets called by <strong class="command">accept</strong>
+to signal the sender to stop transmission.
+See <tt class="file docutils literal"><span class="pre">blocks/xonxoff.frt</span></tt> for example usage.</li>
+<li>replaces <strong class="command">up</strong> with <strong class="command">up&#64;</strong> and <strong class="command">up!</strong>.</li>
+<li>new word: <strong class="command">j</strong> ( &#8211; n).</li>
+<li>new word: <strong class="command">?execute</strong> ( xt|0 &#8211; ) if non-zero execute the XT.</li>
+<li>The Atmega644 works fine :=) but needs the Atmel assembler (see <a class="reference internal" href="faq.html#faq"><em>FAQ</em></a>) :=(</li>
+<li>Bugfix: <strong class="command">+!</strong> did a <strong class="command">+</strong> only.</li>
+<li>Bugfix: too many spaces in <strong class="command">.</strong> (dot).</li>
+<li>give user variables <strong class="command">rp</strong> and <strong class="command">sp</strong> a name.</li>
+</ul>
+</div>
+<div class="section" id="release-1-5">
+<h2>14.3.2007 release 1.5<a class="headerlink" href="#release-1-5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>changed: <strong class="command">itype</strong> and (new) <strong class="command">icount</strong> refactored by Michael Kalus. These words now have similiar
+stack effects as there RAM counterparts.</li>
+<li>changed: <strong class="command">.</strong> now operates on signed values.</li>
+<li>new word: <strong class="command">u/mod</strong> is basically the former <strong class="command">/mod</strong>.</li>
+<li>new word: <strong class="command">u.</strong> to display unsigned values.</li>
+<li>fixed bug in <strong class="command">/mod</strong> for values less -FF (hex).</li>
+<li><strong class="command">create</strong> left the address of the XT insted of the PFA. Fixed.</li>
+<li>deleted word: <strong class="command">idump</strong>. It is now in the file <tt class="file docutils literal"><span class="pre">blocks/misc.frt</span></tt>.</li>
+<li>new word: <strong class="command">:noname</strong> ( &#8211; xt) creates headerless entry in the dictionary.</li>
+<li>new word: <strong class="command">cold</strong> as main entry point. It executes the turnkey action.
+<strong class="command">abort</strong> &amp; co do not trigger the turnkey action.</li>
+</ul>
+</div>
+<div class="section" id="release-1-4">
+<h2>5.3.2007 release 1.4<a class="headerlink" href="#release-1-4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">pad</strong> is now in the unsed (according to <strong class="command">heap</strong>) ram. That may help <strong class="command">word</strong> to store longer strings.</li>
+<li>new word: <strong class="command">unused</strong> ( &#8211; n) gives the number of unused flash cells in the dictionary.</li>
+<li><strong class="command">/mod</strong> (and <strong class="command">/</strong> and <strong class="command">mod</strong>) now honor signed numbers, division is symmetric.</li>
+<li>new word: <strong class="command">abort&#8221;</strong></li>
+<li><strong class="command">quit</strong> now aborts on every catched exception.</li>
+<li><strong class="command">quit</strong> no longer prints anything, <strong class="command">ver</strong> is now a turnkey action.</li>
+<li>new optional dictionary, included at compiletime. Contains now <strong class="command">case</strong> &amp;amp; Co and some <strong class="command">d-</strong> words for
+double cell arithmetics.</li>
+</ul>
+</div>
+<div class="section" id="release-1-3">
+<h2>24.2.2007 release 1.3<a class="headerlink" href="#release-1-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>bug: <strong class="command">digit</strong> did not work properly</li>
+<li>bug: <strong class="command">&lt;</strong>: equal is not less</li>
+<li>interrupts are processed faster</li>
+<li>Interrupt counter are now only 1 byte long (access with <strong class="command">c&#64;</strong>)</li>
+<li>change: <strong class="command">allot</strong> works now for ram not for flash</li>
+<li>added/corrected stack comments</li>
+<li>bug: <strong class="command">create</strong> leaves flash address insted of first cell content</li>
+<li>change: <strong class="command">.s</strong> nicer for empty stack</li>
+<li>internal: <strong class="command">i!</strong> internally completly turns off interrupts</li>
+<li>bug: <strong class="command">abort</strong> now works again, error was in <strong class="command">quit</strong></li>
+<li>bug: <strong class="command">while</strong> and <strong class="command">repeat</strong> changed stack effects</li>
+<li>bug: <strong class="command">r&#64;</strong> now works correctly</li>
+<li>new word: <strong class="command">immediate</strong></li>
+<li>removed words: <strong class="command">forget</strong>, <strong class="command">postpone</strong> (these and many more are now in the <strong class="command">blocks/ans.frt</strong> library)</li>
+<li>bug: if <strong class="command">&#8216;</strong> (tick) does not find the word, it now throws the exception -13
+Many thanks to Ulrich Hoffmann for providing feedback and corrections!</li>
+</ul>
+</div>
+<div class="section" id="release-1-2">
+<h2>3.2.2007 release 1.2<a class="headerlink" href="#release-1-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>anyone missed <strong class="command">emit?</strong>?.</li>
+<li>increased user area to 24 bytes (12 cells). Fixed a overlap between <strong class="command">handler</strong>
+and <strong class="command">emit</strong> ff.</li>
+<li>AVR <a class="reference internal" href="TG/recipes/AVR-Butterfly.html#avr-butterfly"><em>AVR Butterfly</em></a>  works (again). Many thanks to the
+<a class="reference external" href="http://www.forth-ev.de/">German FIG</a> for donating one.</li>
+<li>internal changes for multitarget development (for the AREXX asuro minirobot).</li>
+</ul>
+</div>
+<div class="section" id="release-1-1">
+<h2>20.1.2007 release 1.1<a class="headerlink" href="#release-1-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong class="command">emit</strong>, <strong class="command">key</strong> and <strong class="command">key?</strong> are now vectored via <strong class="command">user</strong> based
+variables.</li>
+<li><strong class="command">forget</strong> frees most of the flash space too</li>
+<li>internal go back for <strong class="command">i!</strong> to previous code</li>
+<li>Code for Atmega8 was broken due to nrww flash overflow (found by Milan Horkel)</li>
+<li>Bugfix: backspace key in <strong class="command">accept</strong> now stops at beginning of line (found by Milan Horkel)</li>
+</ul>
+</div>
+<div class="section" id="release-1-0">
+<h2>4.1.2007 release 1.0<a class="headerlink" href="#release-1-0" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>new immediate word: <strong class="command">[&#8216;]</strong></li>
+<li>new word <strong class="command">user</strong> defines user variables</li>
+<li>new controller: atmega169 (Atmel Butterfly)</li>
+<li>renamed <strong class="command">eheap</strong> to <strong class="command">edp</strong>.</li>
+</ul>
+</div>
+<div class="section" id="release-0-9">
+<h2>17.12.2006 release 0.9<a class="headerlink" href="#release-0-9" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>interrupts in high level forth colon words (INT0 and INT1 for now).</li>
+<li>new word: <strong class="command">noop</strong> a colon word for doing nothing.</li>
+<li><strong class="command">number</strong> respects minus sign</li>
+<li>changed <strong class="command">turnkey</strong> into <strong class="command">&#8216;turnkey</strong>. The &amp;quot;turn-off&amp;quot; value
+is now 0 (zero)</li>
+<li>new words: <strong class="command">pause</strong> and <strong class="command">&#8216;pause</strong>. <strong class="command">pause</strong> will execute
+the XT stored in <strong class="command">&#8216;pause</strong> (a RAM cell) when non zero</li>
+<li><strong class="command">handler</strong> (used by <strong class="command">cactch</strong> and <strong class="command">throw</strong>) is a USER variable.</li>
+</ul>
+</div>
+<div class="section" id="release-0-8">
+<h2>7.12.2006 release 0.8<a class="headerlink" href="#release-0-8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>new words: <strong class="command">create</strong>, <strong class="command">does&gt;</strong>, <strong class="command">up</strong>, <strong class="command">0</strong></li>
+<li>Support for user variable, turned <strong class="command">base</strong>, <strong class="command">rp0</strong> and <strong class="command">sp0</strong> into user variables</li>
+<li>words like <strong class="command">(do)</strong> which should not by called by user
+are now invisible to save nrww flash space</li>
+<li>bugfix for negative increment for <strong class="command">+loop</strong>.</li>
+</ul>
+</div>
+<div class="section" id="release-0-7">
+<h2>24.11.2006 release 0.7<a class="headerlink" href="#release-0-7" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>new word: <strong class="command">turnkey</strong>: executed whenever <strong class="command">quit</strong> starts.</li>
+<li>numbers may contain lower case characters (if <strong class="command">base</strong> permits)</li>
+<li>bugfixing <strong class="command">case</strong> &amp; co.</li>
+<li><strong class="command">number</strong> emits -13 if an invalid character is found</li>
+<li>renamed <strong class="command">vheader</strong> to <strong class="command">(create)</strong></li>
+<li><strong class="command">abort</strong> re-initializes both stacks</li>
+<li>made backslash <strong class="command">\</strong> immediate</li>
+</ul>
+</div>
+<div class="section" id="release-0-6">
+<h2>20.11.2006 release 0.6<a class="headerlink" href="#release-0-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>backspace now works in <strong class="command">accept</strong></li>
+<li><strong class="command">depth</strong> based on <strong class="command">sp0</strong>/<strong class="command">sp&#64;</strong></li>
+<li>&#8220;unused&#8221; control characters are treated as spaces</li>
+<li>bugfixes for <strong class="command">(loop)</strong> and <strong class="command">(+lopp)</strong>.</li>
+<li>New words: <strong class="command">1ms</strong> busy waits 1 millisecond</li>
+</ul>
+</div>
+<div class="section" id="release-0-5">
+<h2>13.11.2006 release 0.5<a class="headerlink" href="#release-0-5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>definition files for varios atmega types</li>
+<li>core wordlist should be complete</li>
+<li>internal cleanups and bugfixes</li>
+</ul>
+</div>
+<div class="section" id="release-0-4">
+<h2>5.11.2006 release 0.4<a class="headerlink" href="#release-0-4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>start using <strong class="command">catch</strong>/<strong class="command">throw</strong></li>
+<li>Atmega8 works fine</li>
+<li>few new words (<strong class="command">case</strong>, comments)</li>
+<li>nicer prompt</li>
+</ul>
+</div>
+<div class="section" id="release-0-3">
+<h2>31.10.2006 release 0.3<a class="headerlink" href="#release-0-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>New website</li>
+<li>Atmega16 works fine</li>
+<li>Bugfixing, true flag always 0xffff</li>
+</ul>
+</div>
+<div class="section" id="release-0-2">
+<h2>27.10.2006 release 0.2<a class="headerlink" href="#release-0-2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Compiler works</li>
+<li>Many new wrds</li>
+</ul>
+</div>
+<div class="section" id="release-0-1">
+<h2>16.10.2006 release 0.1<a class="headerlink" href="#release-0-1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>first public release</li>
+<li>interpreter over serial terminal</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG/TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG/Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG/refcard.html">Reference Card</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="_sources/history.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

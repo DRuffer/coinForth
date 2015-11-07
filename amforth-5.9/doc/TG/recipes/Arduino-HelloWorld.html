@@ -1,0 +1,276 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Arduino Hello World &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Popular Boards" href="Boards.html" />
+    <link rel="next" title="Arduino Analog" href="Arduino-Analog.html" />
+    <link rel="prev" title="Popular Boards" href="Boards.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="arduino-hello-world">
+<span id="ardiuno-helloworld"></span><h1>Arduino Hello World<a class="headerlink" href="#arduino-hello-world" title="Permalink to this headline">¶</a></h1>
+<p>The example demonstrates a blinking LED. Most arduino&#8217;s have one
+attached to the port Digital-13. For this recipe, the amforth system
+is already loaded onto the ardiuno. Instructions to do it are in the
+<a class="reference internal" href="../../UG/amforth_user.html#user-guide"><em>User&#8217;s Manual</em></a>.</p>
+<p>To quickly test the hardware start a terminal (e.g. screen /dev/ttyACM0 38400)
+and enter the following commands:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mh">$80</span> <span class="mh">$24</span> <span class="k">c!</span>
+<span class="k">&gt; </span><span class="mh">$80</span> <span class="mh">$25</span> <span class="k">c!</span>
+<span class="k">&gt; </span><span class="mh">$00</span> <span class="mh">$25</span> <span class="k">c!</span>
+</pre></div>
+</div>
+<p>The LED turned on until the last command is executed. The character
+<strong class="command">&gt;</strong> is the command prompt, if you see it, you can enter
+any commands. You&#8217;ll never enter that character yourselves. A
+command line can be up to 80 characters long.</p>
+<p>The commands above are pretty obscure. To make them easier to
+understand we define labels for some numbers, so called
+constants:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mh">$25</span> <span class="kn">constant</span> <span class="nc">PORTB</span>
+<span class="k">&gt; </span><span class="mh">$24</span> <span class="kn">constant</span> <span class="nc">DDRB</span>
+</pre></div>
+</div>
+<p>The arduino uses its own numbering schema for pins, but
+for now we use the atmega one: digial-13 is the same as
+bit 7 of port B. Port B has 8 pins and three registers to
+configure them. we need two of them: The Data Direction
+Register (DDR) and the PORT (Output) Register. The third
+register is used for reading from the port (PIN).</p>
+<p>The above commands can now be written as</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mh">$80</span> <span class="nf">DDRB</span> <span class="k">c!</span>
+<span class="k">&gt; </span><span class="mh">$80</span> <span class="nf">PORTB</span> <span class="k">c!</span>
+<span class="k">&gt; </span><span class="mh">$00</span> <span class="nf">PORTB</span> <span class="k">c!</span>
+</pre></div>
+</div>
+<p>Technically the same but easier to read.</p>
+<p>Next we do not want to enter all commands interactively. Forth
+has the reputation of an extendible command set.</p>
+<p>Good forth coding style means to have many small words which do exactly
+one thing. Most forth commands are built with only a handful other commands.</p>
+<p>The first command in this example sets up the Data Direction Register DDR
+to configire the LED Port as an output pin. In arduino sketch it would be:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+   <span class="n">pinMode</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The same in Forth is:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="kn">:</span> <span class="nc">led-init</span>  <span class="mh">$80</span> <span class="nf">DDRB</span> <span class="k">c! ;</span>
+ <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>With this command line the interpreter learns a new command:
+<strong class="command">led-init</strong>. This command can be called immediately.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="nf">led-init</span>
+ <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>It writes the number 128 (hex 80) to the register DDRB (hex 24)
+as defined above. This makes the 7th bit of PORTB an Output pin.</p>
+<p>Calling our newly defined word does not change anything
+visible. But with the next word, the LED will turn on:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">led-on</span> <span class="mh">$80</span> <span class="nf">PORTB</span> <span class="k">c! ;</span>
+</pre></div>
+</div>
+<p>Here the 7th bit will be set to 1, and that makes the led to be connected
+to VCC (5V) and it will turn on (the LED is connected to ground already).</p>
+<p>If the led-on command does not turn on the LED just call the
+<strong class="command">led-init</strong> command (again). The led-init is needed after an reset
+or power cycle as well.</p>
+<p>Now that the led is active, we want a command to turn it off. One solution
+is to repeat the command from above: <strong class="command">0 PORTB c!</strong>. Smarter is a
+new command word:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">led-off</span>  <span class="mi">0</span> <span class="nf">PORTB</span> <span class="k">c! ;</span>
+</pre></div>
+</div>
+<p>You can now use the newly defined commands to turn the led on and off:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> led-on led-off led-on led-off
+<span class="go"> ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+<p>Since there is no timing yet, you may not even see the led flash, amforth is
+pretty fast.</p>
+<p>Our next word will simplify this and gives the real blink experience:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">led-blink</span> <span class="nf">led-on</span> <span class="mi">500</span> <span class="k">ms </span><span class="nf">led-off</span> <span class="mi">500</span> <span class="k">ms ;</span>
+</pre></div>
+</div>
+<p>Calling this command will turn on the led, waits for half a second, turn it
+off again and waits another half a second before returning to the command
+prompt.</p>
+<p>With this command you can blink the led a few times</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> led-blink led-blink led-blink
+<span class="go"> ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+<p>The led will blink for a 3 seconds before the ok and returning to
+the command prompt.</p>
+<p>To make it blink &#8220;forever&#8221;, we define another command word:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">blink-forever</span>
+  <span class="s">.&quot;</span> <span class="s">press any key to stop </span><span class="nf">&quot;</span>
+  <span class="k">begin</span>
+     <span class="nf">led-blink</span>
+     <span class="k">key?</span>
+  <span class="k">until</span>
+  <span class="k">key drop</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>Since this is our first command which needs more than 1 line, the
+interpreter acts more complex. It changes the command prompt until
+the end of the command definition is reached (the command <tt class="docutils literal"><span class="pre">;</span></tt>)
+The ouput in the terminal window looks like</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> : blink-forever
+<span class="go"> ok.&quot; press any key to stop&quot;</span>
+<span class="go"> okbegin</span>
+<span class="go"> ok led-blink</span>
+<span class="go"> ok key?</span>
+<span class="go"> okuntil</span>
+<span class="go"> okkey drop</span>
+<span class="go"> ok;</span>
+<span class="go"> ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+<p>This word first prints some text (&#8220;press any key to stop&#8221;) and starts a loop.
+This loop lets the led blink once and checks for a keystroke. If no key
+is pressed, the loops is repeated. If a key is pressed, the loop is
+terminated. The last two commands are housekeeping: get the key pressed
+and forget it. Otherwise the key pressed would be the first character
+of the next command line.</p>
+<p>The advantage of defining many words is that you can test them immediately.
+Thus any further code can rely on words already being tested. That
+makes debugging a lot easier. The drawback of that many words? You need
+to remember their names.</p>
+<div class="section" id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Permalink to this headline">¶</a></h2>
+<p>This example is very basic. Next steps may involve library code
+like <a class="reference internal" href="Digital-Ports.html#digital-ports"><em>Digital Ports</em></a>. Related to it are the <a class="reference internal" href="Upload.html#upload"><em>Use of the amforth-shell.py utility</em></a> for
+files with forth code.</p>
+<p>More Arduino related stuff is in <a class="reference internal" href="Arduino-Analog.html#arduino-analog"><em>Arduino Analog</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Arduino-HelloWorld.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

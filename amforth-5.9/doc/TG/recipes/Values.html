@@ -1,0 +1,308 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Values &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Programming and Debugging" href="Programming.html" />
+    <link rel="next" title="Walking Wordlists" href="WalkingWordlists.html" />
+    <link rel="prev" title="Unbreakable AmForth" href="Unbreakable.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="values">
+<span id="id1"></span><h1>Values<a class="headerlink" href="#values" title="Permalink to this headline">¶</a></h1>
+<p>The standard VALUE gives access to memory content like a variable
+does. The difference between these two is that a value gives a actual
+data whereas a variable leaves the address of the data on the stack.
+The place, where a value stores the data is usually not known. There
+is only one way to change it: use of <strong class="command">TO</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mi">42</span> <span class="kn">Evalue</span> <span class="nc">answer</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">answer</span> <span class="k">.</span>
+ <span class="mi">42</span> <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="mi">4711</span> <span class="k">to </span><span class="nf">answer</span>
+  <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">answer</span> <span class="k">.</span>
+  <span class="mi">4711</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>This resembles the intended usage pattern for EEPROM: Write
+seldom, read often.</p>
+<p>The forth standard defines a few value types: <strong class="command">2VALUE</strong> for
+double cell data, <strong class="command">FVALUE</strong> for floating point numbers and
+the single cell sized <strong class="command">VALUE</strong> itself.  They all use the same
+<strong class="command">TO</strong> command to change their content. This requires
+a non-trivial implementation to achieve it. Amforth uses a simple data
+structure for each value in the dictionary (flash), almost identical to the
+one used by <strong class="command">defer</strong>. The first element contains
+the address of the actual data. This first field is followed by 2 execution
+tokens (XT) for the read and write operations. This makes the runtime operations
+fairly easy. The read operation (the 2nd element in the data structure) is
+called with the address of the 1st element. It is expected that the read
+operation leaves the data on the data stack. Similiar the write operation.
+The <strong class="command">TO</strong> command simply executes the write execution token (the
+3rd element). The similarities between values and defers goes as far as
+<strong class="command">to</strong> and <strong class="command">is</strong> are in fact identical and can be used with
+both.</p>
+<p>This generic approach allows not only single cell data in EEPROM but
+any data everwhere. The following examples illustrate
+this with an implementation of a value that stores a single
+byte in RAM and a cached version of the standard EEPROM value. They have
+in common that calling their names give the data and applying <strong class="command">TO</strong>
+to them stores new data.</p>
+<div class="section" id="cvalue">
+<h2>cvalue<a class="headerlink" href="#cvalue" title="Permalink to this headline">¶</a></h2>
+<p>Cvalues store a single byte in RAM. The first element in the
+value data structure in the dictionary is the address of the RAM byte.
+The defining word allocates it. Like any other RAM based data its
+content is not preserved over resets and restarts.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ two helper functions, not called directly</span>
+<span class="kn">:</span> <span class="nc">c@v</span> <span class="no">@i </span><span class="k">c@ ;</span>
+<span class="kn">:</span> <span class="nc">c!v</span> <span class="no">@i </span><span class="k">c! ;</span>
+
+<span class="kn">:</span> <span class="nc">cvalue</span> <span class="c1">( n &quot;name&quot; -- )</span>
+  <span class="nf">(value)</span>           <span class="c1">\ create a new wordlist entry</span>
+  <span class="k">here , </span>           <span class="c1">\ the address of the RAM memory</span>
+  <span class="k">[&#39;] </span><span class="nf">c@v</span> <span class="k">, </span>        <span class="c1">\ method for the read operation</span>
+  <span class="k">[&#39;] </span><span class="nf">c!v</span> <span class="k">, </span>        <span class="c1">\ method for the write (TO) operation</span>
+  <span class="k">here c! </span>          <span class="c1">\ initialize the RAM content</span>
+  <span class="mi">1</span> <span class="k">allot </span>          <span class="c1">\ formally allocate the RAM byte</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>Using this new value is straight forward:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mi">42</span> <span class="nf">cvalue</span> <span class="nf">answer</span>
+<span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">answer</span> <span class="k">.</span>
+<span class="mi">42</span> <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="mi">17</span> <span class="k">to </span><span class="nf">answer</span>
+<span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">answer</span> <span class="k">.</span>
+<span class="mi">17</span> <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>After its definition the new size restricted value is used like
+any other value. To read it, simply call its name. To write to it,
+use the TO command. As a bonus, all operations are save against
+overflows:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mh">$dead</span> <span class="k">to </span><span class="nf">answer</span>
+<span class="nf">ok</span>
+<span class="k">&gt; hex </span><span class="nf">answer</span> <span class="k">.</span>
+<span class="nf">AD</span> <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cached-value">
+<h2>cached Value<a class="headerlink" href="#cached-value" title="Permalink to this headline">¶</a></h2>
+<p>A cached value is a value that stores the data in EEPROM but
+tolerates heavy write access by using a RAM cell as a cache.
+This RAM cell gets all write operations. The eeprom is not written
+until an explicit flush is performed. At startup the cache needs
+to be warmed, this is not done automatically.</p>
+<div class="highlight-forth"><div class="highlight"><pre> <span class="c1">\ 2 is a magic number</span>
+ <span class="kn">:</span> <span class="nc">@cache</span> <span class="mi">2</span> <span class="k">+ </span><span class="no">@i </span><span class="k">@ ;</span>
+ <span class="kn">:</span> <span class="nc">!cache</span> <span class="mi">2</span> <span class="k">+ </span><span class="no">@i </span><span class="k">! ;</span>
+
+ <span class="c1">\ cache related words</span>
+ <span class="kn">:</span> <span class="nc">flush-cache</span> <span class="k">1+ dup </span><span class="mi">2</span> <span class="k">+ </span><span class="no">@i </span><span class="k">@ swap </span><span class="no">@i !e </span><span class="k">;</span>
+ <span class="kn">:</span> <span class="nc">warm-cache</span>  <span class="k">1+ dup </span><span class="no">@i @e </span><span class="k">swap </span><span class="mi">2</span> <span class="k">+ </span><span class="no">@i </span><span class="k">! ;</span>
+
+ <span class="kn">:</span> <span class="nc">cache-value</span>
+  <span class="nf">(value)</span>                           <span class="c1">\ create the vocabulary entry</span>
+  <span class="k">dup </span><span class="nf">ehere</span> <span class="k">dup , dup cell+ to </span><span class="nf">ehere</span> <span class="no">!e </span><span class="c1">\ allocate an EEPROM cell.</span>
+  <span class="k">[&#39;] </span><span class="nf">@cache</span> <span class="k">, </span>                     <span class="c1">\ XT for the read method</span>
+  <span class="k">[&#39;] </span><span class="nf">!cache</span> <span class="k">, </span>                     <span class="c1">\ XT for the write methon</span>
+  <span class="k">here </span><span class="mi">2</span> <span class="c1">( 1 cell )</span> <span class="k">allot dup , ! </span>  <span class="c1">\ allocate a RAM cell and initialize it</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>The following example session creates a cached value and
+demonstrates the content of the two memory&#8217;s during normal
+execution.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="nf">ehere</span> <span class="c1">\ keep the eeprom address for later direct access</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="mi">42</span> <span class="nf">cache-value</span> <span class="nf">c-dp</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="mi">17</span> <span class="k">to </span><span class="nf">c-dp</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">c-dp</span> <span class="k">. dup </span><span class="no">@e </span><span class="k">.</span>
+<span class="c1">\ RAM and EEPROM contents are different!</span>
+ <span class="mi">17</span> <span class="mi">42</span> <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">&#39;</span> <span class="nf">c-dp</span> <span class="nf">flush-cache</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">c-dp</span> <span class="k">. dup </span><span class="no">@e </span><span class="k">.</span>
+ <span class="mi">17</span> <span class="mi">17</span> <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>Note that there is a difference in programming style between
+the load/store and the addiional warm/flush operations. The
+latter use a code sequence like</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">&#39;</span> <span class="kn">value</span> <span class="nc">method</span>
+</pre></div>
+</div>
+<p>instead of the standard <tt class="docutils literal"><span class="pre">TO</span></tt> schema</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">method</span> <span class="kn">value</span>
+</pre></div>
+</div>
+<p>Its fairly simple to achieve the <tt class="docutils literal"><span class="pre">TO</span></tt> schema for the other
+commands as well, but since this requires a parsing word
+(which is state smart too) the forth gurus consider this suboptimal.
+A second argument against may be the growing acceptance of
+the OO notation <tt class="docutils literal"><span class="pre">object</span> <span class="pre">method</span></tt> with object beeing kind
+of an address.</p>
+<div class="highlight-forth"><div class="highlight"><pre> <span class="kn">:</span> <span class="nc">flush</span>
+  <span class="nf">&#39;</span> <span class="k">state @ if</span>
+    <span class="k">postpone literal postpone </span><span class="nf">flush-cache</span>
+  <span class="k">else</span>
+    <span class="nf">flush-cache</span>
+  <span class="k">then</span>
+<span class="k">; immediate</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="double-cell-ram-value">
+<span id="id2"></span><h2>Double Cell RAM Value<a class="headerlink" href="#double-cell-ram-value" title="Permalink to this headline">¶</a></h2>
+<p>A very compact implementation (a single short
+word) makes use of <a class="reference internal" href="Quotations.html#quotations"><em>Quotations</em></a>:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ a value in RAM with 2 cells data storage</span>
+<span class="c1">\ requires quotations and 2@/2! from double wordset</span>
+
+<span class="kn">:</span> <span class="nc">2rvalue</span> <span class="c1">( d -- )</span>
+  <span class="nf">(value)</span>
+  <span class="k">here ,</span>
+  <span class="nf">[:</span> <span class="no">@i </span><span class="k">2@ </span><span class="nf">;]</span> <span class="k">,</span>
+  <span class="nf">[:</span> <span class="no">@i </span><span class="k">2! </span><span class="nf">;]</span> <span class="k">,</span>
+  <span class="k">here 2! </span><span class="mi">4</span> <span class="k">allot</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>This value stores a double cell information in RAM. The read and write
+methods are embedded as quotations.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="I2C-Values.html#i2c-values"><em>I2C EEPROM VALUE</em></a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Values.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

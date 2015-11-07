@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectVersion>6.2</ProjectVersion>
+    <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.AVRAssembler</ToolchainName>
     <ProjectGuid>{70477529-dd71-4078-9734-ebb532d9f1a7}</ProjectGuid>
     <avrdeviceseries>none</avrdeviceseries>
@@ -51,6 +51,7 @@
       <ToolNumber>000200185954</ToolNumber>
       <ToolName>AVRISP mkII</ToolName>
     </com_atmel_avrdbg_tool_ispmk2>
+    <ExternalProgrammingToolCommand />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -58,12 +59,14 @@
   <avrasm.assembler.general.GenerateEEPFile>True</avrasm.assembler.general.GenerateEEPFile>
   <avrasm.assembler.general.AdditionalIncludeDirectories>
     <ListValues>
-      <Value>../../amforth-5.8/common</Value>
-      <Value>../../amforth-5.8/avr8</Value>
+      <Value>../../amforth-5.9/common</Value>
+      <Value>../../amforth-5.9/avr8</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.90\avrasm\inc</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.90\avrasm\inc</Value>
     </ListValues>
   </avrasm.assembler.general.AdditionalIncludeDirectories>
   <avrasm.assembler.general.OtherFlags>-v0</avrasm.assembler.general.OtherFlags>
-  <avrasm.assembler.general.IncludeFile>(%24IncludeFile)</avrasm.assembler.general.IncludeFile>
+  <avrasm.assembler.general.IncludeFile>m328pdef.inc</avrasm.assembler.general.IncludeFile>
 </AvrAssembler>
     </ToolchainSettings>
     <OutputType>Executable</OutputType>
@@ -71,8 +74,19 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrAssembler>
-        <avrasm.assembler.general.IncludeFile>(%24IncludeFile)</avrasm.assembler.general.IncludeFile>
-      </AvrAssembler>
+  <avrasm.assembler.general.GenerateEEPFile>True</avrasm.assembler.general.GenerateEEPFile>
+  <avrasm.assembler.general.AdditionalIncludeDirectories>
+    <ListValues>
+      <Value>../../amforth-5.9/common</Value>
+      <Value>../../amforth-5.9/avr8</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.90\avrasm\inc</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.90\avrasm\inc</Value>
+      <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.0.90\avrasm\inc</Value>
+    </ListValues>
+  </avrasm.assembler.general.AdditionalIncludeDirectories>
+  <avrasm.assembler.general.OtherFlags>-v0</avrasm.assembler.general.OtherFlags>
+  <avrasm.assembler.general.IncludeFile>m328pdef.inc</avrasm.assembler.general.IncludeFile>
+</AvrAssembler>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>

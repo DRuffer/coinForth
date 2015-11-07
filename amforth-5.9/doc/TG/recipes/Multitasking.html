@@ -1,0 +1,555 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Multitasking &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="General Code Examples" href="General.html" />
+    <link rel="next" title="Pitfalls" href="Pitfalls.html" />
+    <link rel="prev" title="Defining and using Macros" href="Macros.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="multitasking">
+<span id="id1"></span><h1>Multitasking<a class="headerlink" href="#multitasking" title="Permalink to this headline">¶</a></h1>
+<p>Multitasking is a way to execute separate chunks of program code (tasks) apparently simultaneous on a
+single CPU. Of course, the separate tasks will run one after another. If the CPU can switch between them
+fast enough, separate tasks may appear to execute in parallel.</p>
+<p>Multitasking in amforth is achieved as <em>cooperative multitasking</em> <a class="footnote-reference" href="#id3" id="id2">[1]</a>: In every task the programmer defines
+places, where control is given up, such that the next task can run. The tasks current state is stored in a
+piece of memory called the task control block (TCB). TCBs are organized in a simple, linked list and are
+visited in round–robin fashion.</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>as opposed to preemptive multitasking</td></tr>
+</tbody>
+</table>
+<div class="section" id="what-is-a-task">
+<h2>What is a Task?<a class="headerlink" href="#what-is-a-task" title="Permalink to this headline">¶</a></h2>
+<p>Every task owns a piece of RAM, where it finds a set of runtime information
+(user area) and where it has its own space for the data and return stacks.
+This space is called a <em>task control block (TCB)</em>. Is is referred to
+by the <em>task id</em> or <em>tid</em>, which happens to be the start
+address of the TCB by convention[#]_</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td>Technically the TCB is located in the <em>user</em> area. However,
+the first 6 cells of the user area are used by the system itself
+(see section Multitasker:  The Gory Details)</td></tr>
+</tbody>
+</table>
+<p>The runtime information includes:</p>
+<ul class="simple">
+<li>status, whether the task is <em>awake</em> or <em>sleeping</em></li>
+<li>follower, points to the next task in the list</li>
+<li>where do the stacks start and how many entries are currently on them</li>
+<li>the current value of <strong class="command">base</strong></li>
+<li>pointers to deferred words such as <strong class="command">key</strong>, <strong class="command">emit</strong> and the like</li>
+<li>the content of the stacks is not regarded part of the task control block. They can be located
+anywhere as long as their location is known. They do belong to the task, however.</li>
+</ul>
+<p>Viewed from afar, a task is just a piece of RAM holding a small set of important information.</p>
+</div>
+<div class="section" id="switching-tasks">
+<h2>Switching Tasks<a class="headerlink" href="#switching-tasks" title="Permalink to this headline">¶</a></h2>
+<p>To switch execution from one task to the next, the following things need to happen somehow:</p>
+<ul class="simple">
+<li>store the relevant bits of the current runtime in the task control block (stack pointers, mainly)</li>
+<li>look up the next task’s control block</li>
+<li>switch the userarea-pointer to that control block</li>
+<li>unfold the same bits, which were stored before giving up control, back into the runtime</li>
+<li>resume execution at the next instruction of the new task</li>
+</ul>
+<p>So the problem is mainly an exercise in saving and restoring all relevant information.</p>
+</div>
+<div class="section" id="using-the-multitasker">
+<h2>Using the Multitasker<a class="headerlink" href="#using-the-multitasker" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="problem">
+<h3>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h3>
+<p>Simultaneous execution of several blocks of code (tasks) is desired on a single CPU.</p>
+</div>
+<div class="section" id="solution">
+<h3>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h3>
+<p>Include the file <tt class="file docutils literal"><span class="pre">lib/multitask.frt</span></tt> in your programm, define separate tasks as separate words. The
+start of everything needs a little extra code (see starttasker). This solution is working together with
+turnkey.</p>
+</div>
+<div class="section" id="sample-program">
+<h3>Sample Program<a class="headerlink" href="#sample-program" title="Permalink to this headline">¶</a></h3>
+<p>The following example creates two tasks:</p>
+<ol class="arabic simple">
+<li>the command loop keeps running</li>
+<li>increment a Counter N, write its value to PORTB. The intention is to make connected LEDs blink.</li>
+</ol>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ run_multitask -- tested with amforth-4.7, atmega-32</span>
+
+<span class="mh">$38</span> <span class="kn">constant</span> <span class="nc">PORTB</span>
+<span class="mh">$37</span> <span class="kn">constant</span> <span class="nc">DDRB</span>
+<span class="nf">include</span> <span class="nf">lib/multitask.frt</span>
+<span class="c1">\ load the multitasker</span>
+<span class="kn">:</span> <span class="nc">ms</span> <span class="c1">( n -- )</span> <span class="mi">0</span> <span class="k">?do </span><span class="no">pause </span><span class="mi">1</span><span class="k">ms loop ; </span><span class="c1">\ call pause on wait</span>
+<span class="kn">variable</span> <span class="nc">N</span>
+<span class="kn">:</span> <span class="nc">init</span>
+  <span class="mh">$ff</span> <span class="nf">PORTB</span> <span class="k">c!</span>
+  <span class="c1">\ portB: all pins high</span>
+  <span class="mh">$ff</span> <span class="nf">DDRB</span> <span class="k">c!</span>
+  <span class="c1">\ all pins output</span>
+  <span class="mi">0</span> <span class="nf">N</span> <span class="k">!</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">run-demo</span>
+ <span class="c1">\ --- task 2 ---</span>
+ <span class="k">begin</span>
+   <span class="nf">N</span> <span class="k">@ invert </span><span class="nf">PORTB</span> <span class="k">c!</span>
+   <span class="mi">1</span> <span class="nf">N</span> <span class="nf">+!</span>
+   <span class="mi">&amp;500</span> <span class="k">ms</span>
+ <span class="k">again</span>
+<span class="k">;</span>
+<span class="mh">$20</span> <span class="mh">$20</span> <span class="mi">0</span> <span class="nf">task:</span> <span class="nf">task_demo</span>
+<span class="c1">\ create task, allot tcb + stack space</span>
+<span class="kn">:</span> <span class="nc">start-demo</span>
+  <span class="nf">task_demo</span> <span class="nf">tcb&gt;tid</span> <span class="nf">activate</span>
+  <span class="c1">\ words after this line are run in new task</span>
+  <span class="nf">run-demo</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">starttasker</span>
+  <span class="nf">task_demo</span> <span class="nf">task-init</span>
+  <span class="c1">\ create TCB in RAM</span>
+  <span class="nf">start-demo</span>
+  <span class="c1">\ activate tasks job</span>
+  <span class="nf">onlytask</span>
+  <span class="nf">task_demo</span> <span class="nf">tcb&gt;tid</span> <span class="nf">alsotask</span>
+  <span class="nf">multi</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">run-turnkey</span>
+  <span class="c1">\ make cmd loop task-1</span>
+  <span class="c1">\ start task-2</span>
+  <span class="c1">\ activate multitaskingMultitasking</span>
+  <span class="nf">applturnkey</span>
+  <span class="nf">init</span>
+  <span class="nf">starttasker</span>
+<span class="k">;</span>
+<span class="nf">’</span> <span class="nf">run-turnkey</span> <span class="k">is </span><span class="no">turnkey</span>
+<span class="c1">\ make run-turnkey start on power up</span>
+</pre></div>
+</div>
+<p>When the program is started, LEDs connected to PORTB will blink. However, the prompt is presented
+as well and commands will be handled.</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; run-turnkey
+amforth 4.7 ATmega32
+ok
+&gt; tasks
+149
+running
+309
+running
+Multitasker is running ok
+&gt; N @ .
+199 ok
+&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="discussion">
+<h3>Discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h3>
+<p>The two tasks will happily run along provided, that both tasks call <strong class="command">pause</strong> regularly.
+This call is built into the command loop already. It is possible to call <strong class="command">run-turnkey</strong>
+as <strong class="command">turnkey</strong>. The program will survive a power cycle, because task: stores the
+neccessary information in flash memory:</p>
+<ol class="arabic simple">
+<li>the address of the task control block</li>
+<li>the start of the data stack (sp0)</li>
+<li>the start of the return stack (rp0)</li>
+</ol>
+<p>The sizes of the stacks are not explicitly stored. They can be inferred from the knowledge that all space
+is allocated as one chunk. However, amforth does not protect the stack from overflows. Exceeding the
+allocated stack space does cause unexpected crashes of your programm (see below at <strong class="command">task:</strong>).</p>
+<p><strong class="command">task-init</strong> prepares the task control block located in RAM. It erases any previous content, stores
+the addresses of the stacks, the top–of–stack address for the data stack, base, and the status of the task
+(sleeping). start-demo adds the calls to the tasks body into the TCB and stack space.
+task: will use three entries from the stack.</p>
+<ol class="arabic simple">
+<li>additional size of the user area in this task. This space can be used to create user–variables,
+which belong to this task only.</li>
+<li>size of the task’s return stack</li>
+<li>size of the task’s data stack. Both stack sizes may be as small as $20 bytes. However, programs</li>
+</ol>
+<p>exceeding a certain complexity may experience inexplicable crashes. If the program works in the
+foreground but not as a task, increasing the stack sizes may help.
+Please note that calling <strong class="command">ms</strong>, which in turn calls 1ms will not produce accurate time
+intervals any more, depending on how much time is spent in the other tasks.
+One might argue that the startup sequence (starttasker) is way too long and should not be handled
+by the programmer. On the other hand, full control over the startup might be useful in unforeseen
+ways.</p>
+</div>
+</div>
+<div class="section" id="multitasker-the-gory-details">
+<h2>Multitasker: The Gory Details<a class="headerlink" href="#multitasker-the-gory-details" title="Permalink to this headline">¶</a></h2>
+<p>amforth ships the file <tt class="file docutils literal"><span class="pre">lib/multitask.frt</span></tt> featuring a multitasker based on code by Brad Eckert.</p>
+<div class="section" id="task-control-block">
+<h3>Task Control Block<a class="headerlink" href="#task-control-block" title="Permalink to this headline">¶</a></h3>
+<p>The layout of the task control block is fixed. Technically it is located at the start of the so called
+<a class="reference internal" href="../Architecture.html#userarea"><em>User Area</em></a>. The first 6 entries (status ... handler) are not intended for changes by the programmer. The next
+6 entries (base ... /key) are commonly changed by the programmer. If more space for user variables is
+desired, the user area needs to be increased specifically. When defining user variables, the offset of that
+variable from the start of the user area needs to be specified. It is the programmers duty to keep track of
+how many entries have been used.</p>
+<p>Also as a consequence the tid of a task holds the start address of the user area for that task. Its value is
+copied into the user pointer upon task switch. The user pointer is fetched and stored with up&#64; and up!,
+respectively (see definition of wake below).</p>
+<p>Two offsets into the TCB are defined as user variables. They produce the address of TCB[0] and
+TCB[2] respectively, correctly using the current TCB’s address.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">decimal</span>
+<span class="mi">0</span> <span class="nf">user</span> <span class="nf">status</span>
+<span class="mi">2</span> <span class="nf">user</span> <span class="nf">follower</span>
+</pre></div>
+</div>
+<p>After that two noname: words are defined. These words will not have a header in the vocabulary, their
+execution tokens (xts) are stored in the constants pass and wake. Their values will be stored in the
+status field (TCB[0]).</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">:noname </span><span class="c1">( ’status1 -- ’status2 )</span>
+  <span class="k">cell+ @ dup @ 1+ &gt;r</span>
+<span class="k">; </span><span class="kn">constant</span> <span class="nc">pass</span>
+<span class="k">:noname </span><span class="c1">( ’status1 -- )</span>
+  <span class="no">up! </span><span class="nf">sp</span> <span class="k">@ </span><span class="no">sp! rp!</span>
+<span class="k">; </span><span class="kn">constant</span> <span class="nc">wakeMultitasking</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="switching-multitasking-on-and-off">
+<h3>Switching Multitasking on and off<a class="headerlink" href="#switching-multitasking-on-and-off" title="Permalink to this headline">¶</a></h3>
+<p>To switch between tasks the deferred word pause is used. Normally, pause does nothing. Therefore
+turning multitasking off is simple:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ stop multitasking</span>
+<span class="kn">:</span> <span class="nc">single</span> <span class="c1">( -- )</span>
+  <span class="nf">[’]</span> <span class="no">noop </span><span class="k">is </span><span class="no">pause</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>A new word multitaskpause is defined, which will switch from this to the next task.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ switch to the next task in the list</span>
+<span class="kn">:</span> <span class="nc">multitaskpause</span> <span class="c1">( -- )</span>
+  <span class="no">rp@ sp@ </span><span class="nf">sp</span> <span class="k">! </span><span class="nf">follower</span> <span class="k">@ dup @ 1+ &gt;r</span>
+<span class="k">;</span>
+<span class="c1">\ start multitasking</span>
+<span class="kn">:</span> <span class="nc">multi</span> <span class="c1">( -- )</span>
+  <span class="nf">[’]</span> <span class="nf">multitaskpause</span> <span class="k">is </span><span class="no">pause</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">multitaskpause</strong> looks short and innocent, but a little explanation
+is called for:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="no">rp@ </span>     <span class="c1">\ -- rp                | fetch the current return stack pointer</span>
+<span class="no">sp@ </span>     <span class="c1">\ -- rp sp             | fetch the current data stack pointer TOS</span>
+<span class="nf">sp</span>       <span class="c1">\ -- rp sp tcb[sp]     | get the addr of user variable to store TOS</span>
+<span class="k">! </span>       <span class="c1">\ -- rp                | store, TCB[8] := TOS</span>
+<span class="nf">follower</span> <span class="c1">\ -- rp tcb[2]         | get the address of TCB[2]</span>
+<span class="k">@ </span>       <span class="c1">\ -- rp tid&#39;           | fetch it&#39;s content, tid of the next task</span>
+<span class="k">dup @ </span>   <span class="c1">\ -- rp tid&#39; status&#39;   | fetch status of the next task (xt)</span>
+<span class="k">1+ </span>      <span class="c1">\ -- rp tid&#39; pfa       | xt \Verb|&gt;body|</span>
+<span class="k">&gt;r </span>      <span class="c1">\ -- rp tid&#39;           | put pfa of pass or wake on the returnstack</span>
+</pre></div>
+</div>
+<p>When multitaskpause exits, the interpreter finds the xt of wake or pass on the return stack and will
+continue execution there.</p>
+<p>If status was pass, the next task is sleeping, so we need to look for the next next task:</p>
+<div class="highlight-forth"><div class="highlight"><pre>         <span class="c1">\ -- rp tid&#39;           | these are still on the stack</span>
+<span class="k">cell+ </span>   <span class="c1">\ -- rp tid&#39;[2]        | point to follower</span>
+<span class="k">@ </span>       <span class="c1">\ -- rp tid&#39;&#39;          | get the tid of the next next task</span>
+<span class="k">dup </span>     <span class="c1">\ -- rp tid&#39;&#39; tid&#39;&#39;    |</span>
+<span class="k">@ </span>       <span class="c1">\ -- rp tid&#39;&#39; status&#39;&#39; | fetch status of next next task (xt)</span>
+<span class="k">1+ </span>      <span class="c1">\ -- rp tid&#39;&#39; pfa      | xt of &gt;body</span>
+<span class="k">&gt;r </span>      <span class="c1">\ -- rp tid&#39;&#39;          | put xt of next next tasks status on return stack</span>
+</pre></div>
+</div>
+<p>This is repeated until an awake task is found.
+If status was wake, the next task should be running, so we need to unfold it:</p>
+<div class="highlight-forth"><div class="highlight"><pre>    <span class="c1">\ -- rp tid’ these are still on the stack</span>
+<span class="no">up! </span><span class="c1">\ -- rp make user pointer point to tid’</span>
+</pre></div>
+</div>
+<p>This was the magic line. Now the stacks are different stacks! We left the old task’s data stack behind
+with rp on top. Now we look at the new task’s stack and find rp’ of that task on top of it.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">sp</span>   <span class="c1">\ -- rp’</span>
+     <span class="c1">\ -- rp’ tid’[sp] get addr of TOS locationMultitasking</span>
+<span class="k">@ </span>   <span class="c1">\ -- rp’ sp’ retrieve stack pointer of now current task</span>
+<span class="no">sp! </span> <span class="c1">\ -- rp’     store it in (activate) stack pointer</span>
+<span class="no">rp! </span> <span class="c1">\ --         store rp’ of this task in current rp</span>
+</pre></div>
+</div>
+<p>Switching multitasking on is simply pointing pause to multitaskpause. The inner workings are
+far from obvious, but they have been proven to work.</p>
+</div>
+<div class="section" id="handling-tasks">
+<h3>Handling tasks<a class="headerlink" href="#handling-tasks" title="Permalink to this headline">¶</a></h3>
+<p>We need a few words to change the status of tasks:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">stop</span>
+<span class="kn">:</span> <span class="nc">task-sleep</span>
+<span class="kn">:</span> <span class="nc">task-awake</span>     <span class="c1">( -- )</span>
+   <span class="nf">pass</span> <span class="nf">status</span> <span class="k">! </span><span class="no">pause </span><span class="k">; </span><span class="c1">\ sleep current task</span>
+   <span class="c1">( tid -- )</span> <span class="nf">pass</span> <span class="k">swap ! ;</span>
+   <span class="c1">\ sleep another task</span>
+   <span class="c1">( tid -- )</span> <span class="nf">wake</span> <span class="k">swap ! ;</span>
+   <span class="c1">\ wake another task</span>
+</pre></div>
+</div>
+<p>A little more tricky is setting up a piece of code to be run in a task.
+<strong class="command">activate</strong> will be used in a snippet similar to this.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">run-demo</span> <span class="c1">( interesting work here ... )</span> <span class="k">;</span>
+<span class="mh">$20</span> <span class="mh">$20</span> <span class="mi">0</span> <span class="nf">task:</span> <span class="nf">task_demo</span>
+<span class="c1">\ create task, allot tcb + stack space</span>
+<span class="kn">:</span> <span class="nc">start-demo</span>
+ <span class="nf">task_demo</span> <span class="nf">tcb&gt;tid</span> <span class="nf">activate</span>
+ <span class="c1">\ words after this line are run in new task</span>
+ <span class="nf">run-demo</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">activate</strong> will store the xt of <strong class="command">run-demo</strong> on the return stack belonging to the TCB.
+It will also save the address of top of return stack on top of the data stack belonging to the same TCB,
+and the address of TOS in the field TCB[sp]. This particular order of information is expected by
+<strong class="command">wake</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">cell-</span> <span class="k">negate cell+ negate ;</span>
+<span class="c1">\ continue the code as a task in a predefined tcb</span>
+<span class="kn">:</span> <span class="nc">activate</span> <span class="c1">( tid -- )</span>
+   <span class="k">dup</span>
+   <span class="mi">6</span> <span class="k">+ @ </span><span class="nf">cell-</span>
+   <span class="k">over</span>
+   <span class="mi">4</span> <span class="k">+ @ </span><span class="nf">cell-</span> <span class="c1">( -- tid sp rp )</span>
+   <span class="c1">\ point to RP0 SP0</span>
+   <span class="k">r&gt; over 1+ !</span>
+   <span class="c1">( save entry at rp )</span> <span class="c1">\ skip all after ACTIVATE</span>
+   <span class="k">over !</span>
+   <span class="c1">( save rp at sp )</span>
+   <span class="c1">\ save stack context for WAKE</span>
+   <span class="k">over </span><span class="mi">8</span> <span class="k">+ !</span>
+   <span class="c1">( save sp in tos )</span>
+   <span class="nf">task-awake</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">onlytask</strong> initializes the linked list with the current task only.
+It copies the tid of the current task into the field TCB[follower] to create
+a circular list.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ initialize the multitasker with the current task only</span>
+<span class="kn">:</span> <span class="nc">onlytask</span> <span class="c1">( -- )</span>
+  <span class="nf">wake</span> <span class="nf">status</span> <span class="k">!</span>
+  <span class="c1">\ own status is running</span>
+  <span class="no">up@ </span><span class="nf">follower</span> <span class="k">! </span><span class="c1">\ point to myself</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">alsotask</strong> links a new task given by its tid into
+the list behind the current task.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">alsotask</span> <span class="c1">( tid -- )</span>
+   <span class="nf">[’]</span> <span class="no">pause </span><span class="k">defer@ &gt;r </span><span class="c1">\ stop multitasking</span>
+   <span class="nf">single</span>
+   <span class="nf">follower</span> <span class="k">@ </span><span class="c1">( -- tid f)</span>
+   <span class="k">over </span>      <span class="c1">( -- tid f tid )</span>
+   <span class="nf">follower</span> <span class="k">! </span><span class="c1">( -- tid f )</span>
+   <span class="k">swap cell+ </span><span class="c1">( -- f tid-f )</span>
+   <span class="k">!</span>
+   <span class="k">r&gt; is </span><span class="no">pause </span><span class="c1">\ restore multitasking</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>And then there is <strong class="command">tasks</strong> to print the tid of every task in the list and its state to the
+serial console. It will also report, whether the multitasker is switched on or not. If
+you uncomment the three commented lines, then the values of top–of–stack and start–of–stack for the
+data and return stacks are also printed out. This might be useful for debugging.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">tasks</span> <span class="c1">( -- )</span>
+  <span class="nf">status</span> <span class="c1">( -- tid )</span> <span class="c1">\ starting value</span>
+  <span class="k">dup</span>
+  <span class="k">begin</span>
+    <span class="c1">( -- tid1 ctid )</span>
+    <span class="k">dup u. </span><span class="c1">( -- tid1 ctid )</span>
+    <span class="k">dup @ </span><span class="c1">( -- tid1 ctid status )</span>
+    <span class="k">dup </span><span class="nf">wake</span> <span class="nf">=</span> <span class="k">if </span><span class="s">.&quot;</span> <span class="s">running</span><span class="nf">&quot;</span> <span class="k">drop else</span>
+        <span class="nf">pass</span> <span class="nf">=</span> <span class="k">if </span><span class="s">.&quot;</span> <span class="s">sleeping</span><span class="nf">&quot;</span> <span class="k">else</span>
+          <span class="k">abort&quot; </span><span class="nf">unknown&quot;</span> <span class="k">then</span>
+        <span class="k">then</span>
+    <span class="c1">\     dup 4 + @ .&quot; rp0=&quot; dup u. cell- @ .&quot; TOR=&quot; u.</span>
+    <span class="c1">\     dup 6 + @ .&quot; sp0=&quot; dup u. cell- @ .&quot; TOS=&quot; u.</span>
+    <span class="c1">\     dup 8 + @ .&quot; sp=&quot; u. cr</span>
+    <span class="k">cell+ @ </span><span class="c1">( -- tid1 next-tid )</span>
+    <span class="k">over over </span><span class="nf">=</span>     <span class="c1">( -- f flag)</span>
+  <span class="k">until</span>
+  <span class="k">drop drop</span>
+  <span class="s">.&quot;</span> <span class="s">Multitasker is </span><span class="nf">&quot;</span>
+  <span class="nf">[’]</span> <span class="no">pause </span><span class="k">defer@ </span><span class="nf">[’]</span> <span class="no">noop </span><span class="nf">=</span> <span class="k">if </span><span class="s">.&quot;</span> <span class="s">not </span><span class="nf">&quot;</span> <span class="k">then</span>
+  <span class="s">.&quot;</span> <span class="s">running</span><span class="nf">&quot;</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-tcb">
+<h3>Creating a TCB<a class="headerlink" href="#creating-a-tcb" title="Permalink to this headline">¶</a></h3>
+<p>So there is only one thing left to do, namely create space for a TCB and the stacks.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">task:</span> <span class="c1">( C: dstacksize rstacksize add.usersize &quot;name&quot; -- )</span>
+ <span class="c1">( R: -- addr )</span>
+ <span class="k">create here ,</span>
+   <span class="c1">\ store address of TCB</span>
+   <span class="c1">( add.usersize )</span> <span class="mi">&amp;24</span> <span class="k">+ allot </span><span class="c1">\ default user area size</span>
+   <span class="c1">\ allocate stacks</span>
+   <span class="c1">( rstacksize )</span> <span class="k">allot here , </span><span class="c1">\ store sp0</span>
+   <span class="c1">( dstacksize )</span> <span class="k">allot here , </span><span class="c1">\ store rp0Multitasking</span>
+   <span class="mi">1</span> <span class="k">allot </span><span class="c1">\ keep here away, amforth specific</span>
+ <span class="k">does&gt;</span>
+ <span class="c1">\ leave flash addr on stack</span>
+<span class="k">;</span>
+
+ <span class="kn">:</span> <span class="nc">tcb&gt;tid</span> <span class="c1">( f -- tid )</span>     <span class="no">@i </span><span class="k">;</span>
+ <span class="kn">:</span> <span class="nc">tcb&gt;sp0</span> <span class="c1">( f -- sp0 )</span> <span class="k">1+ </span> <span class="no">@i </span><span class="k">;</span>
+ <span class="kn">:</span> <span class="nc">tcb&gt;rp0</span> <span class="c1">( f -- rp0 )</span> <span class="mi">2</span> <span class="k">+ </span><span class="no">@i </span><span class="k">;</span>
+ <span class="kn">:</span> <span class="nc">tcb&gt;size</span> <span class="c1">( f -- size )</span>
+    <span class="k">dup </span><span class="nf">tcb&gt;tid</span> <span class="k">swap </span><span class="nf">tcb&gt;rp0</span> <span class="k">1+ swap -</span>
+ <span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">task:</strong> allots memory for the task control block and its associated stacks.
+The sizes of the stacks are taken from the data stack. The start of the data stack
+(SP0) is stored in TCB[6], the start of the return stack (RP0) is stored in TCB[4].
+Then new tid is moved from the return stack to the data stack. The task is
+marked as sleeping and one more byte is allot&#8217;ed to keep here out of the way.
+This is an implementation feature of amforth. Also please note that stacks are growing
+downwards. <strong class="command">task-init</strong> initializes a TCB and copies the information stored in
+flash into their correct locations.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">task-init</span> <span class="c1">( f -- )</span>
+ <span class="k">dup </span><span class="nf">tcb&gt;tid</span> <span class="k">over </span><span class="nf">tcb&gt;size</span> <span class="mi">0</span> <span class="k">fill </span><span class="c1">\ clear RAM for tcb and stacks</span>
+ <span class="c1">\ fixme: possibly use init-user?</span>
+ <span class="k">dup </span><span class="nf">tcb&gt;sp0</span> <span class="k">over </span><span class="nf">tcb&gt;tid</span> <span class="mi">&amp;6</span> <span class="k">+ !</span>
+ <span class="c1">\ store sp0 in tid[6]</span>
+ <span class="k">dup </span><span class="nf">tcb&gt;sp0</span> <span class="nf">cell-</span> <span class="k">over </span><span class="nf">tcb&gt;tid</span> <span class="mi">&amp;8</span> <span class="k">+ ! </span><span class="c1">\ store sp0-- in tid[8], tos</span>
+ <span class="k">dup </span><span class="nf">tcb&gt;rp0</span> <span class="k">over </span><span class="nf">tcb&gt;tid</span> <span class="mi">&amp;4</span> <span class="k">+ !</span>
+ <span class="c1">\ store rp0 in tid[4]</span>
+ <span class="mi">&amp;10</span> <span class="k">over </span><span class="nf">tcb&gt;tid</span> <span class="mi">&amp;12</span> <span class="k">+ !</span>
+ <span class="c1">\ store base in tid[12]</span>
+ <span class="nf">tcb&gt;tid</span> <span class="nf">task-sleep</span>
+ <span class="c1">\ store ’pass’ in tid[0]</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>Versions of <tt class="file docutils literal"><span class="pre">lib/multitask.frt</span></tt> prior to amforth-4.7 are broken in that there is no permanent
+storage as described above. These versions of the multitasker work, but they do not survive a power
+cycle.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Multitasking.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,1408 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Nodes on a RS485 Bus &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Commented Projects" href="../index.html" />
+    <link rel="next" title="Cookbook" href="../../TG/Cookbook.html" />
+    <link rel="prev" title="Commented Projects" href="../index.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nodes-on-a-rs485-bus">
+<h1><a class="toc-backref" href="#id1">Nodes on a RS485 Bus</a><a class="headerlink" href="#nodes-on-a-rs485-bus" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Erich Wälde</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:amforth-devel&#37;&#52;&#48;amforth&#46;sourceforge&#46;net">amforth-devel<span>&#64;</span>amforth<span>&#46;</span>sourceforge<span>&#46;</span>net</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">2015-04-19</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#nodes-on-a-rs485-bus" id="id1">Nodes on a RS485 Bus</a><ul>
+<li><a class="reference internal" href="#abstract" id="id2">1 Abstract</a></li>
+<li><a class="reference internal" href="#motivation-the-project-collector" id="id3">2 Motivation: The Project &#8220;collector&#8221;</a></li>
+<li><a class="reference internal" href="#hardware-requirements" id="id4">3 Hardware Requirements</a></li>
+<li><a class="reference internal" href="#software-requirements" id="id5">4 Software Requirements</a></li>
+<li><a class="reference internal" href="#implementation-plan" id="id6">5 Implementation Plan</a></li>
+<li><a class="reference internal" href="#code" id="id7">6 Code</a><ul>
+<li><a class="reference internal" href="#start" id="id8">6.1 start</a></li>
+<li><a class="reference internal" href="#making-prompt-ready-a-deferred-word" id="id9">6.2 making <tt class="docutils literal"><span class="pre">prompt_ready</span></tt> a deferred word</a></li>
+<li><a class="reference internal" href="#stationid" id="id10">6.3 stationID</a></li>
+<li><a class="reference internal" href="#emit-on-off" id="id11">6.4 emit-on-off</a></li>
+<li><a class="reference internal" href="#adding-rs485-r-w-handling" id="id12">6.5 adding rs485 r/w handling</a></li>
+<li><a class="reference internal" href="#mpc-1-making-usart-rx-isr-a-forth-level-word" id="id13">6.6 mpc 1: making <cite>usart_rx_isr</cite> a forth level word</a><ul>
+<li><a class="reference internal" href="#replace-usart-tx-isr-with-a-forth-word" id="id14">6.6.1 replace <cite>usart_tx_isr</cite> with a Forth word</a></li>
+<li><a class="reference internal" href="#remove-the-registration-of-the-original-asm-function" id="id15">6.6.2 remove the registration of the original asm function</a></li>
+<li><a class="reference internal" href="#register-the-new-function-as-isr" id="id16">6.6.3 register the new function as ISR</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mpc-2-adding-mpc-after-all" id="id17">6.7 mpc 2: adding mpc after all</a></li>
+<li><a class="reference internal" href="#going-to-quiet-mode-on-unparsable-input" id="id18">6.8 going to quiet mode on unparsable input</a></li>
+<li><a class="reference internal" href="#turnkey" id="id19">6.9 turnkey</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-node" id="id20">7 creating a node</a><ul>
+<li><a class="reference internal" href="#counter-sensor" id="id21">7.1 counter sensor</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-somtimes-not-so-obvious-things" id="id22">8 The <em>somtimes-not-so-obvious</em> things</a></li>
+<li><a class="reference internal" href="#finally" id="id23">9 Finally</a></li>
+<li><a class="reference internal" href="#references" id="id24">10 References</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="abstract">
+<h2><a class="toc-backref" href="#id2">1 Abstract</a><a class="headerlink" href="#abstract" title="Permalink to this headline">¶</a></h2>
+<p>The cookbook style recipes presented below are interconnected by the
+desire to create a solution connecting several controller nodes together
+by rs485 network for periodic data collection. A few decisions have been
+taken upfront:</p>
+<ul class="simple">
+<li>The rs485-bus is wired up as &#8220;simplex&#8221; (not duplex).</li>
+<li>There is exactly one node on the rs485 network acting as bus-master (the
+data collecting Linux system) and initiating any data transfer.</li>
+<li>Every node has to exlicitly switch its bus transceiver to &#8220;send&#8221; mode
+when writing data onto the bus.</li>
+<li>There must be a means to address one node whereas all the other nodes
+must remain silent.</li>
+</ul>
+<p>Substantial parts of this solution were inspired or recycled from a project
+published by Lubos Pekny.</p>
+<p>The author is running a set of currently 5 data collecting controller
+nodes on one rs485 bus for several years now. The code provided stable
+operation so far.</p>
+<p>For this article the author decided to &#8220;redo everything&#8221; in plain
+amForth, well almost everything, as it turned out.</p>
+</div>
+<div class="section" id="motivation-the-project-collector">
+<h2><a class="toc-backref" href="#id3">2 Motivation: The Project &#8220;collector&#8221;</a><a class="headerlink" href="#motivation-the-project-collector" title="Permalink to this headline">¶</a></h2>
+<p>When starting with microcontrollers years ago I needed to do something
+with them, that looked useful at least to me. So very soon I started to
+deal with sensors to measure temperature, pressure, and humidity of
+air. The classical &#8220;weather station&#8221; project. This worked, but soon I
+wanted to have the values not only displayed but rather collected &#8212;
+some day nice graphs would be interesting, or so I thought. So I
+connected a small single-board-computer [1] to the only one controller
+with a serial cable. This worked for a long time.</p>
+<p>Later I had the idea to collect temperatures at other points in the
+house as well. I could have added more sensors and long cables to the
+only one controller, but instead I decided to add another controller at
+the end of a long cable. Now I needed a way to talk to two (or more)
+controllers connected &#8220;somehow&#8221; the the single board computer. I could
+have added more serial interfaces, one for each controller, but I
+didn&#8217;t like the idea. Instead I decided to connect two (or more)
+controllers via one long cable using the RS485-Bus specification.</p>
+<p>The RS485-Bus is an electrical specification. A (possibly twisted) pair
+of wires is used to connect two nodes. The signal is differential, the
+difference in potential between the two wires is used as information.
+That way the whole setup is fairly immune against noise, as this
+normally adds the same shift in potential to both wires. The standard
+is good for a distance up to 1200 m, but should work much longer
+distances with slow data rates and proper termination.</p>
+<p>In order to exchange information on the RS485-bus the same timing and
+encoding is used as on a normal serial interface (RS232). The idle
+levels are interpreted as 1, the first bit is the start bit and always
+0, then 8 data bits follow, and then one or more stop bits are sent.
+The stop bits are also 1 and correspond to the idle levels. So there is
+nothing new here.</p>
+<p>However, if several nodes are on the bus, to which one am I talking?
+And if it is the wrong one, how do I &#8220;address&#8221; the correct one? In
+order to distinguish addresses (or control bytes) from ordinary data,
+some agreement has to be established, for example</p>
+<ul class="simple">
+<li>Bytes with the most significant bit set are treated as addresses or
+control bytes</li>
+<li>Bytes with the most significant bit cleared are treated as ordinary
+data</li>
+</ul>
+<p>If the bytes <tt class="docutils literal"><span class="pre">0x00</span> <span class="pre">..</span> <span class="pre">0x7f</span></tt> (the lower half of the ascii table) are
+sufficient for all data exchange, then 8 data bits are still good. If
+not, 9 data bits can be used in many cases. AVR controllers provide
+that possibility. There is a project using 9bit communication on Linux
+as well (uLan), Links section.</p>
+<p>In my case I decided to transfer all information as ascii strings, e.g.</p>
+<div class="highlight-none"><div class="highlight"><pre>7F01:8,22.40,22.87,23.24
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">7F</span></tt> is the station address (stationID) in hex, <tt class="docutils literal"><span class="pre">01</span></tt> is the
+sensor number on that node (also in hex), and after the colon a list of
+4 numerical values, their precise meaning being entirely irrelevant at
+this point. The main advantage is that I can just read everything on
+the bus in clear with little technical overhead.</p>
+<p>Currently I run a set of 5 controllers with a variety of sensors:</p>
+<ul class="simple">
+<li>temperature and humidity (indoors and outdoors), pressure of air</li>
+<li>voltage of an accumulator providing power to a remote system</li>
+<li>distance (ultrasonic range finder) which translates to the amount of
+water in a tank</li>
+<li>counts of meters (electricity, water, natural gas)</li>
+</ul>
+<p>The &#8220;collector&#8221; is a perl script running on the single board computer
+and collecting the data from the controllers every 2 or 10 minutes.
+This program acts as the bus master, the other nodes do not initiate
+any data exchange. The data is then accumulated in a sqlite database.
+A &#8220;viewer&#8221; perl script will then produce graphs of selected values over
+time. Other options are possible, of course.</p>
+</div>
+<div class="section" id="hardware-requirements">
+<h2><a class="toc-backref" href="#id4">3 Hardware Requirements</a><a class="headerlink" href="#hardware-requirements" title="Permalink to this headline">¶</a></h2>
+<p>All controller nodes need to have a RS485-transceiver. The transceiver
+needs 3 connections to the controller:</p>
+<ol class="arabic simple">
+<li>TX &#8211;&gt; Data Out</li>
+<li>RX &lt;&#8211; Data In</li>
+<li>Port D7 &#8211;&gt; Write/Read select (idle = read = low)</li>
+</ol>
+<div class="figure">
+<img alt="../../_images/p_rs485_bus.png" src="../../_images/p_rs485_bus.png" />
+</div>
+<p>An RS232 &#8211; RS485 converter of some sort is needed to connect the
+serial interface of the collector computer to the bus. USB &#8211; RS485
+dongles are available as well. Please note, that the connector should
+not produce a local echo of the bytes transmitted, or software needs to
+take care of the double echo. The controllers are sending an echo
+character as well, this serves as handshake when uploading forth code,
+too.</p>
+<p>Power supply can be local to any node, but serving power on 2 more
+wires is also possible. When having long cables +12V supply voltage and
+step down converters on every board seem like a good idea.</p>
+</div>
+<div class="section" id="software-requirements">
+<h2><a class="toc-backref" href="#id5">4 Software Requirements</a><a class="headerlink" href="#software-requirements" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Any node should be quiet and not write anything to the bus unless
+explicitly requested to do so. This explicit request translates into
+some sort of addressing. Preventing any output is most easily
+achieved by changing <tt class="docutils literal"><span class="pre">emit</span></tt>.</li>
+<li>Bytes <tt class="docutils literal"><span class="pre">0x00</span> <span class="pre">..</span> <span class="pre">0x7f</span></tt> are considered <em>normal</em> data, bytes
+<tt class="docutils literal"><span class="pre">0x80</span> <span class="pre">..</span> <span class="pre">0xff</span></tt> are considered adresses (or control bytes).</li>
+<li>every node needs to have an address or stationID assigned</li>
+<li>The controllers make use of the so called multi processor
+communication (MPC) mode to ignore traffic between other nodes
+already in hardware.</li>
+<li>a write operation to the bus must assert the W/R pin to write before
+transmission.</li>
+<li>Upon completion of the (asynchronous) data transmit the W/R pin has
+to be released, e.g. automatically by using the transmit complete
+interrupt.</li>
+<li>The implementation should be in Forth entirely. A few exceptions
+showed up during implementation.</li>
+<li>If a node is power cycled, nothing weird should happen on power up.
+Especially nothing should be written to the bus at all.</li>
+<li>a modified prompt shall include the address (stationID) of the node
+at the other end of the communication. This is solely to provide
+immediate visible feedback, it is not needed for proper
+communication.</li>
+<li>While experimenting it turned out that sometimes more than one
+controller is in normal mode. They will produce what I call &#8220;echo
+loops&#8221;. The output (mostly error messages) of one node will trigger
+more output (error messages) of the other node. I decided to
+implement harsh measures: whenever command line will produce an
+error message, then instead put the node back to quiet mode.</li>
+</ol>
+</div>
+<div class="section" id="implementation-plan">
+<h2><a class="toc-backref" href="#id6">5 Implementation Plan</a><a class="headerlink" href="#implementation-plan" title="Permalink to this headline">¶</a></h2>
+<p>In order to achieve the above goals, a set of mutually independant
+things were implemented.</p>
+<ol class="arabic">
+<li><p class="first"><strong class="command">stationID</strong>, prompts</p>
+<p>This is to satisfy requirements 3 and 9. The code is fairly simple,
+even short.</p>
+<p><strong class="command">stationID</strong> is an eeprom backed value with a cache place in RAM.</p>
+<p>The prompt itself is produced by <strong class="command">p_rd</strong>. Currently this is not
+a deferred word and therefore cannot be overridden easily by another
+function. So we make it a deferred word (assembly change 1) and then
+implement a new function <strong class="command">p_id_rd</strong> which will then be
+registered into the deferred function <strong class="command">p_rd</strong>.</p>
+</li>
+<li><p class="first"><strong class="command">-emit</strong> / <strong class="command">+emit</strong></p>
+<p>In order to prevent <strong>any</strong> output from the controller, I chose to make
+<strong class="command">emit</strong> point to <strong class="command">drop</strong> rather than <strong class="command">tx</strong>.
+<strong class="command">-emit</strong> will take care of this. This word will be called in the
+next part at startup time.</p>
+</li>
+<li><p class="first">rs485 read/write pin handling</p>
+<p>One pin on the controller has to be selected to drive the read/write-pin of
+the transceiver. The idle state should be low (<cite>0</cite>) or <cite>read</cite>, which is
+achieved by a pull-down resistor.</p>
+<ul class="simple">
+<li>provide constants to declare the selected pin</li>
+<li>switch the pin to output on startup</li>
+<li>set the pin to write (<cite>1</cite>) before transmission</li>
+<li>release the pin to read (<cite>0</cite>) upon completion. Use the transmit
+complete interrupt to achieve this.</li>
+</ul>
+<p>We can now write to and read from the RS485 bus. We can handle only
+one controller so far.</p>
+</li>
+<li><p class="first">mpc &#8212; multi processor communication</p>
+<p>This is the most complex part.</p>
+<ul class="simple">
+<li>set quiet mode
+set the serial interface to <cite>7N2</cite> (7 data bits, no parity bit, 2
+stop bits), set the <cite>MPCM0</cite> bit in register <cite>UCSR0C</cite></li>
+<li>when receiving a byte with the most significant bit set, inspect the
+byte and decide whether this is the local address or not</li>
+<li>if not, remain in quiet mode</li>
+<li>if yes, then switch the serial interface to normal mode (<cite>8N1</cite>) and
+handle all incoming data</li>
+<li>set normal mode:
+set the serial interface to <cite>8N1</cite>,
+clear the <cite>MPCM0</cite> bit in register <cite>UCSR0C</cite></li>
+</ul>
+<p>It turned out that the function <strong class="command">usart_rx_isr</strong> is implemented
+in assembly and registered as a <em>low</em> level interrupt service routine
+(ISR). This prevents overriding the registered interrupt service routine
+with another function. I decided to change this and make
+<strong class="command">usart_rx_isr</strong> a forth level routine (assembly change 2) and
+register it as a <em>high</em> level interrupt. This way the ISR can be
+replaced by some other function.</p>
+<p>Unsurprisingly replacing the ISR needs explicit access to the ring
+buffer that the original ISR is using. It is accessed by <strong class="command">key</strong>
+as well and should not change. So I added forth level headers to make
+the space in RAM available as forth constants/variables (assembly
+change 3)</p>
+</li>
+<li><p class="first">recognizer: go quiet if command not found</p>
+<p>amForth provides recognizers. There is a list of them, which can be
+changed. The first in the list is <strong class="command">rec:word</strong>, it will try to
+find the token in the word list. If it fails, the next one in the list
+is called: <strong class="command">rec:num</strong>. It will try to parse the input token as a
+number. If it fails the list is exhausted and the final
+<strong class="command">r:fail</strong> will be called to issue an error message and do some
+cleanup.</p>
+<p>I decided to add a third recognizer to the end of the list named
+<strong class="command">rec:quiet</strong>. It will not parse the input token again, but clean
+up the arguments. Then it will set the controller to quiet mode (call
+<strong class="command">-emit</strong> <strong class="command">+mpc7</strong>) and signal success rather than error.
+This way the pointer in <strong class="command">r:fail</strong> is not called.</p>
+</li>
+<li><p class="first">startup / turnkey</p>
+<p>In the end all of the above things need to be put together to ensure
+correct startup and initialization of all parts involved. Pay
+attention to turnkey and power cycle.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="code">
+<h2><a class="toc-backref" href="#id7">6 Code</a><a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
+<p>This code was re-developed and tested on an atmega644p running amForth
+5.5.</p>
+<div class="section" id="start">
+<h3><a class="toc-backref" href="#id8">6.1 start</a><a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h3>
+<p>The remainder of this article assumes that we have a working setup
+derived from the</p>
+<div class="highlight-none"><div class="highlight"><pre>amforth/releases/5.5/appl/template
+</pre></div>
+</div>
+<p>directory. Set appropriate values for the controller type, crystal
+frequency, and baud rate to appropriate values for your board.</p>
+<ul>
+<li><p class="first">Makefile</p>
+<div class="highlight-none"><div class="highlight"><pre>MCU=atmega644p
+</pre></div>
+</div>
+</li>
+<li><p class="first">main.asm</p>
+<div class="highlight-none"><div class="highlight"><pre>.equ F_CPU = 11059200
+.set BAUD=115200
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Now we are at the point where the controller should talk to us on the
+serial interface using a terminal program, e.g. minicom:</p>
+<div class="highlight-none"><div class="highlight"><pre>Welcome to minicom 2.7
+
+OPTIONS: I18n
+Compiled on Jan  1 2014, 09:30:18.
+Port /dev/ttyUSB1, 16:46:00
+
+Press CTRL-A Z for help on special keys
+
+amforth 5.5 ATmega644P
+&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="making-prompt-ready-a-deferred-word">
+<h3><a class="toc-backref" href="#id9">6.2 making <tt class="docutils literal"><span class="pre">prompt_ready</span></tt> a deferred word</a><a class="headerlink" href="#making-prompt-ready-a-deferred-word" title="Permalink to this headline">¶</a></h3>
+<p>So the next iteration will make <strong class="command">p_rd</strong> a deferred word &#8212; currently
+it is not. So in the current working directory we make local copies of</p>
+<div class="highlight-none"><div class="highlight"><pre>amforth-eeprom.inc
+words/prompt.asm
+</pre></div>
+</div>
+<p>to prepare the change. In the include order prepared for the call of the
+assembler, files in the local directory are preferred over those of the
+current AMFORTH directory, pointing to <tt class="docutils literal"><span class="pre">...path/to/amforth/release/5.5/core</span></tt> in
+this case.</p>
+<p>So first we add space in eeprom to keep the current execution token (XT) of
+<strong class="command">p_rd</strong> right at the end of file <tt class="docutils literal"><span class="pre">amforth-eeprom.inc</span></tt>. Its
+initial value points to the original function.</p>
+<div class="highlight-diff"><div class="highlight"><pre><span class="gh">diff --git a/02_doc_rs485/amforth-eeprom.inc b/02_doc_rs485/amforth-eeprom.inc</span>
+<span class="gh">index 8403522..62aece3 100644</span>
+<span class="gd">--- a/02_doc_rs485/amforth-eeprom.inc</span>
+<span class="gi">+++ b/02_doc_rs485/amforth-eeprom.inc</span>
+<span class="gu">@@ -67,3 +67,5 @@ EE_INITUSER:</span>
+ .endif
+ EE_UBRRVAL:
+     .dw UBRR_VAL     ; BAUDRATE
+<span class="gi">+EE_PROMPT_RDY:</span>
+<span class="gi">+     .dw XT_PROMPTRDY_INT</span>
+</pre></div>
+</div>
+<p>Then we change <strong class="command">p_rd</strong> to a deferred word, and the original code to
+<strong class="command">(p_rd)</strong>.</p>
+<div class="highlight-diff"><div class="highlight"><pre><span class="gh">diff --git a/02_doc_rs485/words/prompts.asm b/02_doc_rs485/words/prompts.asm</span>
+<span class="gh">index 8f0e945..c5a9472 100644</span>
+<span class="gd">--- a/02_doc_rs485/words/prompts.asm</span>
+<span class="gi">+++ b/02_doc_rs485/words/prompts.asm</span>
+<span class="gu">@@ -1,14 +1,28 @@</span>
+<span class="gi">+; make prompt_ready a deferred word</span>
+<span class="gi">+</span>
+<span class="gi">+VE_PROMPTRDY:</span>
+<span class="gi">+    .dw $ff04</span>
+<span class="gi">+    .db &quot;p_rd&quot;</span>
+<span class="gi">+    .dw VE_HEAD</span>
+<span class="gi">+    .set VE_HEAD = VE_PROMPTRDY</span>
+<span class="gi">+XT_PROMPTRDY:</span>
+<span class="gi">+    .dw PFA_DODEFER1</span>
+<span class="gi">+PFA_PROMPTRDY:</span>
+<span class="gi">+    .dw EE_PROMPT_RDY</span>
+<span class="gi">+    .dw XT_EDEFERFETCH</span>
+<span class="gi">+    .dw XT_EDEFERSTORE</span>
+<span class="gi">+</span>
+ ; ( -- )
+ ; System
+ ; send the READY prompt to the command line
+<span class="gd">-;VE_PROMPTRDY:</span>
+<span class="gd">-;    .dw $ff04</span>
+<span class="gd">-;    .db &quot;p_rd&quot;</span>
+<span class="gd">-;    .dw VE_HEAD</span>
+<span class="gd">-;    .set VE_HEAD = VE_PROMPTRDY</span>
+<span class="gd">-XT_PROMPTRDY:</span>
+<span class="gi">+VE_PROMPTRDY_INT:</span>
+<span class="gi">+    .dw $ff06</span>
+<span class="gi">+    .db &quot;(p_rd)&quot;</span>
+<span class="gi">+    .dw VE_HEAD</span>
+<span class="gi">+    .set VE_HEAD = VE_PROMPTRDY_INT</span>
+<span class="gi">+XT_PROMPTRDY_INT:</span>
+     .dw DO_COLON
+<span class="gd">-PFA_PROMPTRDY:</span>
+<span class="gi">+PFA_PROMPTRDY_INT:</span>
+     .dw XT_CR
+     .dw XT_DOSLITERAL
+     .dw 2
+</pre></div>
+</div>
+<p>With that in place the appearance of the prompt can be changed if we
+so desire:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">amforth</span> <span class="mi">5</span><span class="kt">.5</span> <span class="nf">ATmega644P</span>
+<span class="k">&gt; </span><span class="kn">:</span> <span class="nc">new_p_rd</span>  <span class="k">cr </span><span class="s">.&quot;</span> <span class="s">--new&gt; </span><span class="nf">&quot;</span> <span class="k">;</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="nf">&#39;</span> <span class="nf">new_p_rd</span> <span class="k">is </span><span class="nf">p_rd</span>
+ <span class="nf">ok</span>
+<span class="nf">--new&gt;</span> <span class="mi">1</span> <span class="mi">3</span> <span class="k">+ .</span>
+<span class="mi">4</span>  <span class="nf">ok</span>
+<span class="nf">--new&gt;</span> <span class="nf">&#39;</span> <span class="nf">(p_rd)</span> <span class="k">is </span><span class="nf">p_rd</span>
+ <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>This will be used in the next step to display the content represented by
+<strong class="command">stationID</strong> in the ready-prompt.</p>
+</div>
+<div class="section" id="stationid">
+<h3><a class="toc-backref" href="#id10">6.3 stationID</a><a class="headerlink" href="#stationid" title="Permalink to this headline">¶</a></h3>
+<p><strong class="command">StationID</strong> is a value, permanently stored in EEPROM and copied
+to a RAM location on startup. So we need to load the appropriate
+word <strong class="command">Evalue</strong>:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">include</span> <span class="nf">lib/ans94/core/value.frt</span>
+</pre></div>
+</div>
+<p>After that we are able to create a value, the content of which is
+backed in EEPROM:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$007f</span> <span class="kn">Evalue</span> <span class="nc">stationID</span>
+</pre></div>
+</div>
+<p>With this in place we are now in a position to create a new function
+implementing a new prompt. In order to make it always look the same (two
+digits, leading zeros) we add the word <strong class="command">u0.r</strong> to the dictionary in
+<tt class="docutils literal"><span class="pre">dict_appl.inc</span></tt> (please note the leading dot and the quotes, since this
+is assembly syntax):</p>
+<div class="highlight-none"><div class="highlight"><pre>.include &quot;words/uzerodotr.asm&quot;
+</pre></div>
+</div>
+<p>reassemble and reflash amForth. The define the new word <strong class="command">p_id_rd</strong></p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">p_id_rd</span>
+  <span class="k">cr</span>
+  <span class="k">base @</span>
+  <span class="k">hex</span>
+  <span class="k">[char] </span><span class="nf">~</span> <span class="k">emit</span>
+  <span class="nf">stationID</span> <span class="mi">2</span> <span class="nf">u0.r</span>
+  <span class="k">[char] &gt; emit</span>
+  <span class="k">space</span>
+  <span class="k">base !</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>We should also take care to save and restore the content of
+<strong class="command">base</strong>, since I decided to print out the value of
+<strong class="command">stationID</strong> in hexadecimal. Using the new things should work like
+this:</p>
+<div class="highlight-none"><div class="highlight"><pre>amforth 5.5 ATmega644P ok
+&gt; stationID decimal .
+127  ok
+&gt; p_id_rd
+
+~7F&gt;  ok
+&gt; &#39; p_id_rd is p_rd
+ ok
+~7F&gt; $42 to stationID
+ ok
+~42&gt;
+</pre></div>
+</div>
+<p>The value <tt class="docutils literal"><span class="pre">$007F</span></tt> is the highest address available for the above
+mentioned 7-bit addressing scheme, so I chose it as the default. The exact
+value can be changed here or overwritten later when loading the code with
+something like</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$42</span> <span class="k">to </span><span class="nf">stationID</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="emit-on-off">
+<h3><a class="toc-backref" href="#id11">6.4 emit-on-off</a><a class="headerlink" href="#emit-on-off" title="Permalink to this headline">¶</a></h3>
+<p>In order to prevent the controller from writing to the rs485 bus <strong>unless</strong>
+explicitly requested, I decided to defer <strong class="command">emit</strong> to <strong class="command">drop</strong>
+just to make sure. This requires two fairly simple words</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">variable</span> <span class="nc">old-emit</span>
+<span class="nf">&#39;</span> <span class="k">emit defer@ </span><span class="nf">old-emit</span> <span class="k">!</span>
+<span class="kn">:</span> <span class="nc">-emit</span>
+  <span class="k">[&#39;] emit defer@ </span><span class="nf">old-emit</span> <span class="k">!</span>
+  <span class="k">[&#39;] drop is emit</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">+emit</span>
+  <span class="nf">old-emit</span> <span class="k">@ is emit</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>After loading the code we can test this:</p>
+<div class="highlight-none"><div class="highlight"><pre>amforth 5.5 ATmega644P ok
+~42&gt;
+~42&gt; : hi .&quot; howdy, mate!&quot; cr ;
+ ok
+~42&gt; hi
+howdy, mate!
+ ok
+~42&gt; -emit hi +emit
+ ok
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-rs485-r-w-handling">
+<h3><a class="toc-backref" href="#id12">6.5 adding rs485 r/w handling</a><a class="headerlink" href="#adding-rs485-r-w-handling" title="Permalink to this headline">¶</a></h3>
+<p>In order to drive the rs485 transceiver, we need to implement the
+following things:</p>
+<ol class="arabic simple">
+<li>select W/R pin</li>
+</ol>
+<p>This pin needs to be selected, initialized as output and set to
+low.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$2B</span> <span class="kn">constant</span> <span class="nc">RS485_PORT</span>         <span class="c1">\ memory mapped</span>
+<span class="mh">$2A</span> <span class="kn">constant</span> <span class="nc">RS485_DDR</span>          <span class="c1">\ .</span>
+<span class="mh">$80</span> <span class="kn">constant</span> <span class="nc">RS485_PIN_MASK</span>
+<span class="kn">:</span> <span class="nc">rs485-pin-output</span>
+  <span class="nf">RS485_DDR</span> <span class="k">c@ </span><span class="nf">RS485_PIN_MASK</span> <span class="k">or </span><span class="nf">RS485_DDR</span> <span class="k">c!</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>Of course the functions in <tt class="docutils literal"><span class="pre">lib/bitnames.frt</span></tt> could be used as well,
+but for the argument of smaller dependencies, I decided to implement
+this directly.</p>
+<ol class="arabic simple" start="2">
+<li>set W/R pin high (write) or low (read)</li>
+</ol>
+<p>Two simple functions will do this:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">rs485-write</span>
+  <span class="nf">RS485_PORT</span> <span class="k">c@ </span><span class="nf">RS485_PIN_MASK</span> <span class="k">or </span><span class="nf">RS485_PORT</span> <span class="k">c!</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">rs485-read</span>
+  <span class="nf">RS485_PORT</span> <span class="k">c@ </span><span class="nf">RS485_PIN_MASK</span> <span class="k">invert and </span><span class="nf">RS485_PORT</span> <span class="k">c!</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<ol class="arabic" start="3">
+<li><p class="first">set W/R pin to <cite>write</cite> (<cite>1</cite>) before sending a byte</p>
+<p>Before sending any byte, we need to set the W/R pin high. So we
+reimplement <strong class="command">tx-poll</strong>, the function that transfers one byte to
+the serial interface.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$C6</span> <span class="kn">constant</span> <span class="nc">UDR0</span> <span class="c1">\ usart0 data register</span>
+<span class="kn">:</span> <span class="nc">rs485-tx-poll</span> <span class="c1">( c -- )</span>
+  <span class="k">begin </span> <span class="nf">tx?-poll</span>  <span class="k">until</span>
+  <span class="nf">rs485-write</span>
+  <span class="nf">UDR0</span> <span class="k">c!</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">release W/R pin upon transfer completion</p>
+<p>After sending the byte, the W/R pin should be released to zero.
+This happens <cite>some</cite> time after initiating a transfer. However, the
+Atmel engineers have anticipated this problem and provided the
+<cite>transfer complete</cite> interrupt for our convenience.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">tx-complete-isr</span>
+  <span class="nf">RS485_PORT</span> <span class="k">c@ </span><span class="nf">RS485_PIN_MASK</span> <span class="k">invert and </span><span class="nf">RS485_PORT</span> <span class="k">c!</span>
+<span class="k">;</span>
+
+<span class="mh">$2C</span>  <span class="kn">constant</span> <span class="nc">USART0__TXAddr</span> <span class="c1">\ USART0, Tx Complete</span>
+<span class="mh">$40</span>  <span class="kn">constant</span> <span class="nc">UCSR0B_TXCIE0</span>
+<span class="mh">$C1</span>  <span class="kn">constant</span> <span class="nc">UCSR0B</span>
+<span class="kn">:</span> <span class="nc">+rs485</span>
+  <span class="nf">rs485-pin-output</span>
+  <span class="nf">rs485-read</span>
+  <span class="k">[&#39;] </span><span class="nf">tx-complete-isr</span> <span class="nf">USART0__TXAddr</span> <span class="no">int!</span>
+  <span class="k">[&#39;] </span><span class="nf">rs485-tx-poll</span> <span class="k">is emit</span>
+  <span class="nf">UCSR0B</span> <span class="k">c@ </span><span class="nf">UCSR0B_TXCIE0</span> <span class="k">or </span><span class="nf">UCSR0B</span> <span class="k">c!</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">-rs485</span>
+  <span class="k">[&#39;] </span><span class="no">noop </span><span class="nf">USART0__TXAddr</span> <span class="no">int!</span>
+  <span class="k">[&#39;] </span><span class="nf">tx-poll</span> <span class="k">is emit</span>
+  <span class="nf">UCSR0B</span> <span class="k">c@ </span><span class="nf">UCSR0B_TXCIE0</span> <span class="k">invert and </span><span class="nf">UCSR0B</span> <span class="k">c!</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>The functions <strong class="command">+rs485</strong> and <strong class="command">-rs485</strong> enable and disable
+the whole rs485 bus connection. Apart from changing the deferred word
+<strong class="command">emit</strong> and registering the interrupt service routine to the
+<cite>transfer complete interrupt</cite>, the interrupt itself must be enabled in
+the register <tt class="docutils literal"><span class="pre">UCSR0B</span></tt>.</p>
+</li>
+</ol>
+<p>At this point we have everything in place to connect to the controller via
+the rs485 bus. <strong class="command">+rs485`</strong> needs to be called during startup, which
+is the only missing piece at this point.</p>
+</div>
+<div class="section" id="mpc-1-making-usart-rx-isr-a-forth-level-word">
+<h3><a class="toc-backref" href="#id13">6.6 mpc 1: making <cite>usart_rx_isr</cite> a forth level word</a><a class="headerlink" href="#mpc-1-making-usart-rx-isr-a-forth-level-word" title="Permalink to this headline">¶</a></h3>
+<p>While working on this particular implemention of my code, namely
+reimplementation in as much Forth code as possible, I came across a
+subtle feature of the amForth implementation (as of version 5.5).
+Interrupt handling in amForth is twofold: the low level part (written
+in assembly) is basically doing the bookkeeping, clearing the
+interrupt and then calling into a amForth table of registered
+functions. This provides the possibility to write interrupt service
+routines (ISR) in <cite>high level</cite> Forth rather than assembly. Registering
+your own ISR is a matter of one line:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">&#39;</span> <span class="nf">your-own-isr</span>  <span class="nf">Interrupt-Vector-Addr</span>  <span class="no">int!</span>
+</pre></div>
+</div>
+<p>However, it turned out that the interrupt service routine for receiving
+bytes from the serial interface was <strong>not</strong> constructed in this way but
+registered directly as a low level ISR, bypassing the process outlined
+above. It took me some head scratching to find out, of course, but it
+provides an opportunity to better understand the inner workings of amForth
+as well. Therefore I decided to reimplement the default
+<strong class="command">usart_rx_isr</strong> as a Forth function, which is then registered to
+the receive complete interrupt (<tt class="docutils literal"><span class="pre">URXC0</span></tt>) in <strong class="command">applturnkey</strong>. With
+this change in place, we can easily register an mpc-specific ISR to handle
+incoming traffic.</p>
+<p>The affected code is found in file <tt class="docutils literal"><span class="pre">drivers/usart-isr-rx.asm</span></tt>.</p>
+<p>The original assembly function</p>
+<div class="highlight-asm"><div class="highlight"><pre><span class="nl">usart_rx_isr:</span>
+  <span class="nf">push</span> <span class="no">xl</span>
+  <span class="nf">in</span> <span class="no">xl</span><span class="p">,</span> <span class="no">SREG</span>
+  <span class="nf">push</span> <span class="no">xl</span>
+  <span class="nf">push</span> <span class="no">xh</span>
+  <span class="nf">push</span> <span class="no">zl</span>
+  <span class="nf">push</span> <span class="no">zh</span>
+
+  <span class="nf">lds</span> <span class="no">xh</span><span class="p">,</span> <span class="no">USART_DATA</span>
+
+<span class="nl">usart_rx_store:</span>
+  <span class="nf">lds</span> <span class="no">xl</span><span class="p">,</span> <span class="no">usart_rx_in</span>
+  <span class="nf">ldi</span> <span class="no">zl</span><span class="p">,</span> <span class="no">low</span><span class="p">(</span><span class="no">usart_rx_data</span><span class="p">)</span>
+  <span class="nf">ldi</span> <span class="no">zh</span><span class="p">,</span> <span class="no">high</span><span class="p">(</span><span class="no">usart_rx_data</span><span class="p">)</span>
+  <span class="nf">add</span> <span class="no">zl</span><span class="p">,</span> <span class="no">xl</span>
+  <span class="nf">adc</span> <span class="no">zh</span><span class="p">,</span> <span class="no">zeroh</span>
+  <span class="nf">st</span> <span class="no">Z</span><span class="p">,</span> <span class="no">xh</span>
+
+  <span class="nf">inc</span> <span class="no">xl</span>
+  <span class="nf">andi</span> <span class="no">xl</span><span class="p">,</span><span class="no">usart_rx_mask</span>
+
+  <span class="nf">sts</span> <span class="no">usart_rx_in</span><span class="p">,</span> <span class="no">xl</span>
+
+<span class="nl">usart_rx_isr_finish:</span>
+  <span class="nf">pop</span> <span class="no">zh</span>
+  <span class="nf">pop</span> <span class="no">zl</span>
+  <span class="nf">pop</span> <span class="no">xh</span>
+  <span class="nf">pop</span> <span class="no">xl</span>
+  <span class="nf">out</span> <span class="no">SREG</span><span class="p">,</span> <span class="no">xl</span>
+  <span class="nf">pop</span> <span class="no">xl</span>
+  <span class="nf">reti</span>
+</pre></div>
+</div>
+<p>is registered as interrupt service routine for <tt class="docutils literal"><span class="pre">URXCaddr</span></tt></p>
+<div class="highlight-asm"><div class="highlight"><pre>.set usartpc = pc
+.org URXCaddr
+  jmp_ usart_rx_isr
+.org usartpc
+</pre></div>
+</div>
+<p>So we need three parts to implement the desired change:</p>
+<ol class="arabic simple">
+<li>replace <strong class="command">usart_tx_isr</strong> with a Forth word</li>
+<li>remove the registration of the original asm function</li>
+<li>register the new function as ISR</li>
+</ol>
+<div class="section" id="replace-usart-tx-isr-with-a-forth-word">
+<h4><a class="toc-backref" href="#id14">6.6.1 replace <cite>usart_tx_isr</cite> with a Forth word</a><a class="headerlink" href="#replace-usart-tx-isr-with-a-forth-word" title="Permalink to this headline">¶</a></h4>
+<p>This part is not particularly difficult, because a Forth equivalent
+is found already as a comment in the asm file.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">; forth </span><span class="nf">code:</span>
+<span class="k">; </span><span class="kn">:</span> <span class="nc">rx-isr</span> <span class="nf">USART_DATA</span> <span class="k">c@</span>
+<span class="k">; </span>   <span class="nf">usart_rx_data</span> <span class="nf">usart_rx_in</span> <span class="k">c@ dup &gt;r</span>
+<span class="k">; </span>   <span class="k">+ !</span>
+<span class="k">; </span>   <span class="k">r&gt; 1+ </span><span class="nf">usart_rx_mask</span> <span class="k">and </span><span class="nf">usart_rx_in</span> <span class="k">c!</span>
+<span class="k">; ;</span>
+<span class="k">; </span><span class="nf">setup</span> <span class="nf">with</span>
+<span class="k">; </span><span class="nf">&#39;</span> <span class="nf">rx-isr</span> <span class="nf">URXCaddr</span> <span class="no">int!</span>
+</pre></div>
+</div>
+<p>So all we need to do is to shape this into a Forth word:</p>
+<div class="highlight-asm"><div class="highlight"><pre>; --- make usart_rx_isr a forth function, needs to be registered in applturnkey
+; --- could be calling the original asm code instead ...
+VE_USART_RX_ISR:
+        .dw $ff0c
+        .db &quot;usart_rx_isr&quot;
+        .dw VE_HEAD
+        .set VE_HEAD = VE_USART_RX_ISR
+XT_USART_RX_ISR:
+        .dw DO_COLON
+PFA_USART_RX_ISR:
+        .dw XT_DOLITERAL        ; UDR0 c@
+        .dw USART_DATA
+        .dw XT_CFETCH
+                                ;    usart_rx_data usart_rx_in c@ dup &gt;r
+        .dw XT_DOLITERAL
+        .dw usart_rx_data
+        .dw XT_DOLITERAL
+        .dw usart_rx_in
+        .dw XT_CFETCH
+        .dw XT_DUP
+        .dw XT_TO_R
+                                ;    + ! \ ? c!
+        .dw XT_PLUS
+        .dw XT_CSTORE
+                                ;    r&gt; 1+ usart_rx_mask and usart_rx_in c!
+        .dw XT_R_FROM
+        .dw XT_1PLUS
+        .dw XT_DOLITERAL
+        .dw usart_rx_mask
+        .dw XT_AND
+        .dw XT_DOLITERAL
+        .dw usart_rx_in
+        .dw XT_CSTORE
+
+        .dw XT_EXIT
+</pre></div>
+</div>
+<p>I kept the name, but please note that it does not refer to the asm label
+any more &#8212; <strong class="command">usart_rx_isr</strong> is now a proper Forth word.</p>
+</div>
+<div class="section" id="remove-the-registration-of-the-original-asm-function">
+<h4><a class="toc-backref" href="#id15">6.6.2 remove the registration of the original asm function</a><a class="headerlink" href="#remove-the-registration-of-the-original-asm-function" title="Permalink to this headline">¶</a></h4>
+<p>This part is very easy, we just remove the 4 lines doing the
+registration by commenting them out:</p>
+<div class="highlight-asm"><div class="highlight"><pre>; --- do NOT register &quot;usart_rx_isr:&quot; as low level isr!
+; .set usartpc = pc
+; .org URXCaddr
+;   jmp_ usart_rx_isr
+; .org usartpc
+</pre></div>
+</div>
+</div>
+<div class="section" id="register-the-new-function-as-isr">
+<h4><a class="toc-backref" href="#id16">6.6.3 register the new function as ISR</a><a class="headerlink" href="#register-the-new-function-as-isr" title="Permalink to this headline">¶</a></h4>
+<p>The new function must be registered somewhere in the startup of amForth,
+because otherwise there will be no access to the command loop via the
+serial interface. So in function <strong class="command">applturnkey</strong> we add the
+equivalent of</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">&#39;</span> <span class="nf">usart_rx_isr</span>  <span class="nf">USART0__RXAddr</span>  <span class="no">int!</span>
+</pre></div>
+</div>
+<p>just before globally enabling interrupts.</p>
+<div class="highlight-asm"><div class="highlight"><pre>; ( -- ) System
+; R( -- )
+; application specific turnkey action
+VE_APPLTURNKEY:
+    .dw $ff0b
+    .db &quot;applturnkey&quot;,0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_APPLTURNKEY
+XT_APPLTURNKEY:
+    .dw DO_COLON
+PFA_APPLTURNKEY:
+    .dw XT_USART
+
+    ; register usart_rx_isr
+    .dw XT_DOLITERAL            ; &#39; usart_rx_isr URXCaddr int!
+    .dw XT_USART_RX_ISR
+    .dw XT_DOLITERAL
+    .dw URXCaddr
+    .dw XT_INTSTORE
+
+    .dw XT_INTON
+    .dw XT_VER
+    .dw XT_EXIT
+</pre></div>
+</div>
+<p>Assembling amForth and programming the controller with these changes
+must result in an equally usable system as it was before.</p>
+</div>
+</div>
+<div class="section" id="mpc-2-adding-mpc-after-all">
+<h3><a class="toc-backref" href="#id17">6.7 mpc 2: adding mpc after all</a><a class="headerlink" href="#mpc-2-adding-mpc-after-all" title="Permalink to this headline">¶</a></h3>
+<p>Entering MPC mode in this case means configuring the serial interface
+to <cite>7N2</cite> (7 data bits, no parity bit, 2 stop bits) and setting the
+<tt class="docutils literal"><span class="pre">MPCM0</span></tt> bit in register <tt class="docutils literal"><span class="pre">USCR0A</span></tt>.</p>
+<p>In that mode, if a data frame is received with the most significant
+bit cleared (0), the the data frame is silently ignored.</p>
+<p>In that mode, if a data frame is received with the most significant bit set
+(1), then the data frame shows up in register <tt class="docutils literal"><span class="pre">UDR0</span></tt>, the data register
+of the serial interface. An interrupt is generated and the corresponding
+ISR is called.</p>
+<p>All nodes on the bus will inspect the just arrived address byte. If the
+value of the address byte is the same as the configured node address (also
+known as <strong class="command">stationID</strong>), only then the serial interface is
+reconfigured to <cite>8N1</cite> and the <tt class="docutils literal"><span class="pre">MPCM0</span></tt> bit is cleared. This node is then
+<em>awake</em> from a communication point of view. It will receive all following
+data frames and is expected to act on them.</p>
+<p>All other nodes on the bus will keep the <cite>7N2</cite> mode of the serial
+interface and remain <em>silent</em> from a communication point of view.</p>
+<p>The <em>awake</em> state will not end and must be changed explicitly.</p>
+<p>Things that need to be done are</p>
+<ol class="arabic">
+<li><p class="first">provide a few definitions for readability (recycled from
+<tt class="docutils literal"><span class="pre">devices/$(MCU)/$(MCU).frt</span></tt> &#8212; make sure to load the correct file
+for your controller!)</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$2C</span>  <span class="kn">constant</span> <span class="nc">USART0__TXAddr</span> <span class="c1">\ USART0, Tx Complete</span>
+<span class="mh">$28</span>  <span class="kn">constant</span> <span class="nc">USART0__RXAddr</span> <span class="c1">\ USART0, Rx Complete</span>
+<span class="mh">$40</span>  <span class="kn">constant</span> <span class="nc">UCSR0B_TXCIE0</span>
+<span class="mh">$C0</span>  <span class="kn">constant</span> <span class="nc">UCSRA</span> <span class="c1">\ UCSR0A, really</span>
+<span class="mh">$10</span>  <span class="kn">constant</span> <span class="nc">UCSRA_FE0</span>          <span class="c1">\ frame error</span>
+<span class="mh">$08</span>  <span class="kn">constant</span> <span class="nc">UCSRA_DOR0</span>         <span class="c1">\ data over run</span>
+<span class="mh">$04</span>  <span class="kn">constant</span> <span class="nc">UCSRA_UPE0</span>         <span class="c1">\ parity error</span>
+<span class="mh">$01</span>  <span class="kn">constant</span> <span class="nc">UCSRA_MPCM0</span>        <span class="c1">\ mpc mode enabled</span>
+<span class="mh">$C1</span>  <span class="kn">constant</span> <span class="nc">UCSR0B</span>
+<span class="mh">$C2</span>  <span class="kn">constant</span> <span class="nc">UCSRC</span>
+<span class="mh">$C6</span>  <span class="kn">constant</span> <span class="nc">UDR0</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">waiting for the currently active transfer to complete (reusing
+definitions from the rs485 section above)</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">txc</span>  <span class="k">begin </span> <span class="nf">RS485_PORT</span> <span class="k">c@ </span> <span class="nf">RS485_PIN_MASK</span>  <span class="k">and 0= until ;</span>
+</pre></div>
+</div>
+<p>This is needed whenever we want to switch to mpc mode. Without
+waiting we will destroy any ongoing transmit.</p>
+</li>
+<li><p class="first">enabling MPC mode (<cite>7N2</cite>)</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">+mpc7</span>
+  <span class="nf">txc</span>
+  <span class="mh">$0C</span> <span class="nf">UCSRC</span> <span class="k">c! </span>                     <span class="c1">\ 7N2</span>
+  <span class="nf">UCSRA</span> <span class="k">c@ </span><span class="mh">$01</span> <span class="k">or </span><span class="nf">UCSRA</span> <span class="k">c! </span>         <span class="c1">\ MPCM0=1</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">disabling MPC mode (<cite>8N1</cite>)</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">-mpc7</span> <span class="c1">(  --  )</span>
+  <span class="nf">UCSRA</span> <span class="k">c@ </span><span class="mh">$01</span> <span class="k">invert and </span><span class="nf">UCSRA</span> <span class="k">c! </span> <span class="c1">\ MPCM=0</span>
+  <span class="mh">$06</span> <span class="nf">UCSRC</span> <span class="k">c! </span>                     <span class="c1">\ 8N1</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">access to the RX data ring buffer</p>
+<p>Handling incoming data unfortunately requires access to the
+variables of the rx ring buffer, which are not readily available in
+forth. In a local copy of <tt class="docutils literal"><span class="pre">drivers/usart-isr-rx.asm</span></tt> we add
+appropriate provisions. The existing declaration of the used RAM
+space and sizes</p>
+<div class="highlight-asm"><div class="highlight"><pre>; sizes have to be powers of 2!
+.equ usart_rx_size = $10
+.equ usart_rx_mask = usart_rx_size - 1
+.dseg
+usart_rx_data: .byte usart_rx_size+2
+usart_rx_in:   .byte 2
+usart_rx_out:  .byte 2
+.cseg
+</pre></div>
+</div>
+<p>will be made available as amForth constants and variables.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ variable USART_RX_DATA N allot \ &amp;buffer[0]</span>
+<span class="c1">\ variable USART_RX_IN           \ index</span>
+<span class="c1">\ N 1- constant USART_RX_MASK    \ length-1, length=2^n</span>
+
+<span class="k">; </span><span class="c1">( -- value )</span> <span class="kn">constant</span> <span class="nc">USART_RX_DATA</span>
+<span class="nf">VE_USART_RX_DATA:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="mh">$FF0D</span>
+    <span class="kt">.</span><span class="nf">db</span> <span class="nf">&quot;USART_RX_DATA&quot;,$00</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">VE_HEAD</span>
+    <span class="kt">.</span><span class="nf">set</span> <span class="nf">VE_HEAD</span> <span class="nf">=</span> <span class="nf">VE_USART_RX_DATA</span>
+<span class="nf">XT_USART_RX_DATA:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">PFA_DOVARIABLE</span>
+<span class="nf">PFA_USART_RX_DATA:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">usart_rx_data</span>
+
+<span class="k">; </span><span class="c1">( -- addr )</span> <span class="kn">variable</span> <span class="nc">USART_RX_IN</span>
+<span class="nf">VE_USART_RX_IN:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="mh">$ff0b</span>
+    <span class="kt">.</span><span class="nf">db</span> <span class="nf">&quot;USART_RX_IN&quot;,$00</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">VE_HEAD</span>
+    <span class="kt">.</span><span class="nf">set</span> <span class="nf">VE_HEAD</span> <span class="nf">=</span> <span class="nf">VE_USART_RX_IN</span>
+<span class="nf">XT_USART_RX_IN:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">PFA_DOVARIABLE</span>
+<span class="nf">PFA_USART_RX_IN:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">usart_rx_in</span>
+
+<span class="k">; </span><span class="c1">( -- value )</span> <span class="kn">constant</span> <span class="nc">USART_RX_MASK</span>
+<span class="nf">VE_USART_RX_MASK:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="mh">$FF0D</span>
+    <span class="kt">.</span><span class="nf">db</span> <span class="nf">&quot;USART_RX_MASK&quot;,$00</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">VE_HEAD</span>
+    <span class="kt">.</span><span class="nf">set</span> <span class="nf">VE_HEAD</span> <span class="nf">=</span> <span class="nf">VE_USART_RX_MASK</span>
+<span class="nf">XT_USART_RX_MASK:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">PFA_DOVARIABLE</span>
+<span class="nf">PFA_USART_RX_MASK:</span>
+    <span class="kt">.</span><span class="nf">dw</span> <span class="nf">usart_rx_mask</span>
+</pre></div>
+</div>
+<p>This provides the words <strong class="command">USART_RX_DATA</strong> <strong class="command">USART_RX_IN</strong>
+<strong class="command">USART_RX_MASK</strong> for our usage. Alternately we could setup our
+own variables and replace <strong class="command">rx-isr</strong> with a version looking at
+them.</p>
+</li>
+<li><p class="first">handling an incoming byte according to MPC-mode</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">UCSRA_FE0</span>
+<span class="nf">UCSRA_DOR0</span>  <span class="k">or</span>
+<span class="nf">UCSRA_UPE0</span>  <span class="k">or </span><span class="kn">constant</span> <span class="nc">UCSRA_RX_ERR</span>
+<span class="kn">:</span> <span class="nc">mpc?</span>     <span class="nf">UCSRA</span> <span class="k">c@ </span> <span class="nf">UCSRA_MPCM0</span> <span class="k">and ;</span>
+<span class="kn">:</span> <span class="nc">rx-err?</span>  <span class="nf">UCSRA</span> <span class="k">c@ </span> <span class="nf">UCSRA_RX_ERR</span> <span class="k">and ;</span>
+<span class="kn">:</span> <span class="nc">rx-store</span> <span class="c1">( udata -- )</span>
+  <span class="nf">USART_RX_DATA</span> <span class="nf">USART_RX_IN</span> <span class="k">c@ </span> <span class="k">dup &gt;r</span>
+  <span class="k">+ !</span>
+  <span class="k">r&gt; 1+ </span><span class="nf">USART_RX_MASK</span> <span class="k">and </span><span class="nf">USART_RX_IN</span> <span class="k">c!</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">mpc-rx-isr</span>
+  <span class="nf">rx-err?</span> <span class="k">0= if</span>
+    <span class="nf">UDR0</span> <span class="k">c@ </span>            <span class="c1">\ -- udata</span>
+    <span class="nf">mpc?</span> <span class="k">if</span>
+      <span class="nf">stationID</span> <span class="nf">=</span> <span class="k">if</span>
+        <span class="nf">-mpc7</span>
+      <span class="k">then</span>
+    <span class="k">else</span>
+      <span class="nf">rx-store</span>
+    <span class="k">then</span>
+  <span class="k">then</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>The new word command:<cite>mpc-rx-isr</cite> will inspect incoming data according
+to whether we are in MPC mode or not. It requires the node address in
+the value <strong class="command">stationID</strong> as defined before.</p>
+</li>
+<li><p class="first">string everything together</p>
+<p>In order to use all of the above we basically need to switch it on
+(and off):</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">+rs485.mpc</span>
+  <span class="k">[&#39;] </span><span class="nf">prompt_rd</span> <span class="k">is </span><span class="nf">p_rd</span>         <span class="c1">\ overwrite p_rd</span>
+  <span class="nf">+rs485</span>
+  <span class="k">[&#39;] </span><span class="nf">mpc-rx-isr</span> <span class="nf">USART0__RXAddr</span> <span class="no">int! </span><span class="c1">\ overwrite usart_rx_isr</span>
+  <span class="nf">-emit</span>
+  <span class="nf">+mpc7</span>
+<span class="k">;</span>
+
+<span class="kn">:</span> <span class="nc">-rs485.mpc</span>
+  <span class="k">[&#39;] </span><span class="nf">(p_rd)</span> <span class="k">is </span><span class="nf">p_rd</span>
+  <span class="k">[&#39;] </span><span class="nf">usart_rx_isr</span> <span class="nf">USART0__RXAddr</span> <span class="no">int!</span>
+  <span class="nf">-rs485</span>
+  <span class="nf">-mpc7</span>
+  <span class="nf">+emit</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>When using this in a turnkey word, make sure to disable <strong class="command">emit</strong>
+before calling the original word <strong class="command">applturnkey</strong>, because
+otherwise the output of <strong class="command">ver</strong> will be written to the bus.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">run-turnkey</span>
+  <span class="nf">-emit</span>
+  <span class="nf">applturnkey</span>
+  <span class="nf">+rs485.mpc</span>
+
+  <span class="c1">\ more initialization here</span>
+
+<span class="c1">\ begin</span>
+<span class="c1">\   your periodic work goes here</span>
+<span class="c1">\ again</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>We are all ready to go. Please note that you need some means to send
+<tt class="docutils literal"><span class="pre">0x80</span> <span class="pre">|</span> <span class="pre">0xStationAddress</span></tt> to the bus to address the desired node. Once
+connected you need to issue <strong class="command">+emit</strong>, and only after that the
+ok-prompt will show up.</p>
+</div>
+<div class="section" id="going-to-quiet-mode-on-unparsable-input">
+<h3><a class="toc-backref" href="#id18">6.8 going to quiet mode on unparsable input</a><a class="headerlink" href="#going-to-quiet-mode-on-unparsable-input" title="Permalink to this headline">¶</a></h3>
+<p>After everything worked thus far I found out, that sometimes more than
+one controller on the bus will be <em>awake</em> receiving data and acting on
+it. Most of the time this would result in error messages being sent to
+the bus, which in turn will create another round of error messages. I
+called this <em>the echo loop</em>. I did not find out, what really caused
+this behaviour, but instead I decided: whenever a node receives
+<em>illegible</em> input that cannot be handled properly, the node shall
+return to mpc <em>quiet</em> mode and not write any error messages at all.</p>
+<p>The desired behaviour is a fairly fundamental change to the command
+loop, however, it is easy to install thanks to the availability of
+recognizers.</p>
+<p>Any input will be parsed by a list of recognizers, the first to
+<em>understand</em> the input will trigger the corresponding work. The last in the
+list will be the one to possibly issue an error message. So we create a new
+recognizer and insert it into the list of recognizers before the one
+issueing error messages.</p>
+<p>First we need to load the word <strong class="command">recognizer:</strong></p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">include</span> <span class="nf">lib/recognizer.frt</span>
+</pre></div>
+</div>
+<p>After that we create a table holding 3 execution tokens. The first is
+to be called at runtime, the second at compile time, and the third
+during a postpone operation.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">:noname </span><span class="nf">-emit</span> <span class="nf">+mpc7</span> <span class="k">; </span>   <span class="c1">\ at runtime call the equivalent of ~end</span>
+<span class="nf">&#39;</span> <span class="no">noop </span>                  <span class="c1">\ nothing to do at compile time</span>
+<span class="k">:noname type </span><span class="mi">-48</span> <span class="k">throw ; </span><span class="c1">\ postpone would be an error</span>
+<span class="nd">recognizer: </span><span class="nf">r:quiet</span>
+</pre></div>
+</div>
+<p>The parsing word does basically nothing. If this recognizer is called,
+<strong class="command">rec:word</strong> and <strong class="command">rec:num</strong> have not been able to handle the
+input. So we simply drop the references to the unhandled input before the
+call into an entry of the newly created table <strong class="command">r:quiet</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">rec:quiet</span>  <span class="c1">( addr length -- t/f )</span> <span class="k">drop drop </span><span class="nf">r:quiet</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>Registering and deregistering the new recognizer is a little involved,
+because we want to place it at the last position &#8212; if the last
+recognizer fails, the content of r:fail is called. After some
+fiddling, I decided to compare the last value with the one to be
+inserted or removed, such that repeated calls to &#8220;+rec:quiet&#8221; or
+&#8220;-rec:quiet&#8221; will not cause a problem.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">+rec:quiet</span>
+  <span class="k">[&#39;] </span><span class="nf">rec:quiet</span>         <span class="c1">\ -- r0</span>
+  <span class="nd">get-recognizers </span>      <span class="c1">\ -- r0 r1 r2 2</span>
+  <span class="k">dup pick </span>             <span class="c1">\ -- r0 r1 r2 2 r1</span>
+  <span class="k">[&#39;] </span><span class="nf">rec:quiet</span> <span class="nf">&lt;&gt;</span> <span class="k">if </span>  <span class="c1">\ -- r0 r1 r2 2</span>
+    <span class="k">1+</span>
+    <span class="nd">set-recognizers</span>
+  <span class="k">else</span>
+    <span class="nd">set-recognizers </span><span class="c1">\ 0 ?do drop loop \ rather? no change?</span>
+    <span class="k">drop</span>
+  <span class="k">then</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">-rec:quiet</span>
+  <span class="nd">get-recognizers </span>      <span class="c1">\ -- r0 r1 r2 3</span>
+
+  <span class="k">dup pick</span>
+  <span class="k">[&#39;] </span><span class="nf">rec:quiet</span> <span class="nf">=</span> <span class="k">if</span>
+    <span class="k">1- </span><span class="nd">set-recognizers </span><span class="k">drop</span>
+  <span class="k">else</span>
+    <span class="mi">0</span> <span class="k">?do drop loop</span>
+  <span class="k">then</span>
+
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">+rec:quiet</strong> needs to be called in <strong class="command">+rs485.mpc</strong> and
+similar for <strong class="command">-rec:quiet</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mh">$28</span> <span class="kn">constant</span> <span class="nc">USART0__RXAddr</span>
+<span class="kn">:</span> <span class="nc">+rs485.mpc</span>
+  <span class="k">[&#39;] </span><span class="nf">prompt_rd</span> <span class="k">is </span><span class="nf">p_rd</span>         <span class="c1">\ overwrite p_rd</span>
+  <span class="nf">+rs485</span>
+  <span class="k">[&#39;] </span><span class="nf">mpc-rx-isr</span> <span class="nf">USART0__RXAddr</span> <span class="no">int! </span><span class="c1">\ overwrite usart_rx_isr</span>
+  <span class="nf">+rec:quiet</span>
+  <span class="nf">-emit</span>
+  <span class="nf">+mpc7</span>
+<span class="k">;</span>
+
+<span class="kn">:</span> <span class="nc">-rs485.mpc</span>
+  <span class="k">[&#39;] </span><span class="nf">(p_rd)</span> <span class="k">is </span><span class="nf">p_rd</span>
+  <span class="k">[&#39;] </span><span class="nf">usart_rx_isr</span> <span class="nf">USART0__RXAddr</span> <span class="no">int!</span>
+  <span class="nf">-rec:quiet</span>
+  <span class="nf">-rs485</span>
+  <span class="nf">-mpc7</span>
+  <span class="nf">+emit</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="turnkey">
+<h3><a class="toc-backref" href="#id19">6.9 turnkey</a><a class="headerlink" href="#turnkey" title="Permalink to this headline">¶</a></h3>
+<p>We are done. We can now put this together in a function to be called at
+system boot. The controller will immediately switch off any output and go
+to <em>quiet</em> mpc mode. As such the controller will behave well on a bus
+with possibly other nodes.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">run-turnkey</span>
+  <span class="nf">-emit</span>
+  <span class="nf">applturnkey</span>
+  <span class="nf">+rs485.mpc</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>Please note that <strong class="command">-emit</strong> must be called before
+<strong class="command">applturnkey</strong>, because the later does call <strong class="command">ver</strong>
+producing the well known output</p>
+<div class="highlight-none"><div class="highlight"><pre>amforth 5.5 ATmega644P ok
+</pre></div>
+</div>
+<p>or similar. But we do <strong>not</strong> want to write anything on the bus unless
+explicitly asked to do so.</p>
+</div>
+</div>
+<div class="section" id="creating-a-node">
+<h2><a class="toc-backref" href="#id20">7 creating a node</a><a class="headerlink" href="#creating-a-node" title="Permalink to this headline">¶</a></h2>
+<p>While the above implementation is <em>complete</em>, it may not be obvious,
+how to create a sensor node with all the required bits around it. So at
+least the description of a working example seems needed.</p>
+<p>In my case the <tt class="docutils literal"><span class="pre">collector</span></tt> is a perl script, which will periodically
+address a list of nodes and for each of these</p>
+<ul>
+<li><p class="first">write the address byte <tt class="docutils literal"><span class="pre">0x80</span> <span class="pre">|</span> <span class="pre">addr</span></tt> to the bus</p>
+</li>
+<li><p class="first">write <strong class="command">+emit</strong> after that (no echo characters expected)</p>
+</li>
+<li><p class="first">wait for the ok prompt</p>
+</li>
+<li><p class="first">write <strong class="command">~data</strong> to the bus (waiting for each echo character, since
+those are coming from the controller now)</p>
+</li>
+<li><p class="first">read all the characters which come as an answer, e.g.</p>
+<div class="highlight-none"><div class="highlight"><pre>__Q 42:0005 4200:0  4201:0  4202:0  4203:0 C-- ok
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none"><div class="highlight"><pre>__Q 7F:0005 7F01:3,+19.50,+19.50,+19.50  7F02:3,514,516,518 C-- ok
+</pre></div>
+</div>
+</li>
+<li><p class="first">write <strong class="command">~end</strong> to the bus (again waiting for each echo character)</p>
+</li>
+</ul>
+<p>The answer string is then parsed into pieces, and individual
+measurements are then inserted into a database table.</p>
+<p>The <tt class="docutils literal"><span class="pre">__Q</span></tt> and <tt class="docutils literal"><span class="pre">C--</span></tt> tokens were inserted only to make parsing simpler.
+The second token consists of <tt class="docutils literal"><span class="pre">stationID:softwareVersion</span></tt>, both as a hex
+number. Tokens after that are either <tt class="docutils literal"><span class="pre">sensorID:Counter</span></tt> or
+<tt class="docutils literal"><span class="pre">sensorID:N,xlow,xmean,xhigh</span></tt> collections. Other formats are certainly
+possible, this is just my choice based on the decision <em>its all plain ascii</em>.</p>
+<p>This represents the <em>high level</em> view of the node as seen from the
+<em>network</em> (aka bus).
+So the words</p>
+<ul class="simple">
+<li><strong class="command">+emit</strong></li>
+<li><strong class="command">~data</strong></li>
+<li><strong class="command">~end</strong></li>
+</ul>
+<p>must be available on the node.</p>
+<p>So there are at least two ways to make <strong class="command">~data</strong> report meaningful output.</p>
+<ol class="arabic">
+<li><p class="first">interrupt only sensors</p>
+<p>If all sensors can be handled by appropriate interrupt service routines,
+those shall fill the variables with meaningful values. <strong class="command">~data</strong>
+will then only read those values and report them over the bus.</p>
+<p>This setup is used for counters or <em>meters</em>. In my case the
+electricity meter has a so called <cite>S0</cite> interface with two pins <tt class="docutils literal"><span class="pre">+</span></tt>
+and <tt class="docutils literal"><span class="pre">-</span></tt>. <tt class="docutils literal"><span class="pre">+</span></tt> must be pulled high by a pullup resistor and connected
+to a controller pin. The meter will short the <tt class="docutils literal"><span class="pre">+</span></tt> to the <tt class="docutils literal"><span class="pre">-</span></tt> pin for
+a few milliseconds thus reporting one <em>count</em>. If the pin at the
+controller either can react on such a pulse by issueing an interrupt
+(external or pin change interrrupt) or if the pin is connected to a
+counter register, that&#8217;s all there needs to be done. Every low pulse
+will increment the value reported by <strong class="command">~data</strong>.</p>
+</li>
+</ol>
+<div class="figure">
+<img alt="../../_images/p_S0_interface.png" src="../../_images/p_S0_interface.png" />
+</div>
+<ol class="arabic" start="2">
+<li><p class="first">using the multitasker to do the work in the background</p>
+<p>If there is more work to be done, either on event or periodically,
+then using the multitasker is an option. There are only two tasks
+involved: the task serving the command line and the task
+periodically collecting sensor readouts into variables. The handling
+of sensors or events could be spread over more tasks, if needed for
+some reason.</p>
+<p>If <strong class="command">~data</strong> is called on the command line, it will report the
+stored values and optionally reset the variables.</p>
+</li>
+</ol>
+<div class="section" id="counter-sensor">
+<h3><a class="toc-backref" href="#id21">7.1 counter sensor</a><a class="headerlink" href="#counter-sensor" title="Permalink to this headline">¶</a></h3>
+<p>As an example I will outline the needed bits for a counter node. It
+will count <em>active-low</em> pulses on one of 4 pins. The controller is an
+atmega168, which features <em>pin-change-interrupts</em> on all port pins. The
+pulses are produced by an electricity meter with a so called <cite>S0</cite>
+interface. This particular electricity meter will produce 1000 counts
+per kWh consumed, each count consists of pulling pin <tt class="docutils literal"><span class="pre">+</span></tt> down for
+90 milliseconds.</p>
+<p>The pin change interrupt will trigger on falling and rising edges.
+There is only one interrupt for a group of eight pins (one port). So
+the interrupt service routine needs to find out, which pin exaclty
+triggered the interrupt, and whether a falling or rising edge did
+occur. On the falling edge we need to increment the associated counter
+for this pin.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ --- data handling -------------------------</span>
+<span class="kn">variable</span> <span class="nc">Count</span> <span class="mi">4</span> <span class="k">cells allot</span>
+<span class="kn">variable</span> <span class="nc">Pins_old</span>
+<span class="kn">:</span> <span class="nc">pci1_isr</span>
+  <span class="nf">ledsensor</span> <span class="nf">high</span>
+  <span class="nf">PINC</span> <span class="k">c@ </span><span class="mh">$0F</span> <span class="k">and </span>      <span class="c1">\ -- pins</span>
+  <span class="nf">Pins_old</span> <span class="k">c@ </span>          <span class="c1">\ -- pins alt</span>
+  <span class="k">over </span>                 <span class="c1">\ -- pins alt pins</span>
+  <span class="k">xor </span>                  <span class="c1">\ -- pins diff</span>
+  <span class="k">dup if </span>               <span class="c1">\ -- pins diff</span>
+
+    <span class="mi">4</span> <span class="mi">0</span> <span class="k">do </span>                         <span class="c1">\ for each (consequtive input) pin</span>
+      <span class="k">dup </span> <span class="mi">1</span> <span class="k">i lshift </span> <span class="k">and if </span>      <span class="c1">\ . bit one changed?</span>
+        <span class="k">over </span> <span class="mi">1</span> <span class="k">i lshift </span> <span class="k">and 0= if </span><span class="c1">\ . leading edge?</span>
+          <span class="mi">1</span>  <span class="k">Count i cells + </span> <span class="nf">+!</span>    <span class="c1">\ . increment</span>
+        <span class="k">then</span>
+      <span class="k">then</span>
+    <span class="k">loop</span>
+
+  <span class="k">then</span>
+  <span class="c1">( diff )</span> <span class="k">drop</span>
+  <span class="c1">( pins )</span> <span class="nf">Pins_old</span> <span class="k">c!</span>
+  <span class="nf">ledsensor</span> <span class="nf">low</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">+pci1</span>
+  <span class="mh">$0F</span> <span class="nf">PCMSK1</span> <span class="k">c! </span> <span class="c1">\ pcint 8..11 active</span>
+  <span class="mh">$02</span> <span class="nf">PCICR</span>  <span class="k">c! </span> <span class="c1">\ pci1 active</span>
+  <span class="mh">$02</span> <span class="nf">PCIFR</span>  <span class="k">c! </span> <span class="c1">\ clear PCI1, just in case</span>
+  <span class="nf">PINC</span> <span class="k">c@ </span><span class="mh">$0F</span> <span class="k">and </span> <span class="nf">Pins_old</span> <span class="k">!</span>
+  <span class="k">[&#39;] </span><span class="nf">pci1_isr</span> <span class="nf">PCINT1Addr</span> <span class="no">int!</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">-pci1</span>
+  <span class="mh">$00</span> <span class="nf">PCICR</span>  <span class="k">c!</span>
+  <span class="mh">$02</span> <span class="nf">PCIFR</span>  <span class="k">c! </span> <span class="c1">\ clear PCI1, just in case</span>
+ <span class="k">;</span>
+</pre></div>
+</div>
+<p>The function <strong class="command">~data</strong> will then read the counter and report the value
+found as a plain ascii string on the serial interface. No provisions
+are taken to implement any access locking, reading the two bytes of
+the counter might result in inconsistent values.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ counters are expected signed. A rollover can then be detected</span>
+<span class="c1">\ and distinguished from restart of the controller.</span>
+<span class="c1">\ therefore &#39;.&#39; not &#39;u.&#39; in data.ls</span>
+<span class="kn">:</span> <span class="nc">data.ls</span>
+  <span class="mi">4</span> <span class="mi">0</span> <span class="k">do</span>
+    <span class="k">space </span><span class="nf">stationID</span> <span class="k">@ </span><span class="nf">&gt;&lt;</span> <span class="k">i + </span><span class="mi">&amp;4</span> <span class="k">hex </span><span class="nf">u0.r</span> <span class="nf">colon</span>  <span class="k">Count i cells + @ decimal .</span>
+  <span class="k">loop</span>
+<span class="k">;</span>
+<span class="kn">:</span> <span class="nc">~data</span>
+  <span class="nf">leddata</span> <span class="nf">high</span>     <span class="c1">\ fixme: leddata</span>
+
+  <span class="s">.&quot;</span> <span class="s">__Q</span><span class="nf">&quot;</span>       <span class="c1">\ datagram start</span>
+  <span class="kt">.</span><span class="nf">id+ver</span>       <span class="c1">\ stationID + swVersion</span>
+  <span class="nf">data.ls</span>
+  <span class="s">.&quot;</span> <span class="s">C--</span><span class="nf">&quot;</span>       <span class="c1">\ datagram end</span>
+  <span class="nf">leddata</span> <span class="nf">low</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>Since data is updated using an interrrupt service routine only, the
+available command loop is available to service any requests from the
+rs485&#8211;serial connection. If work has to be done outside the interrupt
+service routine, a multitasker can be used to run two tasks: one to
+read and process sensor data, and another one to run the command loop.</p>
+</div>
+</div>
+<div class="section" id="the-somtimes-not-so-obvious-things">
+<h2><a class="toc-backref" href="#id22">8 The <em>somtimes-not-so-obvious</em> things</a><a class="headerlink" href="#the-somtimes-not-so-obvious-things" title="Permalink to this headline">¶</a></h2>
+<p>As one of my lecturers kept saying: <cite>**Afterwards** everything is obvious</cite>.
+However, the path to obviousness can be long and windy at times.</p>
+<ol class="arabic simple">
+<li>Always provide a jumper to optionally disconnect the RX pin of the
+transceiver, IF you want to keep the existing RS232 transceiver
+working.</li>
+<li>Consider adding jumpers to disconnect the bus. This is occasionally
+useful.</li>
+</ol>
+<p>There is probably more to be said ...</p>
+</div>
+<div class="section" id="finally">
+<h2><a class="toc-backref" href="#id23">9 Finally</a><a class="headerlink" href="#finally" title="Permalink to this headline">¶</a></h2>
+<p>Like always this work would not have been possible without substantial
+help from others. Special thanks go to Matthias Trute for amForth, for
+providing valuable feedback and picking up suggestions; Lubos Pekny for
+proving, that it can be done; the members of the amforth-devel mailing
+list, the weekly IRC round and of the German &#8220;Forth Gesellschaft e.V.&#8221;;
+countless authors of documentation, code, or processes for all the
+countless pieces of software that comprise my workstation setup, e.g.
+bash, emacs and perl to name just three.</p>
+</div>
+<div class="section" id="references">
+<h2><a class="toc-backref" href="#id24">10 References</a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>net4801 single board computer running the collector<ul>
+<li><a class="reference external" href="http://www.soekris.com">http://www.soekris.com</a></li>
+</ul>
+</li>
+<li>Lubos Peknys <cite>mFC</cite> project using rs485 and mpc mode highly inspired this
+code and project<ul>
+<li><a class="reference external" href="http://www.forth.cz">http://www.forth.cz</a></li>
+</ul>
+</li>
+<li>Pavel Pisa, implementing a 9-bit microLAN<ul>
+<li><a class="reference external" href="http://cmp.felk.cvut.cz/~pisa/papers/pi-ulan-prot.pdf">http://cmp.felk.cvut.cz/~pisa/papers/pi-ulan-prot.pdf</a></li>
+<li><a class="reference external" href="http://ulan.sourceforge.net/">http://ulan.sourceforge.net/</a></li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../TG/TG.html">Technical Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../TG/Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../TG/refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/Projects/RS485/RS485Bus.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

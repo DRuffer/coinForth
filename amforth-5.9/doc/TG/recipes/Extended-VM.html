@@ -1,0 +1,226 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Extended VM &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Programming and Debugging" href="Programming.html" />
+    <link rel="next" title="Un-Doing Definitions" href="Forget.html" />
+    <link rel="prev" title="Exceptions" href="Exceptions.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="extended-vm">
+<span id="id1"></span><h1>Extended VM<a class="headerlink" href="#extended-vm" title="Permalink to this headline">¶</a></h1>
+<p>At the Euroforth 2008 Stephen Pelc presented a paper
+<a class="reference external" href="http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf">http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf</a>
+with some interesting extensions to the Forth virtual machine
+model. He proposed 4 new registers A, B, X, and Y. They can be
+used to simply store temporary data. More intelligent use cases
+arise from certian pointer operations with auto-increment and
+auto-decrement facilities.</p>
+<p>AmForth adapts these ideas by combining the operations for A and X
+(B and Y similiarly). All commands are implemented in assembly using
+free registers and are included at compile time by adding the line</p>
+<div class="highlight-none"><div class="highlight"><pre>.include &quot;words/reg-a.asm&quot;
+.include &quot;words/reg-b.asm&quot;
+</pre></div>
+</div>
+<p>They do not depend on other files.</p>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>Both registers A and B act the same way. They are not used inside
+any standard AmForth code and are not thread local. Since they use
+CPU registers, they work faster than variables or other memory based
+data.</p>
+<p>To store data into a register, the command <tt class="docutils literal"><span class="pre">&gt;a</span></tt> is used. Getting back
+the data is done with <tt class="docutils literal"><span class="pre">a&gt;</span></tt>. Unline the similiar  looking <tt class="docutils literal"><span class="pre">&gt;r</span></tt>,
+repeated calls to <tt class="docutils literal"><span class="pre">&gt;a</span></tt> overwrite the register contents.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="no">a&gt; </span><span class="k">.</span>
+  <span class="mi">6183</span> <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="mi">17</span> <span class="no">&gt;a</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="no">a&gt; </span><span class="k">.</span>
+  <span class="mi">17</span> <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pointer-voodoo">
+<h2>Pointer Voodoo<a class="headerlink" href="#pointer-voodoo" title="Permalink to this headline">¶</a></h2>
+<p>The registers can work as address registers. The command <tt class="docutils literal"><span class="pre">a&#64;</span></tt> reads the RAM
+location, the A register points to. By using <tt class="docutils literal"><span class="pre">a&#64;+</span></tt> the data is read and the
+register is incremented by 1 cell (2 bytes). Similiar the <tt class="docutils literal"><span class="pre">a&#64;-</span></tt>: the data
+is read and the register is decremented by 1 cell.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="kn">:</span> <span class="nc">dump</span> <span class="k">swap </span><span class="no">&gt;a </span><span class="k">2/ </span><span class="mi">0</span> <span class="k">do </span><span class="nf">a@+</span> <span class="k">. loop ;</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span> <span class="k">source dump</span>
+ <span class="mi">7320</span> <span class="mi">756</span><span class="nf">F</span> <span class="mi">6372</span> <span class="mi">2065</span> <span class="mi">7564</span> <span class="mi">706</span><span class="nf">D</span>  <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>To store data, the commands <tt class="docutils literal"><span class="pre">a!</span></tt>, <tt class="docutils literal"><span class="pre">a!+</span></tt> and <tt class="docutils literal"><span class="pre">a!-</span></tt>
+can be used. They store the Top-Of-Stack Element to
+RAM where the A register points to and modify it
+afterwards (if applicable).</p>
+<p>The words <tt class="docutils literal"><span class="pre">na&#64;</span></tt> and <tt class="docutils literal"><span class="pre">na!</span></tt> give access to the memory
+location n bytes relative to the current value of the
+A register. The content of the A register is not changed.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="kn">:</span> <span class="nc">dump</span> <span class="k">swap </span><span class="no">&gt;a </span><span class="k">2/ </span><span class="mi">0</span> <span class="k">do i cells </span><span class="nf">na@</span> <span class="k">. loop ;</span>
+ <span class="nf">ok</span>
+<span class="k">&gt; </span> <span class="k">source dump</span>
+ <span class="mi">7320</span> <span class="mi">756</span><span class="nf">F</span> <span class="mi">6372</span> <span class="mi">2065</span> <span class="mi">7564</span> <span class="mi">706</span><span class="nf">D</span>  <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="portable-version">
+<h2>Portable Version<a class="headerlink" href="#portable-version" title="Permalink to this headline">¶</a></h2>
+<p>The registers are an extension of the underlying forth VM. There
+is no official reference implementation available. To experiment
+with them, the following code may be useful.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="mi">1</span> <span class="k">cells </span><span class="kn">constant</span> <span class="nc">cell</span>
+
+<span class="kn">variable</span> <span class="nc">reg:a</span>
+
+<span class="kn">:</span> <span class="nc">&gt;a</span>  <span class="nf">reg:a</span>  <span class="k">! ;</span>
+<span class="kn">:</span> <span class="nc">a&gt;</span>  <span class="nf">reg:a</span>  <span class="k">@ ;</span>
+<span class="kn">:</span> <span class="nc">a@</span>  <span class="no">a&gt; </span><span class="k">@ ;</span>
+<span class="kn">:</span> <span class="nc">a!</span>  <span class="no">a&gt; </span><span class="k">! ;</span>
+<span class="kn">:</span> <span class="nc">na@</span> <span class="no">a&gt; </span><span class="k">+ @ ;</span>
+<span class="kn">:</span> <span class="nc">na!</span> <span class="no">a&gt; </span><span class="k">+ ! ;</span>
+
+<span class="c1">\ post-increment fetch/store</span>
+<span class="kn">:</span> <span class="nc">a@+</span> <span class="nf">cell</span> <span class="nf">reg:a</span> <span class="nf">+!</span> <span class="no">a@ </span><span class="k">;</span>
+<span class="kn">:</span> <span class="nc">a!+</span> <span class="nf">cell</span> <span class="nf">reg:a</span> <span class="nf">+!</span> <span class="no">a! </span><span class="k">;</span>
+<span class="kn">:</span> <span class="nc">a@-</span> <span class="nf">cell</span> <span class="k">negate </span><span class="nf">reg:a</span> <span class="nf">+!</span> <span class="no">a@ </span><span class="k">;</span>
+<span class="kn">:</span> <span class="nc">a!-</span> <span class="nf">cell</span> <span class="k">negate </span><span class="nf">reg:a</span> <span class="nf">+!</span> <span class="no">a! </span><span class="k">;</span>
+
+<span class="c1">\ alternativly</span>
+<span class="c1">\ pre-increment fetch/store</span>
+<span class="kn">:</span> <span class="nc">a@+</span> <span class="no">a@ </span><span class="nf">cell</span> <span class="nf">reg:a</span> <span class="nf">+!</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">a!+</span> <span class="no">a! </span><span class="nf">cell</span> <span class="nf">reg:a</span> <span class="nf">+!</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">a@-</span> <span class="no">a@ </span><span class="nf">cell</span> <span class="k">negate </span><span class="nf">reg:a</span> <span class="nf">+!</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">a!-</span> <span class="no">a! </span><span class="nf">cell</span> <span class="k">negate </span><span class="nf">reg:a</span> <span class="nf">+!</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>Amforth has a highly optimizied assembler implementation of these commands.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Extended-VM.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

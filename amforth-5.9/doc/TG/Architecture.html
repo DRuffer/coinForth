@@ -1,0 +1,995 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Architecture &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../index.html" />
+    <link rel="up" title="Technical Guide" href="TG.html" />
+    <link rel="next" title="Implementation" href="Implementation.html" />
+    <link rel="prev" title="Source Organization" href="Sources.html" />
+    <link rel="stylesheet" href="../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>amforth is a 16 bit Forth implementing the indirect threading
+model. The flash memory contains the whole dictionary. A few EEPROM
+cells are used to hold initial values and the dictionary pointers.
+The RAM contains buffers, variables and the stacks.</p>
+<p>The compiler is a classic compiler without any optimization
+support.</p>
+<p>amforth uses all of the CPU registers to hold vital data: The
+data stack pointer, the instruction pointer, the user pointer, and
+the Top-Of-Stack cell. The hardware stack is used as the return
+stack. Some registers are used for temporary data in primitives.</p>
+</div>
+<div class="section" id="cpu-forth-vm-mapping">
+<h2>CPU &#8211; Forth VM Mapping<a class="headerlink" href="#cpu-forth-vm-mapping" title="Permalink to this headline">¶</a></h2>
+<p>The Forth VM has a few registers that need to be mapped to the
+microcontroller registers. The mapping has been extended over time
+and may cover all available registers. The actual coverage depends
+on the amount of additional packages. The default settings are shown
+in the table <a class="reference internal" href="#register-mappings"><em>Register Mapping</em></a>.</p>
+<div class="section" id="register-mapping">
+<span id="register-mappings"></span><h3>Register Mapping<a class="headerlink" href="#register-mapping" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="60%" />
+<col width="40%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Forth Register</td>
+<td>ATmega Register(s)</td>
+</tr>
+<tr class="row-even"><td>W: Working Register</td>
+<td>R22:R23</td>
+</tr>
+<tr class="row-odd"><td>IP: Instruction Pointer</td>
+<td>XH:XL (R27:R26)</td>
+</tr>
+<tr class="row-even"><td>RSP: Return Stack Pointer</td>
+<td>SPH:SPL</td>
+</tr>
+<tr class="row-odd"><td>PSP: Parameter Stack Pointer</td>
+<td>YH:YL (R29:R28)</td>
+</tr>
+<tr class="row-even"><td>UP: User Pointer</td>
+<td>R4:R5</td>
+</tr>
+<tr class="row-odd"><td>TOS: Top Of Stack</td>
+<td>R24:R25</td>
+</tr>
+<tr class="row-even"><td>X: temporary register</td>
+<td>ZH:ZL (R31:R30)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="extended-forth-vm-register-mapping">
+<h3>Extended Forth VM Register Mapping<a class="headerlink" href="#extended-forth-vm-register-mapping" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="60%" />
+<col width="40%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Forth Register</td>
+<td>ATmega Register(s)</td>
+</tr>
+<tr class="row-even"><td>A: Index and Scratch Register</td>
+<td>R6:R7</td>
+</tr>
+<tr class="row-odd"><td>B: Index and Scratch Register</td>
+<td>R8:R9</td>
+</tr>
+</tbody>
+</table>
+<p>In addition the register pair R0:R1 is used internally e.g. to
+hold the the result of multiply operations. The register pair R2:R3
+is used as the zero value in many words. These registers must never
+be changed.</p>
+<p>The registers from R10 to R13 are currently unused, but may be
+used for the VM extended registers X and Y sometimes. The
+registers R14 to R21 are used as temporary registers and can be used
+freely within one module as temp0 to temp7.</p>
+<p>The forth core uses the
+T Flag in the machine status register SREG for signalling
+an interrupt. Any other code must not change that bit.</p>
+</div>
+</div>
+<div class="section" id="core-system">
+<h2>Core System<a class="headerlink" href="#core-system" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="threading-model">
+<h3>Threading Model<a class="headerlink" href="#threading-model" title="Permalink to this headline">¶</a></h3>
+<p>AmForth implements the classic indirect threaded variant of
+forth. The registers and their mappings are shown in table
+<a class="reference internal" href="#register-mappings"><em>Register Mapping</em></a>.</p>
+</div>
+<div class="section" id="inner-interpreter">
+<span id="id1"></span><h3>Inner Interpreter<a class="headerlink" href="#inner-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>For the indirect threading model an inner interpreter is
+needed. The inner interpreter does the interrupt handling too.
+It repeatedly reads the cell, the <strong class="command">IP</strong> points to, takes this number
+as the address for the next code segment and jumps to that code.
+It is expected that this code segment does a jump back to the
+inner interpreter (NEXT). The <strong class="command">IP</strong> is incremented by 1 just before
+the jumps are done to get the next cell.</p>
+<div class="highlight-none"><div class="highlight"><pre>Check_Interrupt
+W  &lt;- [IP]   ; read at IP
+IP &lt;- IP+1   ; advance IP
+X  &lt;- [W]    ; EXECUTE phase, W points to execution token
+JMP [X]      ; read execution token and execute its code
+</pre></div>
+</div>
+<div class="section" id="next">
+<h4>NEXT<a class="headerlink" href="#next" title="Permalink to this headline">¶</a></h4>
+<p>The NEXT routine is the core of the inner interpreter. It does the
+mapping between the execution tokens and the corresponding machine
+code. It consists of 4 steps which are executed for every forth word.</p>
+<p>The first step is to check whether an interrupt needs to
+be handled. It is done by looking at the <strong class="command">T</strong>
+flag in the machine status register. If it is set, the code jumps
+to the interrupt handling part.</p>
+<p>The next step is to read the cell the <strong class="command">IP</strong> points to and
+stores this value in the W register. For a COLON word
+W contains the address of the code field.</p>
+<p>The 3rd step is to increase the <strong class="command">IP</strong> register by 1.</p>
+<p>The 4th step is the EXECUTE step.</p>
+</div>
+<div class="section" id="execute">
+<h4>EXECUTE<a class="headerlink" href="#execute" title="Permalink to this headline">¶</a></h4>
+<p>This operation is the JUMP.  It reads the content of the cell the
+<strong class="command">W</strong> register points to. The result is stored in the scratch pad
+register <strong class="command">X</strong>. The data in <strong class="command">X</strong> is the address of the machine code to be
+executed in the last step. This step is used by the forth command
+<strong class="command">EXECUTE</strong> too. The forth command does not get the address
+of the next destination from the current <strong class="command">IP</strong> but from the data stack.</p>
+<p>This last step finally jumps to the machine code pointed to
+by the <strong class="command">X</strong> scratch pad register.</p>
+</div>
+<div class="section" id="do-colon">
+<h4>DO COLON<a class="headerlink" href="#do-colon" title="Permalink to this headline">¶</a></h4>
+<p>DO COLON (aka NEST) is the subroutine call. It pushes the
+<strong class="command">IP</strong> onto the return stack. It then increments <strong class="command">W</strong>
+by one flash cell, so that it points to the body of the (colon) word,
+and sets <strong class="command">IP</strong> to that value. Then it continues with
+<strong class="command">NEXT</strong>, which begins executing the words in the body
+of the (parent) colon word. Note that <strong class="command">W</strong> points to
+the execution token of the current word, so W+1 points to the
+parameter field (body) of the forth word.</p>
+<div class="highlight-none"><div class="highlight"><pre>push IP
+IP &lt;- W+1
+JMP NEXT
+</pre></div>
+</div>
+</div>
+<div class="section" id="exit">
+<h4>EXIT<a class="headerlink" href="#exit" title="Permalink to this headline">¶</a></h4>
+<p>The code for EXIT (aka UNNEST) is the return from a subroutine.
+It is defined in the forth word <strong class="command">EXIT</strong> in the dictionary.
+It reads the <strong class="command">IP</strong> from the return stack and jumps to NEXT. The return
+stack pointer is incremented by 2 (1 flash cell).</p>
+<div class="highlight-none"><div class="highlight"><pre>pop IP
+JMP NEXT
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="text-interpreter">
+<h2>Text Interpreter<a class="headerlink" href="#text-interpreter" title="Permalink to this headline">¶</a></h2>
+<p>The interpreter is a line based command interpreter. It based upon <strong class="command">REFILL</strong>
+to acquire the next line of characters, located at a position <strong class="command">SOURCE</strong> points to.
+While processing the line, the pointer <strong class="command">&gt;IN</strong> is adjusted accordingly. Both
+words <strong class="command">REFILL</strong> and <strong class="command">SOURCE</strong> are USER based deferred words which
+allows to use any input source on a thread specific level. The interpreter itself
+does not use any static buffers or variables (<strong class="command">&gt;IN</strong> is a USER variable as well).</p>
+<p>A given string is handled by <strong class="command">INTERPRET</strong> which splits it
+into whitespace delimited words. Every word is processed using a list of
+recognizers. Processing ends either when the string end is reached or an exception occurs.</p>
+<div class="section" id="source-and-refill">
+<h3>SOURCE and REFILL<a class="headerlink" href="#source-and-refill" title="Permalink to this headline">¶</a></h3>
+<p><strong class="command">SOURCE</strong> provides an addr/len string pair that does not change
+during processing. The task of <strong class="command">REFILL</strong> is to fill the string
+buffer, <strong class="command">SOURCE</strong> points to when finished.</p>
+<p>There is one default input source: The terminal input buffer. This buffer gets filled with
+<strong class="command">REFILL-TIB</strong> that reads from the serial input buffers (<strong class="command">KEY</strong>).
+<strong class="command">SOURCE</strong> points to the Terminal Input Buffer itself.
+Another input source are plain strings, used by <strong class="command">EVALUATE</strong>.</p>
+</div>
+<div class="section" id="recognizer">
+<span id="recognizers"></span><h3>Recognizer<a class="headerlink" href="#recognizer" title="Permalink to this headline">¶</a></h3>
+<p>Recognizer are a part of the text (command) interpreter.
+They are responsible for analyzing a single word. The
+result consists of two elements: The actual data (if any)
+and an object like identifier connected with certain methods.</p>
+<span class="graphviz">
+<img src="../_images/graphviz-12d12a66d46c841ad7d7793d8e958748c4a646d5.png" alt="digraph Recognizer {
+&quot;Interpret&quot; -&gt; &quot;Get Next Word&quot;
+&quot;Get Next Word&quot; -&gt; &quot;Do Recognizer&quot; [label=&quot;Got one&quot;]
+&quot;Get Next Word&quot; -&gt; &quot;End&quot; [label=&quot;No More Words&quot;];
+&quot;Do Recognizer&quot; -&gt; &quot;Check State&quot;
+&quot;Check State&quot; -&gt; &quot;Compile&quot; [label=&quot;Compile&quot;];
+&quot;Check State&quot; -&gt; &quot;Execute&quot; [label=&quot;Interpret&quot;];
+&quot;Compile&quot; -&gt; &quot;Get Next Word&quot;
+&quot;Execute&quot; -&gt; &quot;Get Next Word&quot;
+}" />
+</span>
+<p>The Forth text interpreter reads from the input source
+and splits it into whitespace delimited words. Each word
+is fed into a list of actions which parse it. If the
+parsing is successful (e.g. it is a number or a word from
+the dictionary) the recognizer leaves the data and
+an method table to deal with it. Depending on the
+interpreter state one of the methods is executed to
+finally process the data. The first method is called
+in interpreter state. It is usually a noop, since
+the recognizer has done all the work already.</p>
+<p>The 2nd method is responsible to perform the compile
+time semantics. That usually means to write it into
+the dictioanary or to execute immediate words.</p>
+<p>The third method is used by :command`postpone` to compile the
+compilation semantics. It honors the immediate flags as well.</p>
+<p><tt class="docutils literal"><span class="pre">Do</span> <span class="pre">Recognizer</span></tt> is an iteration over the recognizer
+stack until the first parsing methods returns something
+different than <tt class="docutils literal"><span class="pre">r:fail</span></tt>. If the recognizer stack is
+exhausted without a match, the <tt class="docutils literal"><span class="pre">r:fail</span></tt> return value
+is generated. The string location that is passed to the
+parse actions is preserved and is restored for every iteration
+cycle.</p>
+<span class="graphviz">
+<img src="../_images/graphviz-6114a310bd1cb48317329bae02b0a5bb96d212c6.png" alt="digraph DoRecognizer {
+&quot;Get Recognizer Stack&quot; -&gt; &quot;Rec-Stack Exhausted?&quot;
+&quot;Rec-Stack Exhausted?&quot; -&gt; &quot;R:FAIL&quot;  [label=&quot;Yes&quot;]
+&quot;Rec-Stack Exhausted?&quot; -&gt; &quot;Call Parse Action&quot;  [label=&quot;Consume Rec-TOS&quot;]
+&quot;Call Parse Action&quot; -&gt; &quot;Rec-Stack Exhausted?&quot; [label=&quot;R:FAIL&quot;]
+&quot;Call Parse Action&quot; -&gt; &quot;End&quot; [label=&quot;Success&quot;]
+&quot;R:FAIL&quot; -&gt; &quot;End&quot;
+}" />
+</span>
+<p>A recognizer consists of a few words that work together.
+To ease maintenance, a naming convention is used: The
+recognizer itself is named with the prefix <tt class="docutils literal"><span class="pre">rec:</span></tt>. The
+method table name gets the prefix <tt class="docutils literal"><span class="pre">r:</span></tt> followed by
+the same name as the recognizer.</p>
+<div class="section" id="recognizer-list">
+<h4>Recognizer List<a class="headerlink" href="#recognizer-list" title="Permalink to this headline">¶</a></h4>
+<p>The interpreter uses a list of recognizers. They are managed
+with the words <strong class="command">get-recognizers</strong> and <strong class="command">set-recognizers</strong>.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ place a recognizer as the last one</span>
+
+<span class="kn">:</span> <span class="nc">place-rec</span> <span class="c1">( xt -- )</span>
+   <span class="nd">get-recognizers </span><span class="k">1+ </span><span class="nd">set-recognizers</span>
+<span class="k">;</span>
+
+<span class="nf">&#39;</span> <span class="nf">rec:foo</span> <span class="nf">place-rec</span>
+</pre></div>
+</div>
+<p>The entries in the list are called in order until the first
+one returns a different result but <strong class="command">r:fail</strong>. If the list
+is exhausted and no one succeeds, the <strong class="command">r:fail</strong> is delivered
+nevertheless and leads to the error reactions.</p>
+<p>The standard recognizer list is defined as follows</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">default-recs</span>
+  <span class="k">[&#39;] </span><span class="nf">rec:intnum</span> <span class="k">[&#39;] </span><span class="nf">rec:find</span>
+  <span class="mi">2</span> <span class="nd">set-recognizers</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>The standard word <strong class="command">marker</strong> resets the recognizer list as well.</p>
+</div>
+<div class="section" id="interpret">
+<h4>INTERPRET<a class="headerlink" href="#interpret" title="Permalink to this headline">¶</a></h4>
+<p>The interpreter is responsible to split the source into words
+and to call the recognizers. It also maintains the state.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">interpret</span>
+  <span class="k">begin</span>
+    <span class="k">parse-name ?dup if drop exit then</span>
+    <span class="nd">do-recognizer </span><span class="c1">( addr len -- i*x r:table )</span>
+    <span class="k">state @ if 1+ then </span><span class="c1">\ get compile time action</span>
+    <span class="no">@i </span><span class="k">execute </span><span class="nf">?stack</span>
+  <span class="k">again</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p><strong class="command">do-recognizer</strong> always returns a valid method table. If no
+recognizer succeeds, the <strong class="command">r:fail</strong> is returned with the addr/len
+of the unknown-to-handle word.</p>
+</div>
+<div class="section" id="api">
+<h4>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h4>
+<p>Every recognizer has a method table for methods to handle the
+data inside the forth interpreter and a word to parse a word.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ order is important!</span>
+<span class="k">:noname </span><span class="kt">...</span> <span class="k">; </span> <span class="c1">\ interpret action</span>
+<span class="k">:noname </span><span class="kt">...</span> <span class="k">; </span> <span class="c1">\ compile action</span>
+<span class="k">:noname </span><span class="kt">...</span> <span class="k">; </span> <span class="c1">\ postpone action</span>
+<span class="nd">recognizer: </span><span class="nf">r:foo</span>
+
+<span class="kn">:</span> <span class="nc">rec:foo</span> <span class="c1">( addr len -- i*x r:foo | r:fail )</span> <span class="kt">...</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>The word <strong class="command">rec:foo</strong> is the actual recognizer. It analyzes the
+string it gets. There are two results possible: Either the word
+is recognized and the address of the method table is returned
+or a failure information is generated which is actually a predefined
+method table named <strong class="command">r:fail</strong>.</p>
+<p>The calling parameters to <strong class="command">rec:foo</strong> are the address and the length
+of a word in RAM. The recognizer must not change it. The result
+(i*x) is the parsed and converted data and the method table to
+deal with it.</p>
+<p>There is a standard method table that does not require
+additional data (i*x is empty) and which is used to communicate
+the &#8220;not-recognized&#8221; information: <strong class="command">r:fail</strong>. Its method
+table entries throw the exception -13 if called.</p>
+<p>Other pre-defined method tables are <strong class="command">r:intnum</strong> to deal with single
+cell numeric data, <strong class="command">r:intdnum</strong> to work with double cell numerics and
+<strong class="command">r:find</strong> to execute, compile and postpone execution tokens from the
+dictionary.</p>
+<p>The words in the method tables get the output of the recognizer as input
+on the data stack. They are excpected to consume them during their work.</p>
+</div>
+<div class="section" id="default-fail">
+<h4>Default (Fail)<a class="headerlink" href="#default-fail" title="Permalink to this headline">¶</a></h4>
+<p>This is a special system level recognizer. It is
+never called, its method table (r:fail) is used
+as both a error flag and for the final error
+actions. Its methods get the addr/len of a single
+word. They consume it by printing the string and
+throwing an exception when called. The effect is
+to get back to the command prompt if catched
+inside the <strong class="command">quit</strong> loop.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">:noname type </span><span class="mi">-13</span> <span class="k">throw ; dup dup</span>
+<span class="nd">recognizer: r:fail</span>
+
+<span class="c1">\ this definition is never used actually</span>
+<span class="kn">:</span> <span class="nc">rec:fail</span> <span class="c1">( addr len -- r:fail)</span>
+  <span class="k">2drop </span><span class="nd">r:fail</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="number">
+<h4>NUMBER<a class="headerlink" href="#number" title="Permalink to this headline">¶</a></h4>
+<p>The number recognizer identifies numeric data in both
+single and double precision. Depending on the actual
+data width, two different methods tables are returned.</p>
+<p>The postpone action follows the standard definitions with
+not allowing to postpone numbers. Instead the number is
+printed and an exception is thrown.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="nf">&#39;</span> <span class="no">noop</span>
+<span class="nf">&#39;</span> <span class="k">literal</span>
+<span class="k">:noname . </span><span class="mi">-48</span> <span class="k">throw ;</span>
+<span class="nd">recognizer: r:num</span>
+
+<span class="nf">&#39;</span> <span class="no">noop</span>
+<span class="nf">&#39;</span> <span class="k">2literal</span>
+<span class="k">:noname d. </span><span class="mi">-48</span> <span class="k">throw ;</span>
+<span class="nd">recognizer: r:dnum</span>
+
+<span class="kn">:</span> <span class="nc">rec:intnum</span> <span class="c1">( addr len -- n r:num | d r:dnum | r:fail )</span>
+  <span class="nf">number</span> <span class="k">if</span>
+   <span class="mi">1</span> <span class="nf">=</span> <span class="k">if </span><span class="nd">r:num </span><span class="k">then</span>
+   <span class="nd">r:dnum</span>
+  <span class="k">else</span>
+    <span class="nd">r:fail</span>
+  <span class="k">then</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="find">
+<h4>FIND<a class="headerlink" href="#find" title="Permalink to this headline">¶</a></h4>
+<p>This recognizer tries to find the word in the dictionary. If
+sucessful, the execution token and the flags are returned. The
+method table contains words to execute and correctly deal with
+immediate words for compiling and postponing.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">( XT flags -- )</span>
+<span class="k">:noname drop execute ;</span>
+<span class="k">:noname 0&gt; if compile, else execute then ;</span>
+<span class="k">:noname 0&gt; if postpone [compile] then , ;</span>
+<span class="nd">recognizer: r:word</span>
+
+<span class="kn">:</span> <span class="nc">rec:find</span> <span class="c1">( addr len -- XT flags r:word | r:fail )</span>
+  <span class="no">find-name </span><span class="k">?dup if</span>
+    <span class="nd">r:word</span>
+  <span class="k">else</span>
+    <span class="nd">r:fail</span>
+  <span class="k">then</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="stacks">
+<h2>Stacks<a class="headerlink" href="#stacks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="data-stack">
+<h3>Data Stack<a class="headerlink" href="#data-stack" title="Permalink to this headline">¶</a></h3>
+<p>The data stack uses the CPU register pair <strong class="command">YH:YL</strong> as its data
+pointer. The Top-Of-Stack element (TOS) is in a register pair.
+Compared to a straight forward implementation this approach saves
+code space and gives higher execution speed (approx 10-20%). Saving even
+more stack elements does not really provide a greater benefit (much more
+code and only little speed enhancements).</p>
+<p>The data stack starts at a configurable distance
+below the return stack (RAMEND) and grows
+downward.</p>
+</div>
+<div class="section" id="return-stack">
+<h3>Return Stack<a class="headerlink" href="#return-stack" title="Permalink to this headline">¶</a></h3>
+<p>The Return Stack is the hardware stack of the
+controller. It is managed with push/pop
+assembler instructions. The default return stack
+starts at RAMEND and grows downward.</p>
+</div>
+</div>
+<div class="section" id="interrupts">
+<h2>Interrupts<a class="headerlink" href="#interrupts" title="Permalink to this headline">¶</a></h2>
+<p>Amforth routes the low level interrupts into the
+forth inner interpreter. The inner interpreter
+switches the execution to a predefined word if an
+interrupt occurs. When that word finishes execution,
+the interrupted word is continued. The interrupt
+handlers are completely normal forth colon words
+without any stack effect. They do not get interrupted
+themselves.</p>
+<p>The processing of interrupts takes place in two steps:
+The first one is the low level part.
+It is called whenever an interrupt occurs. The code
+is the same for all interrupts. It takes the number
+of the interrupt from its vector address and stores
+this in a RAM cell. Then the low level ISR sets the
+<strong class="command">T</strong> flag in the status register of the controller
+and returns with <strong class="command">RET</strong>.</p>
+<p>The second step does the inner interpreter.
+It checks the T-flag every time it is entered and,
+if it is set, it switches to interrupt
+handling at forth level. This approach has a penalty
+of 1 CPU cycle for checking and skipping the branch
+instruction to the isr forth code if no interrupt
+occurred.</p>
+<p>If an interrupt is detected, the forth VM clears the
+T-flag and continues with the word <strong class="command">ISR-EXEC</strong>.
+This word reads the currently active interrupt number and calls
+the associated execution token.  When this word is finished,
+the word <strong class="command">ISR-END</strong> is called. This word clears
+the interrupt flag for the controller (<strong class="command">RETI</strong>).</p>
+<p>This interrupt processing has two advantages: There are
+no lost interrupts (the controller itself disables interrupts
+within interrupts and re-transmits newly discovered interrupts
+afterwards) and it is possible to use standard forth words
+to deal with any kind of interrupts.</p>
+<p>Interrupts from some hardware sources (e.g. the usart)
+need to be cleared from the Interrupt Service Routine.
+If this is not done within the ISR, the interrupt
+is re-triggered immediately after the ISR returned control.</p>
+<p>The downside is a relatively long latency since the the
+forth VM has to be synchronized with the interrupt handling
+code in order to use normal colon words as ISR. This penalty
+is usually small since only words in assembly can cause the
+delay.</p>
+<p class="graphviz">
+<img src="../_images/graphviz-4968710912928e4dc5c62226a0682f47a9d7ecc8.png" alt="digraph InnerInterpreter {
+&quot;COLD&quot; -&gt; &quot;Execute Word&quot;
+&quot;Execute Word&quot; -&gt; &quot;T Flag Set?&quot;;
+&quot;T Flag Set?&quot; -&gt; &quot;Clear T Flag&quot; [label=&quot;Yes&quot;];
+&quot;T Flag Set?&quot; -&gt; &quot;Get Next XT&quot; [label=&quot;No&quot;];
+&quot;Get Next XT&quot; -&gt; &quot;Execute Word&quot;;
+&quot;Clear T Flag&quot; -&gt; &quot;Next XT is ISR_EXEC&quot;;
+&quot;Next XT is ISR_EXEC&quot; -&gt; &quot;Execute Word&quot;;
+}" />
+</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="recipes/Interrupt-ISR.html#interrupt-service-routine"><em>Interrupt Service Routines</em></a>
+<a class="reference internal" href="recipes/Interrupt-Critical-Section.html#interrupt-critical-section"><em>Interrupt Critical Section</em></a></p>
+</div>
+</div>
+<div class="section" id="multitasking">
+<h2>Multitasking<a class="headerlink" href="#multitasking" title="Permalink to this headline">¶</a></h2>
+<p>amforth does not implement multitasking directly. It
+provides the basic functionality however. Within IO
+words the deferred word
+<strong class="command">PAUSE</strong> is called whenever possible. This word is
+initialized to do nothing (<strong class="command">NOOP</strong>).</p>
+</div>
+<div class="section" id="exceptions">
+<span id="exceptiontable"></span><h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Amforth uses and supports exceptions as specified in the
+ANS wordset. It provides the <strong class="command">CATCH</strong>
+and <strong class="command">THROW</strong> commands. The outermost catch
+frame is located at the interpreter level in the word
+<strong class="command">QUIT</strong>. If an exception with a negative value is
+catched, <strong class="command">QUIT</strong> will print a message with this
+number and and re-start itself. Positive values silently
+restart <strong class="command">QUIT</strong>.</p>
+<p>The next table lists the exceptions, amforth uses itself.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="45%" />
+<col width="32%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Exception</td>
+<td>Meaning</td>
+<td>Thrown in</td>
+</tr>
+<tr class="row-even"><td>-1</td>
+<td>silent abort</td>
+<td>ABORT</td>
+</tr>
+<tr class="row-odd"><td>-2</td>
+<td>abort with message</td>
+<td>ABORT&#8221;</td>
+</tr>
+<tr class="row-even"><td>-4</td>
+<td>stack underflow</td>
+<td>?STACK</td>
+</tr>
+<tr class="row-odd"><td>-13</td>
+<td>undefined word</td>
+<td>rec-notfound,
+tick</td>
+</tr>
+<tr class="row-even"><td>-16</td>
+<td>Invalid word</td>
+<td>(create)</td>
+</tr>
+<tr class="row-odd"><td>-50</td>
+<td>search order
+exhausted</td>
+<td>PREVIOUS</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="user-area">
+<h2>User Area<a class="headerlink" href="#user-area" title="Permalink to this headline">¶</a></h2>
+<p>The User Area is a special RAM storage area. It
+contains the USER variables and the User deferred
+definitions. Access is based upon the value of the
+user pointer UP. It can be changed with the word
+<strong class="command">UP!</strong> and read with <strong class="command">UP&#64;</strong>
+. The UP itself is stored in a register pair.</p>
+<p>The size of the user area is determined by the size the system
+itself uses plus a configurable number at compile time. For self
+defined tasks this user supplied number can be changed for task
+local variables.</p>
+<p>The first USER area is located at the first data address
+(usually RAMSTART).</p>
+<table border="1" class="docutils" id="userarea">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Address offset (bytes)</td>
+<td>Purpose</td>
+</tr>
+<tr class="row-even"><td>0</td>
+<td>Multitasker Status</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>Multitasker Follower</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>RP0</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>SP0</td>
+</tr>
+<tr class="row-even"><td>8</td>
+<td>SP (used by multitasker)</td>
+</tr>
+<tr class="row-odd"><td>10</td>
+<td>HANDLER (exception handling)</td>
+</tr>
+<tr class="row-even"><td>12</td>
+<td>BASE (number conversion)</td>
+</tr>
+<tr class="row-odd"><td>14</td>
+<td>EMIT (deferred)</td>
+</tr>
+<tr class="row-even"><td>16</td>
+<td>EMIT? (deferred)</td>
+</tr>
+<tr class="row-odd"><td>18</td>
+<td>KEY (deferred)</td>
+</tr>
+<tr class="row-even"><td>20</td>
+<td>KEY? (deferred)</td>
+</tr>
+<tr class="row-odd"><td>22</td>
+<td>SOURCE (deferred)</td>
+</tr>
+<tr class="row-even"><td>24</td>
+<td>&gt;IN</td>
+</tr>
+<tr class="row-odd"><td>26</td>
+<td>REFILL (deferred)</td>
+</tr>
+</tbody>
+</table>
+<p>The User Area is used to provide task local
+information. Without an active multitasker it
+contains the starting values for the stackpointers,
+the deferred words for terminal IO, the BASE
+variable and the exception handler.</p>
+<p>The multitasker uses the first 2 cells to store the
+status and the link to the next entry in the task
+list. In that situation the user area is/can be seen
+as the task control block.</p>
+<p>Beginning with release 3.7 the USER area has been split
+into two parts. The first one called system user area contains
+all the variables described above. The second one is the application
+user area that contains all variables defined with the USER command.
+The default application user area is empty and by default of size zero.</p>
+</div>
+<div class="section" id="word-lists-and-environment-queries">
+<h2>Word Lists and Environment Queries<a class="headerlink" href="#word-lists-and-environment-queries" title="Permalink to this headline">¶</a></h2>
+<p>Word lists and environment queries are implemented using the
+same structure. The word list identifier is
+a EEPROM address that holds the name field address of the
+first word in the word list.</p>
+<p>Environment queries are normal colon words. They are called within
+<strong class="command">environment?</strong> and leave there results at the data
+stack.</p>
+<p><strong class="command">find-name</strong> (und <strong class="command">find</strong> for counted strings)
+uses an array of word list identifiers to search for the word.
+This list can be accessed with <strong class="command">get-order</strong> as well.</p>
+<div class="section" id="wordlist-header">
+<h3>Wordlist Header<a class="headerlink" href="#wordlist-header" title="Permalink to this headline">¶</a></h3>
+<p>Wordlists are implemented as a single linked list. The list entry
+consists of 4 elements:</p>
+<ul class="simple">
+<li>Name Field (NF) (variable length, at least 2 flash cells).</li>
+<li>Link Field (LF) (1 flash cell), points to the NFA of the
+next element.</li>
+<li>Execution Token (XT) (1 flash cell)</li>
+<li>Parameter Field (Body) (variable length)</li>
+</ul>
+<p>The wording is some mixture of old style fig-forth and
+the more modern variants. The order makes it possible
+to implement the list iterators (<strong class="command">search-wordlist</strong>
+and <strong class="command">show-wordlist</strong>) is a straight forward way.</p>
+<p>The name field itself is a structure containing the flags,
+the length information in the first flash cell
+and the characters of the word name in a packed format afterwards.</p>
+<p>The anchor of any wordlist points to the name field address of the
+first element. The last element has a zero link field content. The
+lists are created from lower addresses to higher ones, the links go
+from higher addresses backwards to lower ones.</p>
+</div>
+</div>
+<div class="section" id="memories">
+<h2>Memories<a class="headerlink" href="#memories" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="flash">
+<h3>Flash<a class="headerlink" href="#flash" title="Permalink to this headline">¶</a></h3>
+<p>The flash memory is divided into 4 sections. The
+first section, starting at address 0, contains the
+interrupt vector table for the low level interrupt
+handling and a character string with the name of the
+controller in plain text.</p>
+<p>The 2nd section contains the low level interrupt
+handling routines. The interrupt handler is very
+closely tied to the inner interpreter. It is located
+near the first section to use the faster relative
+jump instructions.</p>
+<p>The 3rd section is the first part of the dictionary.
+Nearly all colon words are located here. New words
+are appended to this section. This section is filled
+with FFFF cells when flashing the controller
+initially. The current write pointer is the DP
+pointer.</p>
+<p>The last section is identical to the boot loader
+section of the ATmegas. It is also known as the NRWW
+area. Here is the heart of amforth: The inner
+interpreter and most of the words coded in assembly
+language.</p>
+<div class="section" id="flash-structure-overview">
+<h4>FLASH Structure Overview<a class="headerlink" href="#flash-structure-overview" title="Permalink to this headline">¶</a></h4>
+<div class="figure" id="flashstructure">
+<a class="reference internal image-reference" href="../_images/flash-structure.svg"><img src="../_images/flash-structure.svg" width="50%" /></a>
+<p class="caption">Default Flash Structure</p>
+</div>
+<p>The reason for this split is a technical one: to
+work with a dictionary in flash the controller needs
+to write to the flash. The ATmega architecture
+provides a mechanism called self-programming by
+using a special instruction and a rather complex
+algorithm. This instruction only works in the boot
+loader/NRWW section. amforth uses this instruction
+in the word I!. Due to the fact that the self
+programming is a lot more then only a simple
+instruction, amforth needs most of the forth core
+system to achieve it. A side effect is that amforth
+cannot co-exist with classic boot loaders. If a
+particular boot loader provides an API to enable
+applications to call the flash write operation,
+amforth can be restructured to use it. Currently
+only very few and seldom used boot loaders exist that
+enable this feature.</p>
+<p>Atmegas can have more than 64 KB Flash. This
+requires more than a 16 bit address, which is more
+than the cell size. For one type of those bigger
+atmegas there will be an solution with 16 bit cell
+size: Atmega128 Controllers. They can use the whole
+address range with an interpretation trick: The flash
+addresses are in fact not byte addresses but word
+addresses. Since amforth does not deal with bytes
+but cells it is possible to use the whole address
+range with a 16 bit cell. The Atmegas with 128
+KBytes Flash operate slightly slower since the
+address interpretation needs more code to access the
+flash (both read and write). The source code uses
+assembly macros to hide the differences.</p>
+<p>An alternative approach to place the elements in the flash shows picture
+. Here all code goes into the RWW section. This layout definitely needs a
+routine in the NRWW section that provides a cell level flash write functionality.
+The usual boot loaders do not have such an runtime accessible API, only the
+DFU boot loader from atmel found on some USB enabled controllers does.</p>
+</div>
+<div class="section" id="alternative-flash-structure">
+<h4>Alternative FLASH Structure<a class="headerlink" href="#alternative-flash-structure" title="Permalink to this headline">¶</a></h4>
+<div class="figure" id="flash2structure">
+<a class="reference internal image-reference" href="../_images/flash2-structure.svg"><img src="../_images/flash2-structure.svg" width="50%" /></a>
+<p class="caption">Alternative Flash Structure</p>
+</div>
+<p>The unused flash area beyond 0x1FFFF is not directly accessible for amforth.
+It could be used as a block device.</p>
+</div>
+</div>
+<div class="section" id="flash-write">
+<h3>Flash Write<a class="headerlink" href="#flash-write" title="Permalink to this headline">¶</a></h3>
+<p>The word performing the actual flash write
+operation is <strong class="command">I!</strong>
+(i-store). This word takes the value and the
+address of a single cell to be written to flash
+from the data stack. The address is a word
+address, not a byte address!</p>
+<p>The flash write strategy follows Atmel&#8217;s
+appnotes. The first step is turning off all
+interrupts. Then the affected flash page is read
+into the flash page buffer. While doing the
+copying a check is performed whether a flash
+erase cycle is needed. The flash erase can be
+avoided if no bit is turned from 0 to 1. Only if
+a bit is switched from 0 to 1 must a flash page
+erase operation be done. In the fourth step the
+new flash data is written and the flash is set
+back to normal operation and the interrupt flag
+is restored. The whole process takes a few
+milliseconds.</p>
+<p>This write strategy ensures that the flash has
+minimal flash erase cycles while extending the
+dictionary. In addition it keeps the forth
+system simple since it does not need to deal
+with page sizes or RAM based buffers for
+dictionary operations.</p>
+</div>
+</div>
+<div class="section" id="eeprom">
+<h2>EEPROM<a class="headerlink" href="#eeprom" title="Permalink to this headline">¶</a></h2>
+<p>The built-in EEPROM contains vital dictionary
+pointer and other persistent data. They need only a
+few EEPROM cells. The remaining space is available
+for user programs. The easiest way to use the EEPROM
+is a <strong class="command">VALUE</strong>. There intended design
+pattern (read often, write seldom) is like that for
+the typical EEPROM usage. More information about
+values can be found in the recipe <a class="reference internal" href="recipes/Values.html#values"><em>Values</em></a>.</p>
+<p>Another use for EEPROM cells is to hold execution
+tokens. The default system uses this for the turnkey
+vector. This is an EEPROM variable that reads and
+executes the XT at runtime. It is based on the
+DEFER/IS standard. To define a deferred word in the
+EEPROM use the Edefer definition word. The standard
+word IS is used to put a new XT into it.</p>
+<p>Low level space management is done through the the
+EHERE variable. This is not a forth value but a EEPROM
+based variable. To read the current value an
+<strong class="command">&#64;e</strong> operation must be used, changes are written
+back with <strong class="command">!e</strong>. It contains the highest EEPROM address
+currently allocated. The name is based on the DP variable,
+which points to the highest dictionary address.</p>
+</div>
+<div class="section" id="ram">
+<h2>RAM<a class="headerlink" href="#ram" title="Permalink to this headline">¶</a></h2>
+<p>The RAM address space is divided into three
+sections: the first 32 addresses are the CPU
+registers. Above come the IO registers and extended
+IO registers and finally the RAM itself.</p>
+<p>amforth needs very little RAM space for its
+internal data structures. The biggest part are the
+buffers for the terminal IO. In general RAM is managed
+with the words <strong class="command">VARIABLE</strong> and
+<strong class="command">ALLOT</strong>.</p>
+<p>Forth defines a few transient buffer regions for various purposes.
+The most important is PAD, the scratch buffer. It is located 100 bytes
+above the current HERE and goes to upper addresses. The Pictured Numeric
+Output is just at PAD and grows downward. The word WORD uses the area above
+HERE as it&#8217;s buffer to store the just recognized word from SOURCE.</p>
+<div class="figure" id="ramfigure">
+<a class="reference internal image-reference" href="../_images/ram-structure.svg"><img src="../_images/ram-structure.svg" width="50%" /></a>
+<p class="caption">Ram Structure</p>
+</div>
+<p><a class="reference internal" href="#ramfigure"><em>Ram Structure</em></a> shows an RAM layout that can be used on systems
+without external RAM. All elements are located within the internal
+memory pool.</p>
+<div class="figure" id="ram2figure">
+<a class="reference internal image-reference" href="../_images/ram2-structure.svg"><img src="../_images/ram2-structure.svg" width="50%" /></a>
+<p class="caption">Alternative RAM Structure</p>
+</div>
+<p>Another layout, that makes the external RAM easily available is shown in
+<a class="reference internal" href="#ram2figure"><em>Alternative RAM Structure</em></a>. Here are the stacks at the beginning of the internal RAM and the
+data space region. All other buffers grow directly into the external data space. From
+an application point of view there is not difference but a speed penalty when
+working with external RAM instead of internal.</p>
+<p>With amforth all three sections can be accessed
+using their RAM addresses. That makes it quite easy
+to work with words like <strong class="command">C&#64;</strong>. The word <strong class="command">!</strong>
+implements a LSB byte order: The lower part of the
+cell is stored at the lower address.</p>
+<p>For the RAM there is the word <strong class="command">Rdefer</strong>
+which defines a deferred word, placed in RAM. As a
+special case there is the word <strong class="command">Udefer</strong>
+, which sets up a deferred word in the user area. To
+put an XT into them the word <strong class="command">IS</strong>
+is used. This word is smart enough to distinguish
+between the various Xdefer definitions.</p>
+</div>
+<div class="section" id="does">
+<h2>DOES&gt;<a class="headerlink" href="#does" title="Permalink to this headline">¶</a></h2>
+<p><strong class="command">DOES&gt;</strong> is used to change the runtime
+action of a word that <strong class="command">create</strong>
+has already defined.</p>
+<p>Its working is described best using a
+simple example: defining a constant. The standard
+word <strong class="command">constant</strong> does exactly the
+same.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> : con create , does&gt; @i <span class="p">;</span>
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> <span class="m">42</span> con answer
+<span class="go"> ok</span>
+<span class="gp">&gt;</span> answer .
+<span class="go"> 42 ok</span>
+</pre></div>
+</div>
+<p>The first command creates a new command <strong class="command">con</strong>. With
+it a new word gets defined, in this example <strong class="command">answer</strong>.
+<strong class="command">con</strong> calls <strong class="command">create</strong>, that parses the source
+buffer and creates a wordlist entry <strong class="command">answer</strong>.  After that,
+within <strong class="command">con</strong> the top-of-stack element (42) is compiled into
+the newly defined word. The <strong class="command">does&gt;</strong> changes the
+runtime of the newly defined word <strong class="command">answer</strong> to the code
+that follows <strong class="command">does&gt;</strong>.</p>
+<p><strong class="command">does&gt;</strong> is an immediate word. That means, it is not compiled
+into the new word (con) but executed. This compile time action creates
+a small data structure similar to the wordlist entry for a noname: word.
+The address of this data structure is an execution token. This execution
+token replaces the standard XT that <strong class="command">create</strong> has already
+written for words that are defined using <strong class="command">con</strong>. This
+leads inevitably to a flash erase cycle.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../_sources/TG/Architecture.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

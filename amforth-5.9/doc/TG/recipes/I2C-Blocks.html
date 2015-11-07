@@ -1,0 +1,223 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>I2C EEPROM Blocks &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Hardware Modules" href="Hardware.html" />
+    <link rel="next" title="I2C Bus Scanner" href="I2C-Detect.html" />
+    <link rel="prev" title="Efficient Bit Manipulation" href="Efficient-Bitmanipulation.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="i2c-eeprom-blocks">
+<span id="id1"></span><h1>I2C EEPROM Blocks<a class="headerlink" href="#i2c-eeprom-blocks" title="Permalink to this headline">¶</a></h1>
+<p>Stores Blocks in I2C serial EEPROM attached to TWI.</p>
+<div class="section" id="code">
+<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
+<p>A quick start with the amforth-shell is as follows</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">(ATmega16)&gt; #include i2c-eeprom-block.frt</span>
+<span class="go">.... lots of files included, approx 1,5kB dictionary space</span>
+<span class="go">... for testing and inspekting</span>
+<span class="go">(ATmega16)&gt; #include list-dump.frt \ from lib/ans94/block</span>
+<span class="go">... loading code and dependencies</span>
+<span class="go"> ok</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>The I2C hardware drivers need two initialization steps. The
+first is the I2C/TWI hardware init (<tt class="docutils literal"><span class="pre">i2c.init</span></tt> or simply
+<tt class="docutils literal"><span class="pre">i2c.init.default</span></tt>) and the device init as <tt class="docutils literal"><span class="pre">i2c.ee.blockinit</span></tt>.
+After these two commands, which need to run before use in
+e.g. turnkey, the I2C memory modules can be accessed.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> i2c.init.default  <span class="se">\ </span>initialize TWI hardware module in slow speed
+<span class="gp">&gt;</span> 24c64 <span class="nv">$50</span> i2c.ee.blockinit <span class="se">\ </span><span class="nb">set </span>up <span class="k">for</span> block level access
+</pre></div>
+</div>
+<p>Place these two commands (or similar ones) in the application
+turnkey word. The parameters to the <tt class="docutils literal"><span class="pre">i2c.ee.blockinit</span></tt> are the
+page-size (there are some convenient constants, see below) and
+the I2C hardware id ($50). All subsequent access to the device
+depend on these information. They can be changed any time.</p>
+<p>More Information is in the recipe <a class="reference internal" href="Blocks.html#blocks"><em>Blocks</em></a>.</p>
+<p>The specs of almost every serial EEPROM mention, that after a write
+action, 5 milliseconds have to pass before the next access can be
+made. The library takes care of this for every page written. It
+splits the the data transfer of the (possibly) larger buffer size
+to the actual page size of the controller too. To configure the
+page sizes, the command <tt class="docutils literal"><span class="pre">i2c.ee.setpagesize</span></tt> has to be used. It
+takes the page size in bytes as the parameter. To make the source
+code more readably, constant names like <tt class="docutils literal"><span class="pre">24c64</span></tt> are provided.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="22%" />
+<col width="34%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Device Type</td>
+<td>Size</td>
+<td>Page Size</td>
+</tr>
+<tr class="row-even"><td>24c08</td>
+<td>1KB</td>
+<td>16</td>
+</tr>
+<tr class="row-odd"><td>24c16</td>
+<td>2KB</td>
+<td>16</td>
+</tr>
+<tr class="row-even"><td>24c32</td>
+<td>4KB</td>
+<td>32</td>
+</tr>
+<tr class="row-odd"><td>24c64</td>
+<td>8KB</td>
+<td>32</td>
+</tr>
+<tr class="row-even"><td>24c128</td>
+<td>16KB</td>
+<td>64</td>
+</tr>
+<tr class="row-odd"><td>24c256</td>
+<td>32KB</td>
+<td>64</td>
+</tr>
+<tr class="row-even"><td>24c512</td>
+<td>64KB</td>
+<td>128</td>
+</tr>
+<tr class="row-odd"><td>24c1024</td>
+<td>128KB</td>
+<td>256</td>
+</tr>
+</tbody>
+</table>
+<p>The code assumes 2-byte addresses inside the memory and a single
+I2C hardware address (0x50). Modules which use multiple I2C
+addresses  work within the limits of a single address.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="TWI.html#twi"><em>Two Wire Interface TWI/I2C</em></a> <a class="reference internal" href="I2C-Values.html#i2c-values"><em>I2C EEPROM VALUE</em></a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/I2C-Blocks.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

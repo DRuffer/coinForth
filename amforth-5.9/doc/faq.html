@@ -1,0 +1,346 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FAQ &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="index.html" />
+    <link rel="next" title="Technical Guide" href="TG/TG.html" />
+    <link rel="prev" title="Instructions for Building amforth-5-1 using Atmel Studio 6.1 Components" href="UG/quick-windows.html" />
+    <link rel="stylesheet" href="_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="faq">
+<span id="id1"></span><h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="where-do-i-find-more-information">
+<h2>Where do I find more information?<a class="headerlink" href="#where-do-i-find-more-information" title="Permalink to this headline">¶</a></h2>
+<p>There are 2 documentation files: a <a class="reference internal" href="UG/amforth_user.html#user-guide"><em>User&#8217;s Manual</em></a>
+written by Karl Lunt and a more <a class="reference internal" href="TG/TG.html#technical-guide"><em>Technical Guide</em></a>.</p>
+<p>A lot of information is in the cookbook. There you can find
+many small recipes on a specific topic. Most of them can be
+combined.</p>
+<p>More can be found in the
+<a class="reference external" href="http://sourceforge.net/mailarchive/forum.php?forum_name=amforth-devel">Maillinglist archive</a></p>
+</div>
+<div class="section" id="how-do-i-start-with-amforth">
+<h2>How do I start with amforth?<a class="headerlink" href="#how-do-i-start-with-amforth" title="Permalink to this headline">¶</a></h2>
+<p>First: You will have to build your own amforth first. To do this you really want to make
+copy of the <tt class="file docutils literal"><span class="pre">appl/template</span></tt> directory and edit the files in it to fit your environment:
+controller type, cpu frequency, serial port settings  etc. The files are well documented.
+Once the assembler produces two hex files and no errors (warnings should not come up either)
+you can proceed. If you are using the Atmel studio, make  sure that the project settings
+include the generation of the eep files. This settings may be disabled by default.</p>
+<p>Second you need a programmer to transfer the hex files you generated
+to the controller. The only programmers that can be used are those that can work
+on bare (micro controller) systems: ISP (e.g. the Atmel AVRISPmk2 or stk200 or ponyser),
+JTAG (e.g. the AVR Dragon),  High Voltage programming (rarely used) or DebugWire (same:
+rarely used). Programming tools that relies on a boot loader on the micro-controller itself
+can not load amforth (the reasons are explained in the <a class="reference internal" href="TG/TG.html#technical-guide"><em>Technical Guide</em></a>.</p>
+<p>The program to talk with the programmer is avrdude. It is a swiss army knife like
+tool, that works for almost all devices on all operating systems (Linux, Windows, MacOS and
+few more). The <a class="reference external" href="http://amforth.svn.sourceforge.net/viewvc/amforth/trunk/appl/template/">Makefiles / ANT</a>
+files use it. Other programs (just like the famous Atmel Studio) are never used by me, you are on your own.</p>
+<p>After you transferred &#8220;burned&#8221; both hex files (one for the flash memory, one for the
+EEPROM memory), you can begin working with amforth on the serial connection.</p>
+</div>
+<div class="section" id="how-do-i-use-amforth-interactively">
+<h2>How do I use amforth interactively?<a class="headerlink" href="#how-do-i-use-amforth-interactively" title="Permalink to this headline">¶</a></h2>
+<p>At the command prompt you can enter any command and can explore the controller. To simply
+add two numbers just do the following:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mi">24</span> <span class="mi">42</span> <span class="k">+ .</span>
+<span class="mi">66</span> <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>To get the content of an IO register just use the memory mapped address (the example reads
+the 16bit return stack pointer which the just the normal mcu stack pointer):</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mh">$5d</span> <span class="k">@ .</span>
+<span class="mi">1101</span>  <span class="nf">ok</span>
+<span class="k">&gt; </span><span class="no">rp@ </span><span class="k">.</span>
+<span class="mi">1101</span>  <span class="nf">ok</span>
+<span class="k">&gt;</span>
+</pre></div>
+</div>
+<p>8bit registers just use the <strong class="command">c&#64;</strong> command instead of the <strong class="command">&#64;</strong>.
+Writing to any address is just as simple:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">&gt; </span><span class="mi">17</span> <span class="k">pad !</span>
+ <span class="nf">ok</span>
+ <span class="k">&gt; pad @ .</span>
+ <span class="mi">17</span>  <span class="nf">ok</span>
+ <span class="k">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-means">
+<h2>What means <tt class="docutils literal"><span class="pre">??</span></tt><a class="headerlink" href="#what-means" title="Permalink to this headline">¶</a></h2>
+<p>At the terminal prompt the <tt class="docutils literal"><span class="pre">??</span></tt> means that an error occured. If
+it is displayed, the normal interpreter command prompt got active.
+Interrupts will continue to work. It is followed by at least one
+number, if the error occures during a commoand session a second
+number may appear.</p>
+<p>The first number is the error code. Technically it is a negative
+number. The numbers are in fact an exception code, that is not
+handled. The standard systems uses a few of them.</p>
+<p>The second number is the position in the current input line at
+which the error has been detected. E.g. when the error code is
+-13 (not found), the second number points to the last character
+of the word that could not be found.</p>
+</div>
+<div class="section" id="there-are-no-hexfiles-in-the-distribution-archive">
+<h2>There are no hexfiles in the distribution archive!<a class="headerlink" href="#there-are-no-hexfiles-in-the-distribution-archive" title="Permalink to this headline">¶</a></h2>
+<p>Hex-files are very specific to the hardware, even the change of the oscillator frequency needs
+a rebuild. And every processor wants its own settings. There would be far too many different hex-files.
+For some targets a hex-file is provided (e.g AVR Butterfly).</p>
+</div>
+<div class="section" id="i-get-no-serial-prompt">
+<h2>I get no serial prompt!<a class="headerlink" href="#i-get-no-serial-prompt" title="Permalink to this headline">¶</a></h2>
+<p>You need to program two hex files, one for the flash memory and one for the EEPROM.
+The makefiles do that already automatically.</p>
+<p>Next check are the frequency settings. Atmegas need a configuration (fuse setting) to
+use an external clock source. By default they run with an unstabilized 1MHz internal
+clock source, which is not well suited for serial communication. Check the datasheet
+of your controller to find the correct fuse settings, they are different for different
+atemgas and very sensitive, be absolutly careful! Rebuilt the hex files with the proper
+frequency (F_CPU setting).</p>
+<p>Finally check the terminal settings: default are 9600 8N1, no flow control. If your terminal
+has different settings, change them.</p>
+<p>Finally check the hardware. You may add a LED (or a scope) to the TX pin to check wether
+the controller sends out the boot message upon reset. Plug off all programmers (they may
+keep the RESET pin).</p>
+<p>Check the mailing list archive for other hints or (finally) ask there for help.</p>
+</div>
+<div class="section" id="what-do-all-the-words-do">
+<h2>What do all the words do?<a class="headerlink" href="#what-do-all-the-words-do" title="Permalink to this headline">¶</a></h2>
+<p>amforth tries to implement the Forth 2012 dialect of forth. The last public
+version is available at (e.g.) <a class="reference external" href="http://www.taygeta.com/forth/dpans.htm">Taygeta Archive</a></p>
+</div>
+<div class="section" id="i-miss-a-word">
+<h2>I miss a word!<a class="headerlink" href="#i-miss-a-word" title="Permalink to this headline">¶</a></h2>
+<p>The default configuration includes most but not all words. A few
+words are written in assembly and can be found in the platform/words
+directory. The file names usually reflect the forth names. If you
+need on of those words, you&#8217;ll have to edit your project files and
+recompile amforth. A lot more words are available as forth code.
+To use them you only need to send the forth code to the controller.
+The Amforth-Shell may become your friend for that.</p>
+</div>
+<div class="section" id="can-i-embed-amforth-into-other-programs">
+<h2>Can I embed amforth into other programs?<a class="headerlink" href="#can-i-embed-amforth-into-other-programs" title="Permalink to this headline">¶</a></h2>
+<p>Embedding amforth into other programs (e.g. written in C) is almost impossible.
+Amforth is designed to run stand-alone and does not follow any conventions that may
+be used on other systems.</p>
+</div>
+<div class="section" id="can-i-use-code-written-in-c-or-any-other-language-with-in-amforth">
+<h2>Can I use code written in C (or any other language) with/in amforth?<a class="headerlink" href="#can-i-use-code-written-in-c-or-any-other-language-with-in-amforth" title="Permalink to this headline">¶</a></h2>
+<p>Short answer: no.</p>
+</div>
+<div class="section" id="what-means-the-gpl-for-my-programs">
+<h2>What means the GPL for my programs?<a class="headerlink" href="#what-means-the-gpl-for-my-programs" title="Permalink to this headline">¶</a></h2>
+<p>As long as you don&#8217;t use your (Forth) program with amforth: Nothing.
+It&#8217;s your code and you decide everything.</p>
+<p>If you combine your code with amforth, the result is GPL licensed,
+no matter what you think about it. That means your users (sometimes
+called customers or business partners) have access to your code
+together with amforth under the GPL. It doesn&#8217;t matter whether
+you use the GPLv2 (older versions of amforth) or newer ones. I
+kindly ask these users to send me a copy.</p>
+</div>
+<div class="section" id="why-should-i-send-you-my-code">
+<h2>Why should I send you my code?<a class="headerlink" href="#why-should-i-send-you-my-code" title="Permalink to this headline">¶</a></h2>
+<p>Really simple: I want to improve amforth. The best way to do so
+is to study code using it. That includes ports of modules
+to other Forth&#8217;s.</p>
+</div>
+<div class="section" id="does-amforth-run-on-hardware-xy">
+<h2>Does amforth run on hardware xy?<a class="headerlink" href="#does-amforth-run-on-hardware-xy" title="Permalink to this headline">¶</a></h2>
+<p>amforth is targeted to Atmel AVR Atmega controllers. It does not and never will run on
+Attiny controllers or on completely different architectures like PIC or 8051 etc. Work is
+currently under way to port to the Texas Instruments MSP430.</p>
+</div>
+<div class="section" id="what-about-the-fuses">
+<h2>What about the fuses?<a class="headerlink" href="#what-about-the-fuses" title="Permalink to this headline">¶</a></h2>
+<p>Just set them to the factory defaults and adjust the oscillator settings only. amforth uses
+the self programming capabilities so if any boot loader works, amforth should do so.
+Make sure that the boot loader size is as large as the NRWW flash size, otherwise the flash write
+operation may fail silently and crash your system completely.</p>
+</div>
+<div class="section" id="what-about-boot-loaders">
+<h2>What about boot loaders?<a class="headerlink" href="#what-about-boot-loaders" title="Permalink to this headline">¶</a></h2>
+<p>amforth overwrites them, they are no longer existent. And this can only be changed for boot loaders
+with an application usable API to use the flash self programming feature. There are none currently
+available. With such an API the only word that’s need to be rewritten is <strong class="command">!i</strong>.</p>
+</div>
+<div class="section" id="what-do-i-need-for-linux">
+<h2>What do I need for linux?<a class="headerlink" href="#what-do-i-need-for-linux" title="Permalink to this headline">¶</a></h2>
+<p>The linux assembler avra comes without the controller definition files. They need
+to copied from the Atmel AVR Studio. Please use the version 1 of the files from the
+<tt class="file docutils literal"><span class="pre">AvrAssembler/appnotes</span></tt> directory. The Makefiles in the applications expect the files in the
+directory <tt class="file docutils literal"><span class="pre">~/lib/avra</span></tt>. Please note that these files are horribly outdated and do not cover
+all controller types. For those controllers you need the Atmel AVR Assembler version2. See
+next note.</p>
+</div>
+<div class="section" id="how-do-i-use-atmel-s-assembler-with-linux">
+<h2>How do I use Atmel&#8217;s assembler with linux?<a class="headerlink" href="#how-do-i-use-atmel-s-assembler-with-linux" title="Permalink to this headline">¶</a></h2>
+<p>First you need a working setup of a recent wine. Then put the <tt class="file docutils literal"><span class="pre">avrasm2.exe</span></tt> and the <tt class="file docutils literal"><span class="pre">Appnotes</span></tt>
+directory somewhere on your system. Then edit the <tt class="file docutils literal"><span class="pre">makefile</span></tt> to look similiar too:</p>
+<div class="highlight-makefile"><div class="highlight"><pre><span class="nv">AVRDUDE</span><span class="o">=</span>/usr/local/bin/avrdude
+
+<span class="nv">PP</span><span class="o">=</span>-c stk200  -P /dev/parport0
+<span class="nv">JTAG</span><span class="o">=</span>-c jtag1 -P /dev/ttyUSB2
+
+<span class="nv">AVRASM</span><span class="o">=</span>wine ~/projects/avr/AvrAssembler2/avrasm2.exe
+<span class="nv">AVRASMOPTS</span><span class="o">=</span>-fI -I ~/projects/avr/AvrAssembler2/Appnotes -e <span class="nv">$@</span>.eep -l <span class="nv">$@</span>.lst -m <span class="nv">$@</span>.map
+
+<span class="nf">p8.hex</span><span class="o">:</span> *.<span class="n">asm</span> <span class="n">words</span>/*.<span class="n">asm</span> <span class="n">devices</span>/*.<span class="n">asm</span>
+  <span class="k">$(</span>AVRASM<span class="k">)</span> <span class="k">$(</span>AVRASMOPTS<span class="k">)</span> p8.asm
+
+<span class="nf">p8</span><span class="o">:</span> <span class="n">p</span>8.<span class="n">hex</span>
+  <span class="k">$(</span>AVRDUDE<span class="k">)</span> <span class="k">$(</span>PP<span class="k">)</span> -p atmega644 -e -U flash:w:p8.hex:i -U eeprom:w:p8.hex.eep:i
+</pre></div>
+</div>
+<p>please note that the file names are slightly different from the avra generated code. Good luck.</p>
+</div>
+<div class="section" id="what-resources-are-available-in-my-own-assembly-words">
+<h2>What resources are available in my own assembly words?<a class="headerlink" href="#what-resources-are-available-in-my-own-assembly-words" title="Permalink to this headline">¶</a></h2>
+<p>You can use any resource if you take care. There are some things you need to obey: Never
+use the T flag in the machine status register SREG. Only the CPU registers named temp0..temp5
+are save to use without the need of restoration. Any other register change may be harmful.</p>
+</div>
+<div class="section" id="what-is-the-release-policy">
+<h2>What is the release policy?<a class="headerlink" href="#what-is-the-release-policy" title="Permalink to this headline">¶</a></h2>
+<p>Releases are made when there are ready. Usually the list of changes is limited
+to only a few things. Every release is considered stable and ready for production
+use. The version number gets increased by 0.1 with every release. That means,
+that a .0 release is nothing special.</p>
+</div>
+<div class="section" id="how-do-i-send-forth-code-to-the-system">
+<h2>How do I send forth code to the system?<a class="headerlink" href="#how-do-i-send-forth-code-to-the-system" title="Permalink to this headline">¶</a></h2>
+<p>Basically send them as ascii text via the terminal line. A command line like:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt; ascii-xfr -s -c <span class="m">10</span> -l  <span class="m">100</span>  devices/atmega32.frt &gt; /dev/ttyS0
+</pre></div>
+</div>
+<p>can be used. amforth does not currently support any kind of flow control. Any transfer
+has to be slow enough to not overrun the buffers. A more sophisticated approach is
+described in <a class="reference internal" href="TG/recipes/Upload.html#upload"><em>Use of the amforth-shell.py utility</em></a></p>
+</div>
+<div class="section" id="i-found-a-bug">
+<h2>I found a bug<a class="headerlink" href="#i-found-a-bug" title="Permalink to this headline">¶</a></h2>
+<p>Too bad. Please send all information to the <a class="reference external" href="mailto:amforth-devel&#37;&#52;&#48;lists&#46;sourceforge&#46;net">Mailling List</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG/TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG/Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TG/refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="_sources/faq.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

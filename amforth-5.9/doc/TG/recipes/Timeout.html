@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Loop With Timeout &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="General Code Examples" href="General.html" />
+    <link rel="next" title="Trouble Shooting" href="Trouble-Shooting.html" />
+    <link rel="prev" title="Structures" href="Structures.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="loop-with-timeout">
+<span id="timeoutloop"></span><h1>Loop With Timeout<a class="headerlink" href="#loop-with-timeout" title="Permalink to this headline">¶</a></h1>
+<p>Many low level routines require to wait for a
+specific condition come true: A transmission is
+finished, a flag is set etc. Most of the time
+these action do work fine. But sometimes, the
+check loop does not terminate for some (usually
+stupid) reason and the program essentially
+crashed.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ wait for twi finish</span>
+<span class="kn">:</span> <span class="nc">twi.wait</span> <span class="c1">( -- )</span>
+ <span class="k">begin</span>
+   <span class="nf">TWCR</span> <span class="k">c@ </span><span class="mi">80</span> <span class="k">and</span>
+ <span class="k">until</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>To circumvent such unwanted endless loops, a timeout
+is often a solution. This ensures that the loop will
+be left, regardless what happens. This recipe is based
+upon the timer module from the <tt class="file docutils literal"><span class="pre">lib/hardware</span></tt> directory,
+that provides a millisecond tick that can be used for
+timeouts as well.</p>
+<p>A timeout loop is basically a modified begin that
+takes a runtime parameter: the maximum allowed time
+for a particular loop. The loop terminater (again,
+until, etc) is left unchanged. If the loop terminates
+properly, the timeout is ignored, otherwise an <em>exception</em>
+is thrown. It is up to the programmer
+to catch that exception. If it is not catched, the
+forth interpreter will do it and returns to the
+command prompt.</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ timeout-begin is a potentially endless loop</span>
+<span class="c1">\ that terminates after a predefined timeout</span>
+
+<span class="c1">\ in the case of a timeout an exception is thrown</span>
+<span class="kn">variable</span> <span class="nc">alarmtime</span>
+<span class="kn">:</span> <span class="nc">(init-alarm)</span>
+  <span class="nf">@tick</span> <span class="k">+ </span><span class="nf">alarmtime</span> <span class="k">!</span>
+<span class="k">;</span>
+
+<span class="kn">:</span> <span class="nc">(check-alarm)</span>
+  <span class="nf">alarmtime</span> <span class="k">@ </span><span class="nf">expired?</span> <span class="k">if </span><span class="mi">-512</span> <span class="k">throw then</span>
+<span class="k">;</span>
+
+<span class="kn">:</span> <span class="nc">timeout-begin</span>
+   <span class="k">postpone </span><span class="nf">(init-alarm)</span>
+   <span class="k">postpone begin</span>
+   <span class="k">postpone </span><span class="nf">(check-alarm)</span>
+<span class="k">; immediate</span>
+</pre></div>
+</div>
+<p>Since the alarm checks are simple, some precautions should be
+obeyed:</p>
+<ul>
+<li><p class="first">The timer gives a millisecond resolution.</p>
+</li>
+<li><p class="first">The longest timeout period is 65.535 seconds (slightly more than a minute).</p>
+</li>
+<li><dl class="first docutils">
+<dt>The timeout-loop cannot be nested. If you want to use it in a multitasking</dt>
+<dd><p class="first last">environment, change the variable to a user.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Don’t forget to initialize and start the timer.</p>
+</li>
+</ul>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ testcase. timeout after 100ms</span>
+<span class="kn">:</span> <span class="nc">foo</span>
+ <span class="mi">100</span> <span class="nf">timeout-begin</span>
+   <span class="no">noop</span>
+ <span class="k">again</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Timeout.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

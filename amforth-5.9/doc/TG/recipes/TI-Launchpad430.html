@@ -1,0 +1,250 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Texas Instruments LaunchPad 430 &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Popular Boards" href="Boards.html" />
+    <link rel="next" title="Amforth with Raspberry PI" href="TI-Raspberry.html" />
+    <link rel="prev" title="AVR Butterfly" href="AVR-Butterfly.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="texas-instruments-launchpad-430">
+<span id="ti-launchpad-430"></span><h1>Texas Instruments LaunchPad 430<a class="headerlink" href="#texas-instruments-launchpad-430" title="Permalink to this headline">¶</a></h1>
+<p>Texas Instruments has the MSP430 microcontroller
+familiy. It is completely different to the AVR
+Atmegas. Amforth recently started to support it
+as well. The Forth kernel is (almost) the same,
+many tools like the amforth-shell work for both
+too. Since the MSP430 is new, bugs and other oddities
+are more likely than for the Atmegas.</p>
+<div class="section" id="getting-started-on-linux-with-mspdebug">
+<h2>Getting started on linux with mspdebug<a class="headerlink" href="#getting-started-on-linux-with-mspdebug" title="Permalink to this headline">¶</a></h2>
+<p>The sources are made for the
+<a class="reference external" href="http://www.mikekohn.net/micro/naken_asm.php">naken_asm</a>
+assembler.</p>
+<p>Connect your Launchpad to the USB port of your PC.
+It may take a while until the modem manager detects
+that it is not a device it can handle. Now open a
+terminal (I use minicom) and set the serial port
+settings: <cite>/dev/acm0</cite>, 9600 and 8N1 without flow
+control. Nothing&#8217;s happening so far.</p>
+<p>Open another shell command window and navigate to
+the launchpad430 directory. There is a hex file with
+the compiled amforth. Try <cite>ant compile</cite> to get it.</p>
+<p>Now run mspdebug to actually program the controller</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt; mspdebug rf2500 &quot;prog launchpad430.hex &quot;
+ MSPDebug version 0.22 - debugging tool for MSP430 MCUs
+ Copyright (C) 2009-2013 Daniel Beer &lt;dlbeer@gmail.com&gt;
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ Trying to open interface 1 on 007
+ rf2500: warning: can&#39;t detach kernel driver: No data available
+ Initializing FET...
+ FET protocol version is 30394216
+ Set Vcc: 3000 mV
+ Configured for Spy-Bi-Wire
+ fet: FET returned error code 4 (Could not find device or device not supported)
+ fet: command C_IDENT1 failed
+ Using Olimex identification procedure
+ Device ID: 0x2553
+   Code start address: 0xc000
+   Code size         : 16384 byte = 16 kb
+   RAM  start address: 0x200
+   RAM  end   address: 0x3ff
+   RAM  size         : 512 byte = 0 kb
+ Device: MSP430G2xx3
+ Number of breakpoints: 2
+ fet: FET returned NAK
+ warning: device does not support power profiling
+ Chip ID data: 25 53
+ Erasing...
+ Programming...
+ Writing  424 bytes at 0200...
+ Writing  188 bytes at 1000...
+ Writing 4096 bytes at e000...
+ Writing 4008 bytes at f000...
+ Writing   32 bytes at ffe0...
+ Done, 8748 bytes total
+</pre></div>
+</div>
+<p>Your Amforth terminal session (minicom) should now print some readable
+characters like</p>
+<div class="highlight-none"><div class="highlight"><pre>+-------------------------------------
+| amforth 5.6 MSP430G2553 8000 kHz
+| &gt;
+|
+</pre></div>
+</div>
+<p>Thats all. If nothing has happened look for error messages
+in the mspdebug window. Try replugging the launchpad. Some
+more information are in the <a class="reference internal" href="TI-Raspberry.html#ti-raspberry"><em>Amforth with Raspberry PI</em></a> recipe.</p>
+<p>You can reprogram the controller via USB whilst the terminal
+session is still active. In this case you&#8217;ll see repeated
+welcome strings from amforth due to some resets.</p>
+<div class="highlight-none"><div class="highlight"><pre>+-------------------------------------
+| amforth 5.6 MSP430G2553 8000 kHz
+| &gt; amforth 5.6 MSP430G2553 8000 kHz
+| &gt; amforth 5.6 MSP430G2553 8000 kHz
+| &gt; amforth 5.6 MSP430G2553 8000 kHz
+| &gt; amforth 5.6 MSP430G2553 8000 kHz
+| &gt;
+|
+</pre></div>
+</div>
+</div>
+<div class="section" id="playing-with-the-launchpad">
+<h2>Playing with the Launchpad<a class="headerlink" href="#playing-with-the-launchpad" title="Permalink to this headline">¶</a></h2>
+<p>The LEDs can be used as follows</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">red:init</span>   <span class="mi">1</span> <span class="mi">34</span> <span class="nf">bm-set</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">red:on</span>     <span class="mi">1</span> <span class="mi">33</span> <span class="nf">bm-set</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">red:off</span>    <span class="mi">1</span> <span class="mi">33</span> <span class="nf">bm-clear</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">green:init</span> <span class="mi">64</span> <span class="mi">34</span> <span class="nf">bm-set</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">green:on</span>   <span class="mi">64</span> <span class="mi">33</span> <span class="nf">bm-set</span> <span class="k">;</span>
+<span class="kn">:</span> <span class="nc">green:off</span>  <span class="mi">64</span> <span class="mi">33</span> <span class="nf">bm-clear</span> <span class="k">;</span>
+</pre></div>
+</div>
+<p>Example for (machine) code (instead of
+the forth code above)</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="k">code </span><span class="nf">red:on</span>  <span class="mh">$D3D2</span> <span class="k">, </span><span class="mh">$0021</span> <span class="k">, </span><span class="nf">end-code</span>
+<span class="k">code </span><span class="nf">red:off</span> <span class="mh">$C3D2</span> <span class="k">, </span><span class="mh">$0021</span> <span class="k">, </span><span class="nf">end-code</span>
+</pre></div>
+</div>
+<p>There are many ways to wait, e.g. do other
+things while waiting (<cite>PAUSE</cite>). A simple
+approach is do nothing:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">ms</span> <span class="mi">0</span> <span class="k">?do </span><span class="mi">1</span><span class="k">ms loop ;</span>
+</pre></div>
+</div>
+<p>Now let the red LED blink ONCE</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">blink</span> <span class="nf">red:on</span> <span class="mi">100</span> <span class="k">ms </span><span class="nf">red:off</span> <span class="mi">100</span> <span class="k">ms ;</span>
+</pre></div>
+</div>
+<p>Test it! Now! The compiled version is <em>much</em>
+faster than the sequence &#8220;1 33 bm-set 1 33 bm-clear&#8221;
+(watch the red flashes). Next is to let it blink until
+a key is pressed</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">blink-forever</span> <span class="k">begin </span><span class="nf">blink</span> <span class="k">key? until key drop ;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/TI-Launchpad430.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!-- make multiple targets with antelope -->
+<project name="Amforth for MSP 430 Tools" basedir="." default="Help">
+    <import file="common-build.xml"/>	
+    <macrodef name="mspdebug">
+	<attribute name="binary"       default="mspdebug" />
+	<attribute name="projectname"  default="undefined"/>
+	<attribute name="mcu"          default="undefined"/>
+	<attribute name="amforth.core" default="../.."/>
+	<sequential>
+		<exec executable="@{binary}" spawn="false" failonerror="true">
+		    <arg line="rf2500 'prog @{projectname}.hex'"/>
+		</exec>
+	</sequential>
+    </macrodef>
+
+    <macrodef name="nakenasm">
+	<attribute name="binary"       default="naken_asm" />
+	<attribute name="projectname"  default="undefined"/>
+	<attribute name="mcu"          default="undefined"/>
+	<attribute name="amforth.core" default="../.."/>
+	<sequential>
+		<echo>Producing Hexfiles for @{mcu}</echo>
+		<exec executable="@{binary}" spawn="false" failonerror="true">
+		    <arg line="-I @{amforth.core}/msp430/devices/@{mcu}"/>
+		    <arg line="-I @{amforth.core}/msp430"/>
+		    <arg line="-I @{amforth.core}/common"/>
+		    <arg line="-I @{amforth.core}"/>
+		    <arg line="-l"/>
+		    <arg line="-o @{projectname}.hex"/>
+		    <arg line="@{projectname}.asm"/>
+		</exec>
+	</sequential>
+    </macrodef>
+
+
+</project>

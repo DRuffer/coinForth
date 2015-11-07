@@ -1,0 +1,195 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Use of the amforth-shell.py utility &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="General Code Examples" href="General.html" />
+    <link rel="next" title="Programming and Debugging" href="Programming.html" />
+    <link rel="prev" title="Turnkey applications" href="Turnkey.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="use-of-the-amforth-shell-py-utility">
+<span id="upload"></span><h1>Use of the amforth-shell.py utility<a class="headerlink" href="#use-of-the-amforth-shell-py-utility" title="Permalink to this headline">¶</a></h1>
+<p>The amforth-shell.py from Keith Amidon may simplify the interaction with amforth
+and the forth code management while uploading projects.</p>
+<p>It is a python2 script that runs fine on Linux, other platforms may work as well.
+The tool takes care of the correct transfer of the source code and will optionally
+pre-process the sources: e.g. replace the register names with their numeric values.
+This saves valuable flash (dictionary) space since most of these registers are used
+only once.</p>
+<div class="highlight-bash"><div class="highlight"><pre> mt@ayla:~/amforth<span class="nv">$ </span>cat tools/test.frt
+<span class="se">\ </span>this is a <span class="nb">test</span>
+INT1Addr .
+ver <span class="m">1000</span> ms cr
+<span class="m">1000</span> ms
+ver cr ver
+<span class="m">1000</span> ms
+mt@ayla:alias<span class="p">|</span>grep amforth-shell
+<span class="nb">alias </span><span class="nv">u0</span><span class="o">=</span><span class="s1">&#39;$HOME/amforth/tools/amforth-shell.py -p /dev/ttyUSB0 --no-error-on-output&#39;</span>
+mt@ayla:~/amforth<span class="nv">$ </span>u0 test.frt
+<span class="p">|</span><span class="nv">I</span><span class="o">=</span>mcudef
+<span class="p">|</span><span class="nv">I</span><span class="o">=</span>using device.py <span class="k">for</span> atmega1280
+<span class="p">|</span><span class="nv">F</span><span class="o">=</span>....test.frt
+<span class="p">|</span>C<span class="p">|</span>    1<span class="p">|</span><span class="se">\ </span>this is a <span class="nb">test</span>
+<span class="p">|</span>S<span class="p">|</span>    2<span class="p">|</span>INT1Addr .
+<span class="p">|</span>O<span class="p">|</span>    2<span class="p">|</span>4
+<span class="p">|</span>S<span class="p">|</span>    3<span class="p">|</span>ver <span class="m">1000</span> ms cr
+<span class="p">|</span>O<span class="p">|</span>    3<span class="p">|</span>amforth 4.9 ATmega1280
+<span class="p">|</span>S<span class="p">|</span>    4<span class="p">|</span><span class="m">1000</span> ms
+<span class="p">|</span>S<span class="p">|</span>    5<span class="p">|</span>ver cr ver
+<span class="p">|</span>O<span class="p">|</span>    5<span class="p">|</span>amforth 4.9 ATmega1280
+<span class="p">|</span>O<span class="p">|</span>    5<span class="p">|</span>amforth 4.9 ATmega1280
+</pre></div>
+</div>
+<p>Note the replacement of the INT1Addr with 4 in line 2. This is done by using the
+device.py file from the core/devices/atmega1280p directory which is automagically
+identified and loaded at startup. And second note, that the file is found automatically
+in the subdirectory tools.</p>
+<p>The amforth-shell.py utility has a lot of more features: an interactive
+command prompt with dynamic command completion and command history (stored
+across multiple invocations), a lot of runtime checks and so on. To enter
+an interactive session, just call it with the port name</p>
+<div class="highlight-bash"><div class="highlight"><pre>mt@ayla:~/amforth<span class="nv">$ </span>u0 -i
+<span class="p">|</span><span class="nv">I</span><span class="o">=</span>Entering amforth interactive interpreter
+<span class="p">|</span><span class="nv">I</span><span class="o">=</span>using device.py <span class="k">for</span> atmega1280
+<span class="o">(</span>ATmega1280<span class="o">)</span>&gt; <span class="c"># (and pressing TAB twice)</span>
+<span class="c">#                    #directive           #exit                #quote-char-word     #tib</span>
+<span class="c">#update-cpu          #edit                #ignore-error        #s                   #timeout</span>
+<span class="c">#update-words        #cd                  #error-on-output     #include             #string-start-word</span>
+<span class="c">#timeout-next</span>
+<span class="o">(</span>ATmega1280<span class="o">)</span>&gt; <span class="c">#</span>
+</pre></div>
+</div>
+<p>Note that not all words displayed here are actual commands on the controller itself. The terminal
+provides commands itself, they start with a # (hash mark).</p>
+<p>To locate the files, the utility checks the current work directory
+or, if set, the directories from the environment variable AMFORTH_LIB.
+Be careful when using a directory with many files, the startup may take
+a long time due to the directory tree scanning.</p>
+<div class="highlight-bash"><div class="highlight"><pre>mt@ayla:~/amforth$ grep AMFORTH ~/.profile
+AMFORTH=~/amforth
+AMFORTH_LIB=$AMFORTH/lib:$AMFORTH/examples
+export AMFORTH_LIB
+mt@ayla:~/amforth$
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Upload.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

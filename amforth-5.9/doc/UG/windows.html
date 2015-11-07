@@ -1,0 +1,571 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>User’s Manual for Windows &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../index.html" />
+    <link rel="up" title="User’s Manual" href="amforth_user.html" />
+    <link rel="next" title="Instructions for Building amforth-5-1 using Atmel Studio 6.1 Components" href="quick-windows.html" />
+    <link rel="prev" title="User’s Manual For Linux" href="linux.html" />
+    <link rel="stylesheet" href="../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="user-s-manual-for-windows">
+<h1>User&#8217;s Manual for Windows<a class="headerlink" href="#user-s-manual-for-windows" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<p>by Karl Lunt for amforth v4.2 (updated for 5.4)</p>
+<p>Document contributed to the amforth project on SourceForge.net.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This manual describes the amforth programming language and provides
+details on how to customize the standard release for use on your target
+platform.  This document focuses on developing amforth applications in
+the Windows environment, using Atmel&#8217;s freeware AVRStudio4.  For
+information on developing amforth applications in the Linux/Unix
+environment, consult the Web.</p>
+<p>amforth is a variant of the ans94 Forth language, designed for the AVR
+ATmega family of  microcontrollers (MCUs).  amforth was developed
+and maintained by Matthias Trute; the amforth project is hosted and
+maintained on SourceForge.net (<a class="reference external" href="http://sourceforge.net/projects/amforth">http://sourceforge.net/projects/amforth</a>).</p>
+<p>You create your amforth application by creating a custom template file,
+(optionally) modifying some of the files included in the distribution
+set, assembling them with AVRStudio4, then moving the resulting object
+file into flash in the target hardware.  Your amforth application
+resides in flash, using very little RAM or EEPROM.</p>
+<p>amforth is fully interactive.  You can connect your target hardware to a
+serial port on your host PC, run a comm program such as Hyperterm, and
+develop additional Forth words and applications on the target.  Each
+word you create interactively is also stored in flash and is available
+following reset or power-cycle of the target.  You can select one of
+your amforth words to be the boot task, which will run automatically on
+the next reset or power-cycle.  You can also write interrupt service
+routines (ISRs) in amforth for handling low-level, time-critical events.</p>
+<p>This manual assumes familiarity with Atmel&#8217;s AVRStudio4 development
+suite (Windows OS); some knowledge of AVR assembly language programming
+is helpful but not necessary for basic use of the amforth language.  You
+can download the free AVRStudio4 suite from Atmel
+(<a class="reference external" href="http://www.atmel.com/dyn/products/tools_card.asp?tool_id=2725">http://www.atmel.com/dyn/products/tools_card.asp?tool_id=2725</a>).  You
+can use version 4.2 or higher; note that you need to fill out a fairly
+simple registration page to complete the download.</p>
+<p>This manual also assumes a working knowledge of the Forth programming
+language.   If you are new to Forth, or if you need a quick refresher or
+a reference page, you can find a full Web version of Leo Brodie&#8217;s
+marvelous book, “Starting Forth,” online at
+<a class="reference external" href="http://home.iae.nl/users/mhx/sf.html">http://home.iae.nl/users/mhx/sf.html</a>.</p>
+</div>
+<div class="section" id="about-this-document">
+<h2>About this document<a class="headerlink" href="#about-this-document" title="Permalink to this headline">¶</a></h2>
+<p>I created this document to support Matthias&#8217; work on amforth.  He has
+designed an excellent Forth that I enjoy using, but I thought newcomers
+to amforth could use a bit more detailed explanation on setting up an
+application.  As my contribution to his amforth project, I&#8217;m providing
+this user&#8217;s manual.</p>
+<p>This document was written using OpenOffice version 3.2.0.  You can
+download a copy of OpenOffice at the project&#8217;s website:
+www.openoffice.org</p>
+<p>I have contributed this document to Matthias for inclusion in his
+project, with the hope that others will edit and expand this text, to
+make amforth even better.  If you modify this document, please include
+this section (with suitable additions) and include my name in the list
+of contributors.</p>
+<p>Karl Lunt, Bothell, WA   USA</p>
+</div>
+<div class="section" id="a-quick-look-inside-amforth">
+<h2>A quick look inside amforth<a class="headerlink" href="#a-quick-look-inside-amforth" title="Permalink to this headline">¶</a></h2>
+<p>amforth v4.2 is available as a single downloadable file
+(<tt class="file docutils literal"><span class="pre">amforth-4.2.zip</span></tt>).  Download this file into your working folder (I&#8217;ll
+use <tt class="file docutils literal"><span class="pre">c:\projects\amforth-4.2</span></tt> throughout this document) and unzip them,
+preserving the subdirectory structure.  You should end up with the
+following subdirectory layout:</p>
+<div class="highlight-none"><div class="highlight"><pre>c:\projects\amforth-x.y\              &lt;-- main directory, holds your project files
+                     \appl            &lt;-- holds amforth systems for various MCUs
+                     \common          &lt;-- holds common source for amforth primitives
+                     \avr8            &lt;-- holds sources specific for avr atmega
+                     \msp430          &lt;-- holds sources specific for msp430
+                     \doc             &lt;-- holds amforth documentation
+                     \examples        &lt;-- holds small projects written in amforth
+                     \lib             &lt;-- holds libraries of Forth source files
+                     \tools           &lt;-- holds amforth support tools (pd2amforth)
+</pre></div>
+</div>
+<p>You will develop your custom applications by creating simple assembly
+language source files in the main directory, assembling your source
+files and the amforth source files with AVRStudio4, then downloading the
+resulting .hex and .eep files into your target with AVRStudio4.</p>
+<p>Note that although you will be creating assembly language source files,
+the files will be little more than a few macro invocations.  Generally,
+you will not need to know any AVR assembly language to develop your
+applications.</p>
+<p>The following sections describe the various subdirectories and files
+found in the initial installation of amforth.</p>
+<div class="section" id="words-subdirectory">
+<h3><tt class="file docutils literal"><span class="pre">*\words</span></tt> subdirectory<a class="headerlink" href="#words-subdirectory" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="file docutils literal"><span class="pre">*\words</span></tt> subdirectory in the <tt class="file docutils literal"><span class="pre">avr8</span></tt>, <tt class="file docutils literal"><span class="pre">msp430</span></tt> and <tt class="file docutils literal"><span class="pre">common</span></tt>
+directory hold a large collection of amforth words, each defined in a separate <tt class="file docutils literal"><span class="pre">.asm</span></tt>
+file.  Each file in this subdirectory is a complete word definition, ready to assemble
+into the final application.    For example, here is the entire contents of <tt class="file docutils literal"><span class="pre">equal.asm</span></tt>,
+the source file for the word <strong class="command">=</strong>, which compares two values on the top of
+the stack and leaves behind a flag that is TRUE if the values match or
+FALSE if they don&#8217;t.</p>
+<div class="highlight-none"><div class="highlight"><pre>; ( n1 n2 -- flag ) Compare
+; R( -- )
+; compares two values
+VE_EQUAL:
+   .dw $ff01
+   .db &quot;=&quot;,0
+   .dw VE_HEAD
+   .set VE_HEAD = VE_EQUAL
+XT_EQUAL:
+   .dw PFA_EQUAL
+PFA_EQUAL:
+   ld temp2, Y+
+   ld temp3, Y+
+   cp tosl, temp2
+   cpc tosh, temp3
+PFA_EQUALDONE:
+   brne PFA_ZERO1
+   rjmp PFA_TRUE1
+</pre></div>
+</div>
+<p>This source file gives an excellent view of the layout for each amforth
+word.  It isn&#8217;t necessary that you understand how a word is laid out
+inside the dictionary in order to use amforth.  However, if you ever
+need to define your own amforth words, you will need to follow the
+layout shown here to make sure your words properly integrate into the
+dictionary.</p>
+</div>
+<div class="section" id="devices-subdirectory">
+<h3><tt class="file docutils literal"><span class="pre">*\devices</span></tt> subdirectory<a class="headerlink" href="#devices-subdirectory" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="file docutils literal"><span class="pre">*\devices</span></tt> subdirectories hold several folders, each defining a
+target MCU.  For each target MCU defined, the associated folder holds
+four files..</p>
+<p>The <tt class="file docutils literal"><span class="pre">device.asm</span></tt> file is intended to be included as part of your
+application, and provides assembly language definitions for MCU-specific
+parameters, such as where RAM starts, the number and layout of the
+interrupt vectors, and where high flash memory starts.</p>
+<p>The <tt class="file docutils literal"><span class="pre">&lt;target&gt;.frt</span></tt> file contains Forth source defining MCU-specific
+parameters, such as IO register names and addresses.  You can use this
+file when working in Forth on your target system; it is not needed when
+building an amforth system in AVRStudio4.</p>
+<p>The <tt class="file docutils literal"><span class="pre">device.inc</span></tt> file contains assembler source and  is intended to be
+included as part of any amforth applications you build for the target
+device.  This file creates Forth words in your dictionary that provide
+access to the MCU registers on your target.</p>
+<p>(Comments on device.py file are needed.)</p>
+<p>If you need to develop support files for a different Atmel MCU, you can
+copy the existing files for a similar device and use these copies as a
+starting point for your efforts.  Rename the files to match the target
+MCU, then refer to the appropriate Atmel reference manual to determine
+the proper values for the various registers and parameters.  Where
+possible, ensure that the assembly language names for the ports match
+those in the existing <tt class="file docutils literal"><span class="pre">.asm</span></tt> file.  If the names do not match, or if you
+need to add new names to provide support for a new subsystem (such as
+the CANBus ports on an AT90CAN128), you may need to edit one or more
+existing amforth source files.</p>
+<p>(Add details on how the device.py file is generated.)</p>
+</div>
+<div class="section" id="amforth-asm">
+<h3><tt class="file docutils literal"><span class="pre">*\amforth.asm</span></tt><a class="headerlink" href="#amforth-asm" title="Permalink to this headline">¶</a></h3>
+<p><tt class="file docutils literal"><span class="pre">amforth.asm</span></tt> in the <tt class="file docutils literal"><span class="pre">avr8</span></tt> and <tt class="file docutils literal"><span class="pre">msp430</span></tt> contains a
+small amount of assembly language source that:
+* defines the Forth inner interpreter,
+* declares the starting address of the Forth kernel,
+* allocates the memory for the final system,
+* sets up the small area of EEPROM used by the Forth system,
+* declares the interrupt service routine (ISR) support,
+* adds the words to be assembled into low flash memory (<tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt>),
+* adds the words to be assembled into high flash memory (<tt class="file docutils literal"><span class="pre">dict_appl_core..inc</span></tt>)</p>
+<p>The <tt class="file docutils literal"><span class="pre">amforth.asm</span></tt> included in your original download is essentially
+complete, in that when assembled it will create most of an amforth
+system.  However, key information about the target hardware is missing
+and must be supplied by you in what is known as a template file.
+Details on what this template file contains and how you use the template
+file to describe your target hardware are contained in a later section.</p>
+<p>Note that <tt class="file docutils literal"><span class="pre">amforth.asm</span></tt> refers to a turnkey application (see
+XT_APPLTURNKEY in the <cite>.eseg</cite> segment).    This execution token is assumed
+to be an amforth word defined somewhere in your application.  The
+default turnkey application, defined in the file <tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt>,
+provides a typical Forth interactive environment.  You can customize
+<tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt> as needed; see the section below on <tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="developing-your-own-amforth-system">
+<h2>Developing your own amforth system<a class="headerlink" href="#developing-your-own-amforth-system" title="Permalink to this headline">¶</a></h2>
+<p>The following sections describe the files you need to create for
+building your own amforth system.  In general, these are the only files
+you will need to edit during development.  You can often find suitable
+files already in the distribution that can serve as starting points for
+these files; just copy and edit them to make your own files.</p>
+<div class="section" id="dict-appl-inc">
+<h3><tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt><a class="headerlink" href="#dict-appl-inc" title="Permalink to this headline">¶</a></h3>
+<p>The file <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> is created by you and contains those amforth
+words that you want to add to your application above and beyond the
+words added by default.</p>
+<p>You create your own <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> file using a standard text editor,
+such as AVRStudio4&#8217;s text editor. Here is a simple <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> file
+that I use for creating a typical amforth development system.  It
+provides words for printing unsigned numbers, listing the dictionary,
+and displaying parts of memory.</p>
+<p>Here is the <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> file I created for my sample amforth system.</p>
+<div class="highlight-none"><div class="highlight"><pre>; this dictionary contains optional words
+; they may be moved to the core dictionary if needed
+
+.include &quot;applturnkey.asm&quot;
+.include &quot;words/ms.asm&quot;
+
+; optionally
+.include &quot;dict/compiler2.inc&quot;
+</pre></div>
+</div>
+<p>Note that none of the files in the <tt class="file docutils literal"><span class="pre">core/dict</span></tt> directory are included.
+This is done automatically depending on the free flash space. The only exception
+which can be added manually is the file <tt class="file docutils literal"><span class="pre">dict/compiler2.inc</span></tt>. Tnis file
+is automatically included for devices with 8KB NRWW flash memory. It is possible
+to add multiple <tt class="docutils literal"><span class="pre">.include</span></tt> statements, the file will only be included once.</p>
+<p>You are free to include whatever words from the <tt class="file docutils literal"><span class="pre">words/</span></tt> folder you want
+in your application.  Note that if you accidentally include a duplicate
+word, assembling the resulting application will generate an error; you
+will need to edit out the duplicate word and reassemble.</p>
+</div>
+<div class="section" id="dict-appl-core-inc">
+<h3><tt class="file docutils literal"><span class="pre">dict_appl_core.inc</span></tt><a class="headerlink" href="#dict-appl-core-inc" title="Permalink to this headline">¶</a></h3>
+<p>The file <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> is created by you and contains those amforth
+words that you want to add to your application above and beyond the
+words added by <tt class="file docutils literal"><span class="pre">dict_minimum.inc</span></tt> and <tt class="file docutils literal"><span class="pre">dict_core.inc</span></tt>.  The difference
+between this file and <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> above is the words in this file will
+be written to high flash (the NRWW or bootloader section).</p>
+<p>Because of the limited amount of space in the NRWW sections of most
+ATmega devices, you will want to limit the words in this file to those
+absolutely required to support amforth.  In general, these are words
+that modify flash, such as istore.asm.  Below is the <tt class="file docutils literal"><span class="pre">dict_appl_core.inc</span></tt>
+file for my sample amforth system.</p>
+<div class="highlight-none"><div class="highlight"><pre>.include &quot;words/estore.asm&quot;
+.include &quot;words/efetch.asm&quot;
+.include &quot;words/istore.asm&quot;
+.include &quot;words/istore_nrww.asm&quot;
+.include &quot;words/ifetch.asm&quot;
+</pre></div>
+</div>
+<p>This file looks almost the same for all current atmega devices. You&#8217;ll need
+to change some entries only for devices from the atxmega line and some bigger
+atmega types. There are examples in the <tt class="file docutils literal"><span class="pre">appl</span></tt> directory for this.
+If you accidentally include words already included by other segments of
+the amforth system, you will get assembler errors for the duplicates;
+just remove the duplicates from your <tt class="file docutils literal"><span class="pre">dict_appl_core.inc</span></tt> file.</p>
+</div>
+<div class="section" id="applturnkey-asm">
+<h3><tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt><a class="headerlink" href="#applturnkey-asm" title="Permalink to this headline">¶</a></h3>
+<p>This file is created by you and contains the assembly language source
+for a turnkey application, as called out in the file amforth.asm (see
+appropriate section above).</p>
+<p>The file <tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt> usually contains amforth words, written in
+assembly language, in the form shown in the <tt class="file docutils literal"><span class="pre">words/</span></tt> subdirectory
+description above.</p>
+<p>The following sample <tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt> file shows the default turnkey
+application.  This application is suitable for most amforth systems and
+should be included when you build your system.  Here is the
+<tt class="file docutils literal"><span class="pre">applturnkey.asm</span></tt> file for my sample amforth system.</p>
+<div class="highlight-none"><div class="highlight"><pre>; ( -- ) System
+; R( -- )
+; application specific turnkey action
+VE_APPLTURNKEY:
+   .dw $ff0b
+   .db &quot;applturnkey&quot;,0
+   .dw VE_HEAD
+   .set VE_HEAD = VE_APPLTURNKEY
+XT_APPLTURNKEY:
+   .dw DO_COLON
+PFA_APPLTURNKEY:
+   .dw XT_INITUSER
+   .dw XT_USART
+   .dw XT_INTON
+   .dw XT_CR
+   .dw XT_CR
+   .dw XT_VER
+   .dw XT_CR
+   .dw XT_SLITERAL
+   .dw 22
+   .db &quot;Karl&#39;s amForth system &quot;
+   .dw XT_ITYPE
+
+   .dw XT_EXIT
+</pre></div>
+</div>
+<p>The above simple application initializes the user area and <cite>USART0</cite>,
+displays amforth&#8217;s version information on the serial terminal, displays
+an extra message proclaiming this as my amforth system, then exits to
+the main amforth shell.</p>
+<p>Note that my custom message ends with a space.  I did this so the
+message had an even number of letters.  If the string length is odd, the
+assembler reports a warning that it had to add an zero-byte to pad out
+an even number of bytes.  (I could have also used the ,0 technique shown
+in the declaration of the applturnkey string at the top of the file.)</p>
+</div>
+<div class="section" id="the-template-file">
+<h3>The template file<a class="headerlink" href="#the-template-file" title="Permalink to this headline">¶</a></h3>
+<p>You define the characteristics of your target hardware and your
+application in a template file.  The template file is an assembly
+language source file you create with a standard ASCII text editor, such
+as AVRStudio4&#8217;s text editor.  Although this is called an assembly
+language source file, you will typically not write any true assembly
+language instructions.  Instead, the contents of your template file will
+largely consist of <cite>.include</cite> and <cite>.equ</cite> statements.</p>
+<p>Here is the template file, <tt class="file docutils literal"><span class="pre">myproj.asm</span></tt>, for defining my sample amforth
+system running on an Atmega328P MCU with a clock frequency of 16 MHz.</p>
+<div class="highlight-none"><div class="highlight"><pre>;
+;  myproj.asm      a simple AVRStudio4 assembly-language project for amforth
+;
+;
+; The order of the entries (esp the include order) must not be
+; changed since it is very important that the settings are in the
+; right order
+;
+; first is to include macros and default settings from the amforth
+; directory.
+.include &quot;preamble.inc&quot;
+
+; amforth needs two essential parameters
+; cpu clock in hertz, 1MHz is factory default
+.equ F_CPU = 16000000
+; and the actual usart port.
+.include &quot;drivers/usart_0.asm&quot;
+
+; include the whole source tree.
+.include &quot;amforth.asm&quot;
+</pre></div>
+</div>
+<p>Your template file should declare a key equate required by
+amforth.  The equate <cite>F_CPU</cite> defines the oscillator frequency, in Hertz,
+of your target hardware and is expressed as a long integer.  The example
+shown above shows the target system uses an 16 MHz clock; F_CPU is
+declared as 16000000.</p>
+<p>Next, your template file should include the assembly source file
+supporting the USART you intend to use as a console on your target
+hardware.  The example above uses USART0 and includes the appropriate
+device include file.</p>
+<p>In general, the remaining equate values (<cite>.equ</cite> and <cite>.set</cite>) in the template
+file will be calculated automatically, based on previously defined
+values in the Atmel definition files for the various MCUs.</p>
+<p>This completes the custom portion of the template file.  All that
+remains is the final include statement, which basically adds all of the
+words that make up the standard amforth system.  Everything you would
+need to do for the majority of amforth systems can be done with the
+statements available to you in your template file.</p>
+</div>
+</div>
+<div class="section" id="setting-up-avrstudio4">
+<h2>Setting up AVRStudio4<a class="headerlink" href="#setting-up-avrstudio4" title="Permalink to this headline">¶</a></h2>
+<p>Begin by creating a new assembly-language project in AVRStudio4.  For my
+sample, I named this project myproj and created it in the
+<tt class="file docutils literal"><span class="pre">c:\projects\amforth-x.y</span></tt> folder.</p>
+<p>I then created the four above files in my project folder (the folder
+holding <tt class="file docutils literal"><span class="pre">myproj.aps</span></tt>).</p>
+<p>Next, I added the path to the <tt class="file docutils literal"><span class="pre">core\</span></tt> folder to my project.  To do this,
+click on Project/Assembler Options and locate the entry for Additional
+include path.  Enter in this field the full path to the corefolder; in
+my case, this path is <tt class="file docutils literal"><span class="pre">C:\projects\amforth-4.2\core</span></tt>.</p>
+<p>This completes setup in AVRStudio4.  Pressing F7 assembles the source
+files and leaves behind two object files.  The file <tt class="file docutils literal"><span class="pre">myproj.hex</span></tt> contains
+the flash contents for my amforth system and the file <tt class="file docutils literal"><span class="pre">myproj.eep</span></tt> holds
+the EEPROM values needed at startup.</p>
+<p>I then hooked my programming pod (an AVRISP mkII) to the target board
+and applied power.  I first made sure that the device&#8217;s fuses were
+properly set.  In particular, I checked that the bootloader area was set
+to the maximum (2048 words for the ATmega328P), the EESAVE fuse was
+checked, and the fuse for BOOTRST (jump to bootloader on reset) was NOT
+checked.</p>
+<p>Finally, I downloaded the EEPROM file to the target, followed by
+downloading the flash file.  When I reset the target, the Hyperterm
+window hooked to the target&#8217;s serial port showed the expected amforth
+announcement.  My amforth system was up and running!</p>
+</div>
+<div class="section" id="what-could-go-wrong">
+<h2>What could go wrong?<a class="headerlink" href="#what-could-go-wrong" title="Permalink to this headline">¶</a></h2>
+<p>When you build a properly created amforth system, you should not get any
+errors or warnings.  If the assembler complains about not finding
+included files, double-check the layout of your amforth folder; it
+should match what I&#8217;ve described at the beginning of this manual.
+Additionally, make sure you entered the path to your <tt class="file docutils literal"><span class="pre">core\</span></tt> folder
+correctly in the Additional include path box when you set up the
+project&#8217;s properties.</p>
+<p>If the project builds properly but does not provide characters to your
+serial port when you download your code to the target, double-check that
+your Hyperterm settings match those in your template file (<tt class="file docutils literal"><span class="pre">myproj.asm</span></tt>
+above).  Also confirm that you got the MCU frequency correct in your
+template file.  Also double-check that you put the correct hard-coded
+paths in your template file and in your <tt class="file docutils literal"><span class="pre">dict_appl.inc</span></tt> file.  Also make
+sure you download BOTH the <cite>.hex</cite> and the <cite>.eep</cite> files for your project, and
+that you have the EESAVE fuse on your device checked.</p>
+</div>
+<div class="section" id="an-alternative-avrstudio4-setup">
+<h2>An alternative AVRStudio4 setup<a class="headerlink" href="#an-alternative-avrstudio4-setup" title="Permalink to this headline">¶</a></h2>
+<p>The above method uses two hard-coded paths in your source files.  This
+can cause problems if you later  try to change processors; it&#8217;s easy to
+forget to change one of the hard-coded paths and it can take time to
+track down the error.</p>
+<p>As an alternative, you can go to Project/Assembler Options and remove
+the path you added in the Additional include path field.  Edit the
+Additional parameters field to include the following text, all entered
+on a single line:</p>
+<div class="highlight-python"><div class="highlight"><pre>-I C:\projects\amforth-x.y\core -I C:\projects\amforth-4.2\core\devices\atmega328p
+</pre></div>
+</div>
+<p>Note that the above entry is for my project; adjust as needed for your
+file paths and target MCU.  Be sure to include the single space after
+each <cite>-I</cite> as shown!</p>
+</div>
+<div class="section" id="revision-history">
+<h2>Revision History<a class="headerlink" href="#revision-history" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="24%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Version</th>
+<th class="head">Author</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>4.2.0</td>
+<td>Karl Lunt</td>
+<td>Extensive changes to track amforth v4.2.</td>
+</tr>
+<tr class="row-odd"><td>4.2.1</td>
+<td>Karl Lunt</td>
+<td>Minor changes to introduction</td>
+</tr>
+<tr class="row-even"><td>4.2.2</td>
+<td>Matthias Trute</td>
+<td>Reformatted with ReST</td>
+</tr>
+<tr class="row-odd"><td>4.2.3</td>
+<td>Matthias Trute</td>
+<td>Update for include file changes</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG/TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG/Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG/refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../_sources/UG/windows.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>

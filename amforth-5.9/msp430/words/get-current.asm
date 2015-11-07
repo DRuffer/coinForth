@@ -1,0 +1,2 @@
+    HEADER(XT_GET_CURRENT,11,"get-current",DOCOLON)
+        DW XT_LATEST,XT_FETCH,XT_EXIT

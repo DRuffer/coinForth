@@ -1,0 +1,138 @@
+<!-- make multiple targets with antelope -->
+<project name="Amforth for AVR8 Tools" basedir="." default="Help">
+    <import file="common-build.xml"/>
+    <macrodef name="avra">
+	<attribute name="binary"       default="../../avr8/Atmel/avra" />
+	<attribute name="includes"     default="../../avr8/Atmel/Appnotes" />
+	<attribute name="projectname"  default="undefined"/>
+	<attribute name="mcu"          default="undefined"/>
+	<attribute name="amforth.core" default="../.."/>
+	<sequential>
+		<exec executable="@{binary}" spawn="false" failonerror="true">
+		    <arg line="-I @{includes}"/>
+		    <arg line="-I @{amforth.core}/avr8/devices/@{mcu}"/>
+		    <arg line="-I @{amforth.core}/avr8"/>
+		    <arg line="-I @{amforth.core}/common"/>
+		    <arg line="--listmac"/>
+		    <arg line="-l @{projectname}.lst"/>
+		    <arg line="-m @{projectname}.map"/>
+		    <arg line="@{projectname}.asm"/>
+		</exec>
+	</sequential>
+    </macrodef>
+
+    <macrodef name="avrasm2">
+	<attribute name="binary"       default="wine" />
+	<attribute name="avrasm"       default="../../avr8/Atmel/avrasm2.exe"/>
+	<attribute name="includes"     default="../../avr8/Atmel/Appnotes2" />
+	<attribute name="projectname"  default="undefined"/>
+	<attribute name="mcu"          default="undefined"/>
+	<attribute name="amforth.core" default="../.."/>
+	<sequential>
+		<echo>Producing Hexfiles for @{mcu}</echo>
+		<exec executable="@{binary}" spawn="false" failonerror="true">
+		    <arg line="@{avrasm}"/>
+		    <arg line="-I @{includes}"/>
+		    <arg line="-I @{amforth.core}/avr8/devices/@{mcu}"/>
+		    <arg line="-I @{amforth.core}/avr8"/>
+		    <arg line="-I @{amforth.core}/common"/>
+		    <arg line="-I @{amforth.core}"/>
+		    <arg line="-fI -v0"/>
+		    <arg line="-e @{projectname}.eep.hex"/>
+		    <arg line="-l @{projectname}.lst"/>
+		    <arg line="-m @{projectname}.map"/>
+		    <arg line="-o @{projectname}.hex"/>
+		    <arg line="@{projectname}.asm"/>
+		</exec>
+	</sequential>
+    </macrodef>
+
+    <macrodef name="avrdude">
+	<attribute name="binary"      default="avrdude" />
+	<attribute name="type"        default="avr910"/>
+	<attribute name="port"        default="${avr.programmer.@{type}port}" />
+	<attribute name="programmer"  default="${avr.programmer.@{type}}" />
+	<attribute name="mcu"         default="m8"/>
+
+	<attribute name="flashfile"   default=""/>
+	<attribute name="eepromfile"  default=""/>
+	<sequential>
+	    <exec executable="@{binary}" spawn="false" failonerror="true">
+	    <arg line="-c @{programmer}"/>
+		<arg line="-p @{mcu}"/>
+		<arg line="-P @{port}"/>
+		<arg line="-e"/> 
+                <arg line="-B 22"/>
+		<arg line="-U flash:w:@{flashfile}"/>
+		<arg line="-U eeprom:w:@{eepromfile}"/>
+		<arg line="-v"/>
+	    </exec>
+	</sequential>
+    </macrodef>
+
+    <macrodef name="avrdude-back">
+	<attribute name="binary"      default="avrdude" />
+	<attribute name="type"        default="avr910"/>
+	<attribute name="port"        default="${avr.programmer.@{type}port}" />
+	<attribute name="programmer"  default="${avr.programmer.@{type}}" />
+	<attribute name="mcu"         default="m8"/>
+
+	<attribute name="flashfile"   default=""/>
+	<attribute name="eepromfile"  default=""/>
+	<sequential>
+	    <exec executable="@{binary}" spawn="false" failonerror="true">
+	    <arg line="-c @{programmer}"/>
+		<arg line="-p @{mcu}"/>
+		<arg line="-P @{port}"/>
+		<arg line="-U flash:r:@{flashfile}:i"/>
+		<arg line="-U eeprom:r:@{eepromfile}:i"/>
+		<arg line="-v"/>
+	    </exec>
+	</sequential>
+    </macrodef>
+
+    <macrodef name="avrdude-2fuses">
+	<attribute name="binary"      default="avrdude" />
+	<attribute name="type"        default="avr910"/>
+	<attribute name="port"        default="${avr.programmer.@{type}port}" />
+	<attribute name="programmer"  default="${avr.programmer.@{type}}" />
+
+	<attribute name="mcu"         default="m8"/>
+	<attribute name="hfuse"       default="0xnn"/>
+	<attribute name="lfuse"       default="0xnn"/>
+	<sequential>
+	    <exec executable="@{binary}" spawn="false" failonerror="true">
+	    <arg line="-c @{programmer}"/>
+		<arg line="-p @{mcu}"/>
+		<arg line="-P @{port}"/>
+		<!-- $(AVRDUDE) $(USB) -p $(MCU) -U hfuse:w:$(HFUSE):m -U lfuse:w:$(LFUSE):m -->
+		<arg line="-U hfuse:w:@{hfuse}:m"/>
+		<arg line="-U lfuse:w:@{lfuse}:m"/>
+		<arg line="-v"/>
+	    </exec>
+	</sequential>
+    </macrodef>
+
+    <macrodef name="avrdude-3fuses">
+	<attribute name="binary"      default="avrdude" />
+	<attribute name="type"        default="avr910"/>
+	<attribute name="port"        default="${avr.programmer.@{type}port}" />
+	<attribute name="programmer"  default="${avr.programmer.@{type}}" />
+
+	<attribute name="mcu"         default="m88"/>
+	<attribute name="efuse"       default="0xnn"/>
+	<attribute name="hfuse"       default="0xnn"/>
+	<attribute name="lfuse"       default="0xnn"/>
+	<sequential>
+	    <exec executable="@{binary}" spawn="false" failonerror="true">
+	    <arg line="-c @{programmer}"/>
+		<arg line="-p @{mcu}"/>
+		<arg line="-P @{port}"/>
+		<arg line="-U hfuse:w:@{hfuse}:m"/>
+		<arg line="-U lfuse:w:@{lfuse}:m"/>
+		<arg line="-U efuse:w:@{efuse}:m"/>
+		<arg line="-v"/>
+	    </exec>
+	</sequential>
+    </macrodef>
+</project>

@@ -1,0 +1,233 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dump Utilities &mdash; AmForth</title>
+    
+    <link rel="stylesheet" href="../../_static/amforth.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AmForth" href="../../index.html" />
+    <link rel="up" title="Programming and Debugging" href="Programming.html" />
+    <link rel="next" title="Exceptions" href="Exceptions.html" />
+    <link rel="prev" title="Debug Shell" href="Debugshell.html" />
+    <link rel="stylesheet" href="../../_static/shariff.min.css" type="text/css" />
+
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+        <div class="headertitle"><a
+          href="../../index.html">AmForth</a></div>
+        <div class="rel">
+          <a href="http://sourceforge.net/p/amforth/community/HEAD/tree/" title="Community Repository"
+             accesskey="C">Community</a> |
+          <a href="/faq.html" title="FAQ"
+             accesskey="F">FAQ</a> |
+          <a href="/UG/amforth_user.html" title="User Guide"
+             accesskey="U">User Guide</a> |
+          <a href="/TG/TG.html" title="Technical Guide"
+             accesskey="T">Technical Guide</a> |
+          <a href="/TG/Cookbook.html" title="Recipes"
+             accesskey="R">Cookbook</a> |
+          <a href="http://sourceforge.net/projects/amforth/" title="Download"
+             accesskey="D">Download</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dump-utilities">
+<span id="id1"></span><h1>Dump Utilities<a class="headerlink" href="#dump-utilities" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="stack-dumps">
+<h2>Stack Dumps<a class="headerlink" href="#stack-dumps" title="Permalink to this headline">¶</a></h2>
+<p>Stack dumps can be generated with the command
+<strong class="command">.s</strong>. The standard does not specify,
+how the output has to be formatted. There is an
+assembly version available intended for core
+development. This means that numbers are printed
+as unsigned (hex is highly recommended) and the TOS
+is on the left hand side. This makes it easy to get
+the most important information easily and the numbers
+are quickly found in memory dumps and the assembler
+LST and MAP files.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> -1 -2 -3 .s
+<span class="go">  65533 65534 65535  ok</span>
+<span class="gp">&gt;</span> hex .s
+<span class="go">  FFFD FFFE FFFF  ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+<p>Many other Forth&#8217;s and the various books use another
+stack dump format. It uses signed numbers and
+places the TOS on the right side. This can be
+achieved with the following definition, kindly
+provided by Enoch on the mailing list:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="kn">:</span> <span class="nc">.s</span>  <span class="c1">( -- )</span> <span class="c1">\ stack picture listing order</span>
+  <span class="k">depth</span>
+  <span class="k">begin dup while dup pick . 1- repeat</span>
+  <span class="k">drop</span>
+<span class="k">;</span>
+</pre></div>
+</div>
+<p>The output looks like:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> -1 -2 -3 .s
+<span class="go"> -1 -2 -3  ok</span>
+<span class="gp">&gt;</span>
+</pre></div>
+</div>
+<p>Other stack dumps are kindly provided by Erich:</p>
+<div class="highlight-forth"><div class="highlight"><pre><span class="c1">\ variations on dot-s</span>
+<span class="c1">\ dot-s, one way, signed output:</span>
+<span class="kn">:</span>  <span class="nc">ds</span>  <span class="no">sp@ sp0 </span><span class="mi">1</span> <span class="k">cells - do i @ </span> <span class="k">. </span><span class="mi">-2</span> <span class="k">+loop ;</span>
+
+<span class="c1">\ dot-s, one way, unsigned output:</span>
+<span class="kn">:</span> <span class="nc">uds</span> <span class="no">sp@ sp0 </span><span class="mi">1</span> <span class="k">cells - do i @ u. </span><span class="mi">-2</span> <span class="k">+loop ;</span>
+
+<span class="c1">\ dot-s, the other way (reverse?), signed output:</span>
+<span class="kn">:</span> <span class="nc">rs</span>  <span class="no">sp@ sp0 </span>     <span class="k">swap do i @ </span> <span class="k">. </span> <span class="mi">2</span> <span class="k">+loop ;</span>
+
+<span class="c1">\ dot-s, the other way, unsigned output:</span>
+<span class="kn">:</span> <span class="nc">urs</span> <span class="no">sp@ sp0 </span>     <span class="k">swap do i @ u. </span> <span class="mi">2</span> <span class="k">+loop ;</span>
+
+<span class="c1">\ dot-s, verbose, as it used to be in earlier versions of amforth:</span>
+<span class="kn">:</span>  <span class="nc">dsv</span>  <span class="k">depth dup </span><span class="mi">0</span> <span class="k">do i u. dup i -</span>
+    <span class="k">cells </span><span class="no">sp0 </span><span class="k">swap - dup u. @ </span> <span class="k">. cr loop ;</span>
+<span class="kn">:</span> <span class="nc">udsv</span>  <span class="k">depth dup </span><span class="mi">0</span> <span class="k">do i u. dup i -</span>
+    <span class="k">cells </span><span class="no">sp0 </span><span class="k">swap - dup u. @ u. cr loop ;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="memory-dumps">
+<h2>Memory Dumps<a class="headerlink" href="#memory-dumps" title="Permalink to this headline">¶</a></h2>
+<p>Atmegas have three different memory address spaces. Each
+region has its own dump utility</p>
+<dl class="docutils">
+<dt><strong class="command">dump</strong></dt>
+<dd>Standard Memory. Every Address unit has 8 bits.</dd>
+</dl>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> <span class="nv">$180</span> <span class="nv">$20</span> dump
+
+<span class="go"> 0180 36 30 31 33 33 02 87 75 F4 6D 74 26 8F 63 A3 CD   601CD..u.mt&amp;.c..</span>
+<span class="go"> 0190 44 AB FC D7 3D DA D7 16 59 EB 3F AF 76 F2 27 3F   D...=...Y.?.v.&#39;?</span>
+<span class="go">ok</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><strong class="command">edump</strong></dt>
+<dd>EEPROM. Similar to RAM, every address unit has 8 bits, but since
+it used on a cell (16 bits) basis, the display uses this number width:</dd>
+</dl>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> <span class="m">0</span> <span class="nv">$30</span> edump
+
+<span class="go">0000 - FFFF 0EA3 0121 0052 0CC7 3B65 0019 0B2B   ....!.R...e;..+.</span>
+<span class="go">0010 - 0014 0014 0E66 0001 0014 FFFF FFFF FFFF   ....f...........</span>
+<span class="go">0020 - FFFF FFFF FFFF FFFF 0000 0000 085F 080F   ............_...</span>
+<span class="go"> ok</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><strong class="command">idump</strong></dt>
+<dd>Flash. Unlike the other memories, flash has 16 bits per address unit:</dd>
+</dl>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">&gt;</span> <span class="nv">$dc0</span> <span class="nv">$20</span> idump
+
+<span class="go"> 0DC0 - 3830 0DC5 38D0 3837 002E 381A FF05 322E   08...878...8...2</span>
+<span class="go"> 0DC8 - 6568 0078 0DAB 3800 3B23 02D5 02DD 02DD   hex....8#;......</span>
+<span class="go"> 0DD0 - 02FF 0430 381A FF05 342E 6568 0078 0DC6   ..0..8...4hex...</span>
+<span class="go"> 0DD8 - 3800 3B23 02D5 02DD 02DD 02DD 02DD 02FF   .8#;............</span>
+<span class="go">  ok</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+          <h3>Table Of Contents</h3>
+          <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../UG/amforth_user.html">User&#8217;s Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../TG.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Projects/index.html">Commented Projects</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../Cookbook.html">Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Recognizers.html">Recognizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../refcard.html">Reference Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+          <div class="shariff" data-lang="en" data-theme="white" data-backend-url="../../_static/shariff"></div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+            <a href="../../_sources/TG/recipes/Dumps.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10"
+    width="80" height="15" border="0"
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <script src="/_static/shariff.complete.js"></script>
+
+  </body>
+</html>
