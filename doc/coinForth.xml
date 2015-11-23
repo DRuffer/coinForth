@@ -85,6 +85,12 @@ Firmware check OK
  OK
 &gt;&gt; junk
 ***** OK</programlisting></para>
+    <para>Now, to line up the UART pins with each other, I reference <ulink url="C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf"/> which is available here <ulink url="http://www.ti.com/lit/ug/swru191f/swru191f.pdf"/>. Table 7-1. Peripheral I/O Pin Mapping
+tells me that what is called AR_TX on the schematic is connected to P0_5 (pin 14), is USART 1 RX Alt. 1 configuration. The same is true for AR_RX on P0_4 (pin 15), which is TX for that same configuration. However, this means that, in <ulink url="C:\Texas Instruments\BLE-CC254x-1.4.1.43908\Components\hal\target\CC2540EB\_hal_uart_isr.c"/>,  this is wrong:</para>
+    <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.</programlisting></para>
+    <para>It needs to be:</para>
+    <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</programlisting></para>
+    <para>So, I added a BLE_ARDUINO configuration option to switch and keep track of these changes to TI&apos;s code.</para>
     <para><warning/></para>
     <para>The rest of this doc are the original contents, which I&apos;ll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</para>
   </section>
