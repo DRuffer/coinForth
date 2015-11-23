@@ -173,7 +173,11 @@
 #define HAL_UART_Px_RTS            0x20         // Peripheral I/O Select for RTS.
 #define HAL_UART_Px_CTS            0x10         // Peripheral I/O Select for CTS.
 #else
+#ifdef BLE_ARDUINO
+#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P0, Alt-1; so clear this bit.
+#else
 #define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.
+#endif
 #define HAL_UART_Px_RTS            0x20         // Peripheral I/O Select for RTS.
 #define HAL_UART_Px_CTS            0x10         // Peripheral I/O Select for CTS.
 #define HAL_UART_Px_RX_TX          0xC0         // Peripheral I/O Select for Rx/Tx.
@@ -266,7 +270,11 @@ static void HalUARTInitISR(void)
 #if (HAL_UART_ISR == 1)
   PERCFG &= ~HAL_UART_PERCFG_BIT;    // Set UART0 I/O location to P0.
 #else
+#ifdef BLE_ARDUINO
+  PERCFG &= ~HAL_UART_PERCFG_BIT;     // Set UART1 I/O location to P0.
+#else
   PERCFG |= HAL_UART_PERCFG_BIT;     // Set UART1 I/O location to P1.
+#endif
 #endif
   PxSEL  |= HAL_UART_Px_RX_TX;       // Enable Tx and Rx on P1.
   ADCCFG &= ~HAL_UART_Px_RX_TX;      // Make sure ADC doesnt use this.
