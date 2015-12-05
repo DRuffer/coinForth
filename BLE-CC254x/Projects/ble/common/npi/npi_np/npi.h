@@ -95,7 +95,11 @@ extern "C"
 #define NPI_UART_INT_ENABLE            TRUE
 
 #if !defined( NPI_UART_BR )
+#ifdef BLE_ARDUINO
 #define NPI_UART_BR                    HAL_UART_BR_19200
+#else
+#define NPI_UART_BR                    HAL_UART_BR_115200
+#endif // BLE_ARDUINO
 #endif // !NPI_UART_BR
 
 /*******************************************************************************
