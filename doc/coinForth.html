@@ -1,11 +1,62 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>The CoinForth Documentation</title><meta name="generator" content="DocBook XSL Stylesheets V1.68.1"><link rel="start" href="coinForth.html" title="The CoinForth Documentation"><link rel="next" href="ar01s02.html" title="Draft Areas"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The CoinForth Documentation</th></tr><tr><td width="20%" align="left"> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s02.html">Next</a></td></tr></table><hr></div><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id546227"></a>The CoinForth Documentation</h2></div><div><h3 class="subtitle"><i>Arduino BLE HostTest Release</i></h3></div><div><p class="releaseinfo">Version 0.1</p></div><div><p class="copyright">Copyright © 2015 Dennis Ruffer</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="coinForth.html#id546312">BLE-STACK 1.4.1</a></span></dt><dt><span class="section"><a href="ar01s02.html">Draft Areas</a></span></dt><dt><span class="section"><a href="ar01s03.html">Basic editing</a></span></dt><dt><span class="section"><a href="ar01s04.html">Images</a></span></dt><dt><span class="section"><a href="ar01s05.html">Program listings</a></span></dt><dt><span class="section"><a href="ar01s06.html">Lists and tables</a></span></dt><dt><span class="section"><a href="ar01s07.html">Localization</a></span></dt></dl></div><div class="abstract"><p class="title"><b>Abstract</b></p><p>This started out as a Docbook example within Syntext Serna Free 4.3.0-20110207.0, which is the latest <span class="bold"><strong>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>The CoinForth Documentation</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en">
+<div class="titlepage">
+<div>
+<div><h2 class="title">
+<a name="id507864"></a>The CoinForth Documentation</h2></div>
+<div><h3 class="subtitle"><i>Arduino Simple BLE Peripheral</i></h3></div>
+<div><p class="releaseinfo">Version 0.2</p></div>
+<div><p class="copyright">Copyright © 2015 Dennis Ruffer</p></div>
+</div>
+<hr>
+</div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="section"><a href="#id507968">BLE-STACK 1.4.1</a></span></dt>
+<dt><span class="section"><a href="#id508227">Draft Areas</a></span></dt>
+<dt><span class="section"><a href="#id508281">Basic editing</a></span></dt>
+<dt><span class="section"><a href="#id508329">Images</a></span></dt>
+<dt><span class="section"><a href="#id508392">Program listings</a></span></dt>
+<dt><span class="section"><a href="#id508430">Lists and tables</a></span></dt>
+<dt><span class="section"><a href="#id508804">Localization</a></span></dt>
+</dl>
+</div>
+<div class="abstract">
+<p class="title"><b>Abstract</b></p>
+<p>This started out as a Docbook example within Syntext Serna Free 4.3.0-20110207.0, which is the latest <span class="bold"><strong>
         <span class="underline">
           <span class="italic">FREE</span>
         </span>
-      </strong></span> version I found at <a href="http://syntext-serna-free.software.informer.com/download/?ca336a2" target="_top">http://syntext-serna-free.software.informer.com/download/?ca336a2</a>. I've started adding my coinForth notes, with the eventual goal of becoming some useful documentation.</p></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id546312"></a>BLE-STACK 1.4.1</h2></div></div></div><p>This software used to be available at <a href="http://www.ti.com/tool/ble-stack" target="_top">http://www.ti.com/tool/ble-stack</a>, but I only see <span class="bold"><strong>BLE-STACK-2-1</strong></span> right now, since the CC2540 is pretty old at this point. I have installed it here, so all other file paths will be relative to this:</p><p><a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.1.43908%5C" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.1.43908\</a></p><p> It requires IAR's EW8051 v9.10.3 with a full license, but all I did was change the device from <span class="bold"><strong>CC2540F256</strong></span> to <span class="bold"><strong>CC2540F128</strong></span> and compiled the <span class="bold"><strong>CC2540EM</strong></span> configuration for using the P0 serial port. I saved the <a href="HostTestReleaseCC2540.hex" target="_top">HostTestReleaseCC2540.hex</a> output file, which should work better than the <a href="CC2540_SmartRF_HostTestRelease_All.hex" target="_top">CC2540_SmartRF_HostTestRelease_All.hex</a> file TI included.</p><p>TI's SmartRF Flash Programmer Ver. 1.12.7 can program those files, but both files give the following error message:</p><pre class="programlisting">CC2540 - ID1188: HEX file content at address 0x26CEE exceeds chip's 128 kB flash size</pre><p>Even IAR, when debugging, gives the following warning:</p><pre class="programlisting">Warning: Possible IDATA stack overflow detected.
-To see the instruction that caused the possible overflow, choose Debug&gt;Break and close this message box. To continue execution, just close this message box.</pre><p>The Disassembly shows:</p><pre class="programlisting">?BANKED_ENTER_XDATA:
+      </strong></span> version I found at <a href="http://syntext-serna-free.software.informer.com/download/?ca336a2" target="_top">http://syntext-serna-free.software.informer.com/download/?ca336a2</a>. I've started adding my coinForth notes, with the eventual goal of becoming some useful documentation.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id507968"></a>BLE-STACK 1.4.1</h2></div></div></div>
+<p>This software used to be available at <a href="http://www.ti.com/tool/ble-stack" target="_top">http://www.ti.com/tool/ble-stack</a>, but I only see <span class="bold"><strong>BLE-STACK-2-1</strong></span> right now, since the CC2540 is pretty old at this point. I have installed it here, so all other file paths will be relative to this:</p>
+<p><a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.1.43908%5C" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.1.43908\</a></p>
+<p> It requires IAR's EW8051 v9.10.3 with a full license, but all I did was change the device from <span class="bold"><strong>CC2540F256</strong></span> to <span class="bold"><strong>CC2540F128</strong></span> and compiled the <span class="bold"><strong>CC2540EM</strong></span> configuration for using the P0 serial port. I saved the <a href="HostTestReleaseCC2540.hex" target="_top">HostTestReleaseCC2540.hex</a> output file, which should work better than the <a href="CC2540_SmartRF_HostTestRelease_All.hex" target="_top">CC2540_SmartRF_HostTestRelease_All.hex</a> file TI included.</p>
+<p>TI's SmartRF Flash Programmer Ver. 1.12.7 can program those files, but both files give the following error message:</p>
+<pre class="programlisting">CC2540 - ID1188: HEX file content at address 0x26CEE exceeds chip's 128 kB flash size</pre>
+<p>Even IAR, when debugging, gives the following warning:</p>
+<pre class="programlisting">Warning: Possible IDATA stack overflow detected.
+To see the instruction that caused the possible overflow, choose Debug&gt;Break and close this message box. To continue execution, just close this message box.</pre>
+<p>The Disassembly shows:</p>
+<pre class="programlisting">?BANKED_ENTER_XDATA:
  001F20  65 0C         XRL   A,V4
-&gt;001F22  45 0D         ORL   A,V5</pre><p>That is somewhere in TI's library (e.g. no source code).</p><p>I've also change the baud rate in <a href="Projects%5Cble%5Ccommon%5Cnpi%5Cnpi_np%5Cnpi.h" target="_top">Projects\ble\common\npi\npi_np\npi.h</a> from 115,200 to 19,200 to fit with 328eForth v2.20's existing serial port driver.</p><pre class="programlisting">#define NPI_UART_BR                    HAL_UART_BR_19200</pre><p>I have also found a "better" Project -&gt; Options -&gt; Linker -&gt; Linker configuration file from:</p><p><a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl</a> to <a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540f128b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540f128b.xcl</a></p><p>However, now I get the following error when compiling:</p><pre class="programlisting">Error[e16]: Segment BLENV_ADDRESS_SPACE (size: 0x1000 align: 0) is too long for segment definition. At least 0x1000 more bytes needed. The  
+&gt;001F22  45 0D         ORL   A,V5</pre>
+<p>That is somewhere in TI's library (e.g. no source code).</p>
+<p>I've also change the baud rate in <a href="Projects%5Cble%5Ccommon%5Cnpi%5Cnpi_np%5Cnpi.h" target="_top">Projects\ble\common\npi\npi_np\npi.h</a> from 115,200 to 19,200 to fit with 328eForth v2.20's existing serial port driver.</p>
+<pre class="programlisting">#define NPI_UART_BR                    HAL_UART_BR_19200</pre>
+<p>I have also found a "better" Project -&gt; Options -&gt; Linker -&gt; Linker configuration file from:</p>
+<p><a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl</a> to <a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540f128b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540f128b.xcl</a></p>
+<p>However, now I get the following error when compiling:</p>
+<pre class="programlisting">Error[e16]: Segment BLENV_ADDRESS_SPACE (size: 0x1000 align: 0) is too long for segment definition. At least 0x1000 more bytes needed. The  
 problem occurred while processing the segment placement command  
 "-Z(CODE)BLENV_ADDRESS_SPACE=_BLENV_ADDRESS_SPACE_START-_BLENV_ADDRESS_SPACE_END", where at the moment of placement  
 the available memory ranges were "-none-" 
@@ -17,9 +68,21 @@ the available memory ranges were "-none-"
    BIT:b8-c7            SFR_AN 
    BIT:e8-ef            SFR_AN 
    BIT:f8-ff            SFR_AN 
-Error while running Linker </pre><p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CSimpleBLEPeripheral.eww" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\SimpleBLEPeripheral.eww</a> compiles and</p><p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CCC2540F128DK-MINI%20Keyfob%5CExe%5CSimpleBLEPeripheral.hex" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex</a> can be flashed, so let's start there.</p><p>The CC2540's serial port is connected to the ATA6614Q pins PD2 (RX) and PD3 (TX), which require a "soft" serial port, like what Arduino provides in their <span class="bold"><strong>SoftwareSerial</strong></span>. <a href="https://www.arduino.cc/en/Reference/SoftwareSerial" target="_top">https://www.arduino.cc/en/Reference/SoftwareSerial</a> and <a href="http://arduiniana.org/libraries/newsoftserial/" target="_top">http://arduiniana.org/libraries/newsoftserial/</a>.</p><p><a href="http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html" target="_top">http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html</a> has: Tool: Select AVRISP mkII and Device: ATA6614Q for Atmel Stdio setup, but can't get the mkII to show up there yet. <a href="https://atmelsupport.force.com/customers/500G000000ohYDZ" target="_top">https://atmelsupport.force.com/customers/500G000000ohYDZ</a>. Fixed!</p><pre class="programlisting">C:\Users\Dennis\Documents&gt;atprogram -t avrispmk2 selftest
+Error while running Linker </pre>
+<p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CSimpleBLEPeripheral.eww" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\SimpleBLEPeripheral.eww</a> compiles and</p>
+<p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CCC2540F128DK-MINI%20Keyfob%5CExe%5CSimpleBLEPeripheral.hex" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex</a> can be flashed, so let's start there.</p>
+<p>The CC2540's serial port is connected to the ATA6614Q pins PD2 (RX) and PD3 (TX), which require a "soft" serial port, like what Arduino provides in their <span class="bold"><strong>SoftwareSerial</strong></span>. <a href="https://www.arduino.cc/en/Reference/SoftwareSerial" target="_top">https://www.arduino.cc/en/Reference/SoftwareSerial</a> and <a href="http://arduiniana.org/libraries/newsoftserial/" target="_top">http://arduiniana.org/libraries/newsoftserial/</a>.</p>
+<p><a href="http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html" target="_top">http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html</a> has: Tool: Select AVRISP mkII and Device: ATA6614Q for Atmel Stdio setup, but can't get the mkII to show up there yet. <a href="https://atmelsupport.force.com/customers/500G000000ohYDZ" target="_top">https://atmelsupport.force.com/customers/500G000000ohYDZ</a>. Fixed!</p>
+<pre class="programlisting">C:\Users\Dennis\Documents&gt;atprogram -t avrispmk2 selftest
 Firmware check OK
-[ERROR] No self tests to perform for this tool. (TCF Error code: 1)</pre><p>Under the Arduino source, burn the following bootloader:</p><p><a href="./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex" target="_top">./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex</a></p><p>Change the fuse: HIGH: 0XDA from 0XD9, which is used by eForth.</p><p>Inside Arduino 1.6.5, File -&gt; Examples -&gt; 01.Basics -&gt; Blink, then Sketch -&gt; Upload and the LED under the reset button starts blinking.</p><p><a href="https://github.com/sdwood68/YAFFA" target="_top">https://github.com/sdwood68/YAFFA</a> Yet Another Forth For Arduino</p><p>Using Arduino's Serial Monitor @ 19200 baud, I get:</p><pre class="programlisting"> YAFFA - Yet Another Forth For Arduino, Version 0.6
+[ERROR] No self tests to perform for this tool. (TCF Error code: 1)</pre>
+<p>Under the Arduino source, burn the following bootloader:</p>
+<p><a href="./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex" target="_top">./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex</a></p>
+<p>Change the fuse: HIGH: 0XDA from 0XD9, which is used by eForth.</p>
+<p>Inside Arduino 1.6.5, File -&gt; Examples -&gt; 01.Basics -&gt; Blink, then Sketch -&gt; Upload and the LED under the reset button starts blinking.</p>
+<p><a href="https://github.com/sdwood68/YAFFA" target="_top">https://github.com/sdwood68/YAFFA</a> Yet Another Forth For Arduino</p>
+<p>Using Arduino's Serial Monitor @ 19200 baud, I get:</p>
+<pre class="programlisting"> YAFFA - Yet Another Forth For Arduino, Version 0.6
  Copyright (C) 2012 Stuart Wood
  This program comes with ABSOLUTELY NO WARRANTY.
  This is free software, and you are welcome to
@@ -33,9 +96,184 @@ Firmware check OK
  315 ($13B) bytes free
 &gt;&gt;
 &gt;&gt;
-&gt;&gt; words5 .</pre><p>Looks like there is some work to do.</p><p>Then again, using my 328eForth setup in HyperAccess (or whatever you favorite terminal emulator is, setup for 19200 @ 8-None-1), it's working fine!</p><pre class="programlisting">&gt;&gt; 5 .
+&gt;&gt; words5 .</pre>
+<p>Looks like there is some work to do.</p>
+<p>Then again, using my 328eForth setup in HyperAccess (or whatever you favorite terminal emulator is, setup for 19200 @ 8-None-1), it's working fine!</p>
+<pre class="programlisting">&gt;&gt; 5 .
 5  OK
 &gt;&gt; : junk 5 0 do [char] * emit loop ;
  OK
 &gt;&gt; junk
-***** OK</pre><div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3></div><p>The rest of this doc are the original contents, which I'll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"> </td><td width="40%" align="right" valign="top"> Draft Areas</td></tr></table></div></body></html>
+***** OK</pre>
+<p>Now, to line up the UART pins with each other, I reference <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.0%5CDocuments%5Cswru191f.pdf" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf</a> which is available here <a href="http://www.ti.com/lit/ug/swru191f/swru191f.pdf" target="_top">http://www.ti.com/lit/ug/swru191f/swru191f.pdf</a>. Table 7-1. Peripheral I/O Pin Mapping
+tells me that what is called AR_TX on the schematic is connected to P0_5 (pin 14), is USART 1 RX Alt. 1 configuration. The same is true for AR_RX on P0_4 (pin 15), which is TX for that same configuration. However, this means that, in <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.1.43908%5CComponents%5Chal%5Ctarget%5CCC2540EB%5C_hal_uart_isr.c" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.1.43908\Components\hal\target\CC2540EB\_hal_uart_isr.c</a>,  this is wrong:</p>
+<pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.</pre>
+<p>It needs to be:</p>
+<pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</pre>
+<p>So, I added a BLE_ARDUINO configuration option to switch and keep track of these changes to TI's code.</p>
+<p>Since I'm starting to make some significant changes to the BLE-CC254x stack, I've added it to my coinForth repository <a href="https://github.com/DRuffer/coinForth" target="_top">https://github.com/DRuffer/coinForth</a>. This also allowed me to update to BLE-CC254x-1.4.1.43908b which is the latest release from TI. Opening this in IAR's EW8051 v 9.10.3 reminded me that you have to select the <span class="bold"><strong>CC2540F128DK-MINI Keyfob</strong></span> workspace.</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Warning</h3></div>
+<p>The rest of this doc are the original contents, which I'll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id508227"></a>Draft Areas</h2></div></div></div>
+<p>Note the presence of gray "Draft Areas" in the document. They are necessary because Docbook stylesheet rules are often intricate. For instance, <code class="sgmltag-element">title</code> in <code class="sgmltag-element">section</code> can be specified within <code class="sgmltag-element">section</code> itself and within <code class="sgmltag-element">sectioninfo</code>. If you specify both, one of them becomes hidden. To avoid this, all such meta-information is shown also in Draft Areas. They can be turned off by changing value of <em class="parameter"><code>show-preamble-editing</code></em> parameter to 0 in <code class="filename">parameters.xsl</code> file in Docbook stylesheet.</p>
+<p>Serna Docbook stylesheet also takes special care of empty content. For example, when you make new article, it provides you with "Title: " inscription where you can enter article title.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id508281"></a>Basic editing</h2></div></div></div>
+<p>Editing of Docbook documents in Serna is quite straightforward, much like in a traditional word-processor. One difference is that you must use "InsertElement" command (<span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>) to insert new elements. Serna will suggest you a list of elements which you can insert at any given location. Other element operations are listed in "Element" menu.</p>
+<p>By default <span><strong class="keycap">ENTER</strong></span> splits the current element. For example, if you are within <code class="sgmltag-element">a para</code>, it will be split in two. If you are at the end of paragraph, new paragraph will be added.</p>
+<p>You can see current editing context in the bottom status bar. Navigation commands from "<span class="guimenu">Go</span>" menu should be use for easier navigation in "tagless" mode. Also, pay attention to the two modes of selection: <em class="firstterm">balanced</em> and <em class="firstterm">unbalanced</em> (they can be toggled from Edit menu or with <span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">B</strong></span>). In unbalanced mode, selection is more distinct, but it sometimes can be difficult to correctly place ends of selection. In balanced mode selection is automatically adjusted, so it is easier to select list items, etc.</p>
+<p>To edit element attributes, press <span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id508329"></a>Images</h2></div></div></div>
+<p>Inserting images is easy: just insert <code class="sgmltag-element">figure</code> or <code class="sgmltag-element">graphic</code> elements, invoke <em class="glossterm">Element Attributes Dialog</em> for corresponding element, and choose an image file by pressing Browse button for the <code class="literal">fileref</code> attribute in Element Attributes Dialog.</p>
+<div class="figure">
+<a name="id508386"></a><p class="title"><b>Figure 1. An example figure</b></p>
+<div align="center"><img src="serna_cycle.png" align="middle" alt="An example figure"></div>
+</div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id508392"></a>Program listings</h2></div></div></div>
+<p>Serna supports whitespace stripping policies, as defined by the stylesheet. Editing behavior within whitespace-preserved ares like Docbook <code class="sgmltag-element">programlisting</code> is different. Within those elements <span><strong class="keycap">ENTER</strong></span> means newline, and you can mix white-spaces and newlines freely.</p>
+<pre class="programlisting">     SubscriberPtr(SubscriberPtrWatcher* watcher, T* ptr)
+          : SubscriberPtrBase(watcher, ptr), P(ptr) {}
+    SubscriberPtr&lt;T&gt;&amp; operator=(T* ptr)
+    {
+          remove();
+          P::operator=(ptr);
+          if (!P::isNull())
+              P::pointer()-&gt;registerSubscriber(this);
+        return *this;
+    }
+    SubscriberPtr(const SubscriberPtr&lt;T&gt;&amp; other)
+          : SubscriberPtrBase(other.watcher(), other.pointer()),
+            P(other.pointer()) {}</pre>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id508430"></a>Lists and tables</h2></div></div></div>
+<p>There are two types of lists in Docbook:</p>
+<div class="orderedlist">
+<p class="title"><b>Ordered list. A list may have optional title.</b></p>
+<ol type="1">
+<li><p>First item.</p></li>
+<li><p>Second item.</p></li>
+<li><p>Third item.</p></li>
+</ol>
+</div>
+<div class="itemizedlist">
+<p class="title"><b>Itemized list. Optional title is also available.</b></p>
+<ul type="disc">
+<li><p>First item.</p></li>
+<li><p>Second item.</p></li>
+<li><p>Third item.</p></li>
+</ul>
+</div>
+<p>In Serna, CALS tables are supported by Docbook stylesheet. </p>
+<div class="table">
+<a name="id508496"></a><p class="title"><b>Table 1.  An example of complex table</b></p>
+<table summary=" An example of complex table" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th colspan="2" valign="top">
+              <p>Title 1</p>
+            </th>
+<th rowspan="2" colspan="2" valign="middle">
+              <p>Title 2</p>
+            </th>
+<th colspan="2" valign="top">
+              <p>Title 3</p>
+            </th>
+<th colspan="2" valign="top">
+              <p>Title 4</p>
+            </th>
+<th colspan="4" valign="top">
+              <p>Title 5</p>
+            </th>
+</tr>
+<tr>
+<th valign="middle">
+              <p>Sub1 </p>
+            </th>
+<th valign="middle">
+              <p>Sub2</p>
+            </th>
+<th valign="middle">
+              <p>Sub3 </p>
+            </th>
+<th valign="middle">
+              <p>Sub4</p>
+            </th>
+<th valign="middle">
+              <p>Sub5</p>
+            </th>
+<th valign="middle">
+              <p>Sub6 </p>
+            </th>
+<th colspan="2" valign="middle">
+              <p>Sub7 </p>
+            </th>
+<th colspan="2" valign="middle">
+              <p>Sub8 </p>
+            </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="2" colspan="2" valign="top">
+              <div align="center"><img src="syntext_logo.png" align="middle"></div>
+              <p>A B C D E F G </p>
+            </td>
+<td colspan="4" valign="top">
+              <div class="orderedlist"><ol type="1">
+<li><p>This is item1</p></li>
+<li><p>This is item2</p></li>
+</ol></div>
+            </td>
+<td colspan="2" valign="top">
+              <p>Content</p>
+            </td>
+<td rowspan="2" colspan="4" valign="top">
+              <p>Cells with vertical span.</p>
+            </td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+              <p>Contents....</p>
+            </td>
+<td colspan="4" valign="top">
+              <p>This is another horizontal span.</p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" lang="de">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id508804"></a>Localization</h2></div></div></div>
+<p>It is possible to localize your docbook documents or their parts by simply changing <em class="parameter"><code>lang</code></em> parameter of the compound element. For example, this section's attribute <em class="parameter"><code>lang</code></em> is set to <code class="literal">de</code>, that is why you see German inscriptions for this section.</p>
+</div>
+</div></body>
+</html>
