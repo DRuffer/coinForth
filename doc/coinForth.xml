@@ -3,8 +3,8 @@
 <article>
   <title>The CoinForth Documentation</title>
   <articleinfo>
-    <subtitle>Arduino BLE HostTest Release</subtitle>
-    <releaseinfo>Version 0.1</releaseinfo>
+    <subtitle>Arduino Simple BLE Peripheral</subtitle>
+    <releaseinfo>Version 0.2</releaseinfo>
     <copyright>
       <year>2015</year>
       <holder>Dennis Ruffer</holder>
@@ -91,6 +91,7 @@ tells me that what is called AR_TX on the schematic is connected to P0_5 (pin 14
     <para>It needs to be:</para>
     <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</programlisting></para>
     <para>So, I added a BLE_ARDUINO configuration option to switch and keep track of these changes to TI&apos;s code.</para>
+    <para>Since I&apos;m starting to make some significant changes to the BLE-CC254x stack, I&apos;ve added it to my coinForth repository <ulink url="https://github.com/DRuffer/coinForth"/>. This also allowed me to update to BLE-CC254x-1.4.1.43908b which is the latest release from TI. Opening this in IAR&apos;s EW8051 v 9.10.3 reminded me that you have to select the <emphasis role="bold">CC2540F128DK-MINI Keyfob</emphasis> workspace.</para>
     <para><warning/></para>
     <para>The rest of this doc are the original contents, which I&apos;ll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</para>
   </section>
