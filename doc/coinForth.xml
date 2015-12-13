@@ -15,13 +15,15 @@
         <emphasis role="underline">
           <emphasis role="italic">FREE</emphasis>
         </emphasis>
-      </emphasis> version I found at <ulink url="http://syntext-serna-free.software.informer.com/download/?ca336a2"/>. I&apos;ve started adding my coinForth notes, with the eventual goal of becoming some useful documentation.</para>
+      </emphasis> version I found at <ulink url="http://syntext-serna-free.software.informer.com/download/?ca336a2"/>. According to <ulink url="https://en.wikipedia.org/wiki/Syntext_Serna"/>, the software was sold and is now the paid <ulink url="http://www.corena.com/products/corena-studio/"/>. Another popular wysiwyg XML Editor is <ulink url="http://www.oxygenxml.com/"/>.</para>
+    <para>I&apos;ve started adding my coinForth notes to the free version, with the eventual goal of becoming some useful documentation.</para>
   </abstract>
   <section>
-    <title>BLE-STACK 1.4.1</title>
-    <para>This software used to be available at <ulink url="http://www.ti.com/tool/ble-stack"/>, but I only see <emphasis role="bold">BLE-STACK-2-1</emphasis> right now, since the CC2540 is pretty old at this point. I have installed it here, so all other file paths will be relative to this:</para>
-    <para><ulink url="C:\Texas Instruments\BLE-CC254x-1.4.1.43908\"/></para>
-    <para> It requires IAR&apos;s EW8051 v9.10.3 with a full license, but all I did was change the device from <emphasis role="bold">CC2540F256</emphasis> to <emphasis role="bold">CC2540F128</emphasis> and compiled the <emphasis role="bold">CC2540EM</emphasis> configuration for using the P0 serial port. I saved the <ulink url="HostTestReleaseCC2540.hex"/> output file, which should work better than the <ulink url="CC2540_SmartRF_HostTestRelease_All.hex"/> file TI included.</para>
+    <title>BLE-STACK</title>
+    <para>This software is usually available at <ulink url="http://www.ti.com/tool/ble-stack"/>, but is being updated from time to time, so the version may change or disappear when it is being updated. Since the CC2540 is pretty old at this point. By default, it installs to this path, so all other files will be relative to this:</para>
+    <para><programlisting>C:\Texas Instruments\BLE-CC254x-1.4.1.43908\</programlisting></para>
+    <para>Later on, I moved it into my <ulink url="https://github.com/DRuffer/coinForth"/> repository, but we&apos;ll discuss that later. For now, we don&apos;t need to be concerned, because we haven&apos;t changed anything yet.</para>
+    <para>The BLE Stack requires IAR&apos;s EW8051 v9.10.3 with a full license, but all I did was change the device from <emphasis role="bold">CC2540F256</emphasis> to <emphasis role="bold">CC2540F128</emphasis> and compiled the <emphasis role="bold">CC2540EM</emphasis> configuration for using the P0 serial port. I saved the <ulink url="HostTestReleaseCC2540.hex"/> output file, which should work better than the <ulink url="CC2540_SmartRF_HostTestRelease_All.hex"/> file TI included.</para>
     <para>TI&apos;s SmartRF Flash Programmer Ver. 1.12.7 can program those files, but both files give the following error message:</para>
     <programlisting>CC2540 - ID1188: HEX file content at address 0x26CEE exceeds chip&apos;s 128 kB flash size</programlisting>
     <para>Even IAR, when debugging, gives the following warning:<programlisting>Warning: Possible IDATA stack overflow detected.
@@ -36,10 +38,8 @@ To see the instruction that caused the possible overflow, choose Debug&gt;Break 
     <para>I have also found a &quot;better&quot; Project -&gt; Options -&gt; Linker -&gt; Linker configuration file from:</para>
     <para><ulink url=".\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl"/> to <ulink url=".\Projects\ble\common\cc2540\ti_51ew_cc2540f128b.xcl"/></para>
     <para>However, now I get the following error when compiling:</para>
-    <para><programlisting>Error[e16]: Segment BLENV_ADDRESS_SPACE (size: 0x1000 align: 0) is too long for segment definition. At least 0x1000 more bytes needed. The  
-problem occurred while processing the segment placement command  
-&quot;-Z(CODE)BLENV_ADDRESS_SPACE=_BLENV_ADDRESS_SPACE_START-_BLENV_ADDRESS_SPACE_END&quot;, where at the moment of placement  
-the available memory ranges were &quot;-none-&quot; 
+    <para><programlisting>Error[e16]: Segment BLENV_ADDRESS_SPACE (size: 0x1000 align: 0) is too long for segment definition. At least 0x1000 more bytes needed. The problem occurred while processing the segment placement command &quot;-Z(CODE)BLENV_ADDRESS_SPACE=_BLENV_ADDRESS_SPACE_START-_BLENV_ADDRESS_SPACE_END&quot;
+where at the moment of placement the available memory ranges were &quot;-none-&quot; 
    Reserved ranges relevant to this placement: 
    CODE:3de6d-3fb30     BANKED_CODE 
    BIT:0-7              BREG 
@@ -51,8 +51,11 @@ the available memory ranges were &quot;-none-&quot;
 Error while running Linker </programlisting></para>
     <para><ulink url=".\Projects\ble\SimpleBLEPeripheral\CC2540DB\SimpleBLEPeripheral.eww"/> compiles and</para>
     <para><ulink url=".\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex"/> can be flashed, so let&apos;s start there.</para>
+  </section>
+  <section>
+    <title>Arduino</title>
     <para>The CC2540&apos;s serial port is connected to the ATA6614Q pins PD2 (RX) and PD3 (TX), which require a &quot;soft&quot; serial port, like what Arduino provides in their <emphasis role="bold">SoftwareSerial</emphasis>. <ulink url="https://www.arduino.cc/en/Reference/SoftwareSerial"/> and <ulink url="http://arduiniana.org/libraries/newsoftserial/"/>.</para>
-    <para><ulink url="http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html"/> has: Tool: Select AVRISP mkII and Device: ATA6614Q for Atmel Stdio setup, but can&apos;t get the mkII to show up there yet. <ulink url="https://atmelsupport.force.com/customers/500G000000ohYDZ"/>. Fixed!</para>
+    <para>Switching back to the Arduino software requires burning their bootloader, and Atmel Studio. <ulink url="http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html"/> has: Tool: Select AVRISP mkII and Device: ATA6614Q for Atmel Studio setup, but can&apos;t get the mkII to show up there yet. My customer support ticket was at: <ulink url="https://atmelsupport.force.com/customers/500G000000ohYDZ"/>, but it&apos;s gone now. I can&apos;t remember what it was, but install issues are usually fixed with Atmel&apos;s help.</para>
     <para><programlisting>C:\Users\Dennis\Documents&gt;atprogram -t avrispmk2 selftest
 Firmware check OK
 [ERROR] No self tests to perform for this tool. (TCF Error code: 1)</programlisting></para>
@@ -60,6 +63,9 @@ Firmware check OK
     <para><ulink url="./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex"/></para>
     <para>Change the fuse: HIGH: 0XDA from 0XD9, which is used by eForth.</para>
     <para>Inside Arduino 1.6.5, File -&gt; Examples -&gt; 01.Basics -&gt; Blink, then Sketch -&gt; Upload and the LED under the reset button starts blinking.</para>
+  </section>
+  <section>
+    <title>Yet Another Forth For Arduino</title>
     <para><ulink url="https://github.com/sdwood68/YAFFA"/> Yet Another Forth For Arduino</para>
     <para>Using Arduino&apos;s Serial Monitor @ 19200 baud, I get:</para>
     <para><programlisting> YAFFA - Yet Another Forth For Arduino, Version 0.6
@@ -77,7 +83,7 @@ Firmware check OK
 &gt;&gt;
 &gt;&gt;
 &gt;&gt; words5 .</programlisting></para>
-    <para>Looks like there is some work to do.</para>
+    <para>Looks like there is some work to do. Later, Stuart Wood (<ulink url="https://github.com/sdwood68"/>) got back to me and told me that &quot;The Arduino Serial Monitor needs to be set up to send Carriage Returns per line. Line Feeds are stripped out.&quot; So that method works too.</para>
     <para>Then again, using my 328eForth setup in HyperAccess (or whatever you favorite terminal emulator is, setup for 19200 @ 8-None-1), it&apos;s working fine!</para>
     <para><programlisting>&gt;&gt; 5 .
 5  OK
@@ -85,6 +91,10 @@ Firmware check OK
  OK
 &gt;&gt; junk
 ***** OK</programlisting></para>
+  </section>
+  <section>
+    <title>UART Pins</title>
+    <graphic fileref="schematic.jpg" scalefit="page"/>
     <para>Now, to line up the UART pins with each other, I reference <ulink url="C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf"/> which is available here <ulink url="http://www.ti.com/lit/ug/swru191f/swru191f.pdf"/>. Table 7-1. Peripheral I/O Pin Mapping
 tells me that what is called AR_TX on the schematic is connected to P0_5 (pin 14), is USART 1 RX Alt. 1 configuration. The same is true for AR_RX on P0_4 (pin 15), which is TX for that same configuration. However, this means that, in <ulink url="C:\Texas Instruments\BLE-CC254x-1.4.1.43908\Components\hal\target\CC2540EB\_hal_uart_isr.c"/>,  this is wrong:</para>
     <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.</programlisting></para>
@@ -92,8 +102,21 @@ tells me that what is called AR_TX on the schematic is connected to P0_5 (pin 14
     <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</programlisting></para>
     <para>So, I added a BLE_ARDUINO configuration option to switch and keep track of these changes to TI&apos;s code.</para>
     <para>Since I&apos;m starting to make some significant changes to the BLE-CC254x stack, I&apos;ve added it to my coinForth repository <ulink url="https://github.com/DRuffer/coinForth"/>. This also allowed me to update to BLE-CC254x-1.4.1.43908b which is the latest release from TI. Opening this in IAR&apos;s EW8051 v 9.10.3 reminded me that you have to select the <emphasis role="bold">CC2540F128DK-MINI Keyfob</emphasis> workspace.</para>
-    <para><warning/></para>
-    <para>The rest of this doc are the original contents, which I&apos;ll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</para>
+  </section>
+  <section>
+    <title>Testing</title>
+    <para>Trying IForth (<ulink url="https://github.com/jdfreder/iforth"/>), even with &quot;conda create -n snakes python=3.4&quot; from <ulink url="http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf"/>, I got:</para>
+    <programlisting>Notebook Validation failed: u&apos;name&apos; is a required property:
+{}</programlisting>
+    <para>So, now I&apos;m trying forth-notebooks (<ulink url="https://github.com/ozayn/forth-notebooks"/>), with help from <ulink url="http://ipython.readthedocs.org/en/stable/config/intro.html"/>. In <emphasis role="bold">source setup.sh</emphasis>
+I see that it&apos;s trying to use mkfifo, so I updated my Ubuntu 64-bit system to VMware Workstation 12 Pro, but then I also found that it&apos;s in cygwin 64-bit.</para>
+  </section>
+  <section>
+    <title>Conclusion</title>
+    <para><warning>
+        <title>Warning:</title>
+        <para>The rest of this doc are the original contents, which I&apos;ll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</para>
+      </warning></para>
   </section>
   <section>
     <title>Draft Areas</title>
