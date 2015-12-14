@@ -8,9 +8,9 @@
 <div class="titlepage">
 <div>
 <div><h2 class="title">
-<a name="id560530"></a>The CoinForth Documentation</h2></div>
+<a name="id536197"></a>The CoinForth Documentation</h2></div>
 <div><h3 class="subtitle"><i>Arduino Simple BLE Peripheral</i></h3></div>
-<div><p class="releaseinfo">Version 0.2</p></div>
+<div><p class="releaseinfo">Version 0.4</p></div>
 <div><p class="copyright">Copyright © 2015 Dennis Ruffer</p></div>
 </div>
 <hr>
@@ -18,50 +18,76 @@
 <div class="toc">
 <p><b>Table of Contents</b></p>
 <dl>
-<dt><span class="section"><a href="#id560607">BLE-STACK</a></span></dt>
-<dt><span class="section"><a href="#id560775">Arduino</a></span></dt>
-<dt><span class="section"><a href="#id560802">Yet Another Forth For Arduino</a></span></dt>
-<dt><span class="section"><a href="#id560831">UART Pins</a></span></dt>
-<dt><span class="section"><a href="#id560908">Testing</a></span></dt>
-<dt><span class="section"><a href="#id560944">Conclusion</a></span></dt>
-<dt><span class="section"><a href="#id560940">Draft Areas</a></span></dt>
-<dt><span class="section"><a href="#id560990">Basic editing</a></span></dt>
-<dt><span class="section"><a href="#id561096">Images</a></span></dt>
-<dt><span class="section"><a href="#id561129">Program listings</a></span></dt>
-<dt><span class="section"><a href="#id561152">Lists and tables</a></span></dt>
-<dt><span class="section"><a href="#id561543">Localization</a></span></dt>
+<dt><span class="section"><a href="#id536326">BLE-STACK</a></span></dt>
+<dt><span class="section"><a href="#id536439">Arduino</a></span></dt>
+<dt><span class="section"><a href="#id536514">Yet Another Forth For Arduino</a></span></dt>
+<dt><span class="section"><a href="#id536521">UART Pins</a></span></dt>
+<dt><span class="section"><a href="#id536590">Testing</a></span></dt>
+<dt><span class="section"><a href="#id536676">Conclusion</a></span></dt>
+<dt><span class="section"><a href="#id536720">Draft Areas</a></span></dt>
+<dt><span class="section"><a href="#id536769">Basic editing</a></span></dt>
+<dt><span class="section"><a href="#id536842">Images</a></span></dt>
+<dt><span class="section"><a href="#id536884">Program listings</a></span></dt>
+<dt><span class="section"><a href="#id536904">Lists and tables</a></span></dt>
+<dt><span class="section"><a href="#id537288">Localization</a></span></dt>
 </dl>
 </div>
 <div class="abstract">
 <p class="title"><b>Abstract</b></p>
-<p>This started out as a Docbook example within Syntext Serna Free 4.3.0-20110207.0, which is the latest <span class="bold"><strong>
+<p>This started out as a Docbook example within Syntext Serna Free
+    4.3.0-20110207.0, which is the latest <span class="bold"><strong>
         <span class="underline">
           <span class="italic">FREE</span>
         </span>
-      </strong></span> version I found at <a href="http://syntext-serna-free.software.informer.com/download/?ca336a2" target="_top">http://syntext-serna-free.software.informer.com/download/?ca336a2</a>. According to <a href="https://en.wikipedia.org/wiki/Syntext_Serna" target="_top">https://en.wikipedia.org/wiki/Syntext_Serna</a>, the software was sold and is now the paid <a href="http://www.corena.com/products/corena-studio/" target="_top">http://www.corena.com/products/corena-studio/</a>. Another popular wysiwyg XML Editor is <a href="http://www.oxygenxml.com/" target="_top">http://www.oxygenxml.com/</a>.</p>
-<p>I've started adding my coinForth notes to the free version, with the eventual goal of becoming some useful documentation.</p>
+      </strong></span> version I found at <a href="http://syntext-serna-free.software.informer.com/download/?ca336a2" target="_top">http://syntext-serna-free.software.informer.com/download/?ca336a2</a>.
+    According to <a href="https://en.wikipedia.org/wiki/Syntext_Serna" target="_top">https://en.wikipedia.org/wiki/Syntext_Serna</a>,
+    the software was sold and is now the paid <a href="http://www.corena.com/products/corena-studio/" target="_top">http://www.corena.com/products/corena-studio/</a>. Another popular
+    WYSIWYG XML Editor is <a href="http://www.oxygenxml.com/" target="_top">http://www.oxygenxml.com/</a>.</p>
+<p>I've started adding my coinForth notes to the free version, with the
+    eventual goal of becoming some useful documentation.</p>
+<p>From a conversation with Peter Knaggs, I found <a href="http://download.cnet.com/XMLmind-XML-Editor/3000-7241_4-75962446.html" target="_top">http://download.cnet.com/XMLmind-XML-Editor/3000-7241_4-75962446.html</a>,
+    which got me <a href="xxe-eval-5_7_0-setup.exe" target="_top">xxe-eval-5_7_0-setup.exe</a>, but that's still the
+    evaluation version. Peter mentions version 5.3, which I need to find. At
+    <a href="http://xmlmind-xml-editor.software.informer.com/3.8/" target="_top">http://xmlmind-xml-editor.software.informer.com/3.8/</a> you
+    end up getting the "Latest version 6.0.0", but scroll down on that page to find the following entry:</p>
+<pre class="programlisting">5.2.1 (32-bit) 22 Mar 2012 xxe-perso-5_2_1-setup.exe 46.7 MB Download</pre>
+<p>Peter did send me a link for his copy of version 5.3, but I'm not sure I can see a difference yet.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560607"></a>BLE-STACK</h2></div></div></div>
-<p>This software is usually available at <a href="http://www.ti.com/tool/ble-stack" target="_top">http://www.ti.com/tool/ble-stack</a>, but is being updated from time to time, so the version may change or disappear when it is being updated. Since the CC2540 is pretty old at this point. By default, it installs to this path, so all other files will be relative to this:</p>
+<a name="id536326"></a>BLE-STACK</h2></div></div></div>
+<p>This software is usually available at <a href="http://www.ti.com/tool/ble-stack" target="_top">http://www.ti.com/tool/ble-stack</a>, but is being updated from time
+    to time, so the version may change or disappear when it is being updated.
+    Since the CC2540 is pretty old at this point. By default, it installs to
+    this path, so all other files will be relative to this:</p>
 <pre class="programlisting">C:\Texas Instruments\BLE-CC254x-1.4.1.43908\</pre>
-<p>Later on, I moved it into my <a href="https://github.com/DRuffer/coinForth" target="_top">https://github.com/DRuffer/coinForth</a> repository, but we'll discuss that later. For now, we don't need to be concerned, because we haven't changed anything yet.</p>
-<p>The BLE Stack requires IAR's EW8051 v9.10.3 with a full license, but all I did was change the device from <span class="bold"><strong>CC2540F256</strong></span> to <span class="bold"><strong>CC2540F128</strong></span> and compiled the <span class="bold"><strong>CC2540EM</strong></span> configuration for using the P0 serial port. I saved the <a href="HostTestReleaseCC2540.hex" target="_top">HostTestReleaseCC2540.hex</a> output file, which should work better than the <a href="CC2540_SmartRF_HostTestRelease_All.hex" target="_top">CC2540_SmartRF_HostTestRelease_All.hex</a> file TI included.</p>
-<p>TI's SmartRF Flash Programmer Ver. 1.12.7 can program those files, but both files give the following error message:</p>
+<p>Later on, I moved it into my <a href="https://github.com/DRuffer/coinForth" target="_top">https://github.com/DRuffer/coinForth</a> repository, but we'll discuss
+    that later. For now, we don't need to be concerned, because we haven't
+    changed anything yet.</p>
+<p>The BLE Stack requires IAR's EW8051 v9.10.3 with a full license, but
+    all I did was change the device from <span class="bold"><strong>CC2540F256</strong></span> to <span class="bold"><strong>CC2540F128</strong></span> and compiled the <span class="bold"><strong>CC2540EM</strong></span> configuration for using the P0 serial
+    port. I saved the <a href="HostTestReleaseCC2540.hex" target="_top">HostTestReleaseCC2540.hex</a> output file,
+    which should work better than the <a href="CC2540_SmartRF_HostTestRelease_All.hex" target="_top">CC2540_SmartRF_HostTestRelease_All.hex</a> file TI included.</p>
+<p>TI's SmartRF Flash Programmer Ver. 1.12.7 can program those files,
+    but both files give the following error message:</p>
 <pre class="programlisting">CC2540 - ID1188: HEX file content at address 0x26CEE exceeds chip's 128 kB flash size</pre>
-<p>Even IAR, when debugging, gives the following warning:</p>
+<p>Even IAR, when debugging, gives the following
+    warning:</p>
 <pre class="programlisting">Warning: Possible IDATA stack overflow detected.
 To see the instruction that caused the possible overflow, choose Debug&gt;Break and close this message box. To continue execution, just close this message box.</pre>
 <p>The Disassembly shows:</p>
 <pre class="programlisting">?BANKED_ENTER_XDATA:
  001F20  65 0C         XRL   A,V4
 &gt;001F22  45 0D         ORL   A,V5</pre>
-<p>That is somewhere in TI's library (e.g. no source code).</p>
-<p>I've also change the baud rate in <a href="Projects%5Cble%5Ccommon%5Cnpi%5Cnpi_np%5Cnpi.h" target="_top">Projects\ble\common\npi\npi_np\npi.h</a> from 115,200 to 19,200 to fit with 328eForth v2.20's existing serial port driver.</p>
+<p>That is somewhere in TI's library (e.g. No source code).</p>
+<p>I've also change the baud rate in <a href="Projects%5Cble%5Ccommon%5Cnpi%5Cnpi_np%5Cnpi.h" target="_top">Projects\ble\common\npi\npi_np\npi.h</a> from
+    115,200 to 19,200 to fit with 328eForth v2.20's existing serial port
+    driver.</p>
 <pre class="programlisting">#define NPI_UART_BR                    HAL_UART_BR_19200</pre>
-<p>I have also found a "better" Project -&gt; Options -&gt; Linker -&gt; Linker configuration file from:</p>
-<p><a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl</a> to <a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540f128b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540f128b.xcl</a></p>
+<p>I have also found a "better" Project -&gt; Options -&gt; Linker
+    -&gt; Linker configuration file from:</p>
+<p><a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl</a> to
+    <a href=".%5CProjects%5Cble%5Ccommon%5Ccc2540%5Cti_51ew_cc2540f128b.xcl" target="_top">.\Projects\ble\common\cc2540\ti_51ew_cc2540f128b.xcl</a></p>
 <p>However, now I get the following error when compiling:</p>
 <pre class="programlisting">Error[e16]: Segment BLENV_ADDRESS_SPACE (size: 0x1000 align: 0) is too long for segment definition. At least 0x1000 more bytes needed. The problem occurred while processing the segment placement command "-Z(CODE)BLENV_ADDRESS_SPACE=_BLENV_ADDRESS_SPACE_START-_BLENV_ADDRESS_SPACE_END"
 where at the moment of placement the available memory ranges were "-none-" 
@@ -74,26 +100,40 @@ where at the moment of placement the available memory ranges were "-none-"
    BIT:e8-ef            SFR_AN 
    BIT:f8-ff            SFR_AN 
 Error while running Linker </pre>
-<p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CSimpleBLEPeripheral.eww" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\SimpleBLEPeripheral.eww</a> compiles and</p>
-<p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CCC2540F128DK-MINI%20Keyfob%5CExe%5CSimpleBLEPeripheral.hex" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex</a> can be flashed, so let's start there.</p>
+<p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CSimpleBLEPeripheral.eww" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\SimpleBLEPeripheral.eww</a>
+    compiles and</p>
+<p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CCC2540F128DK-MINI%20Keyfob%5CExe%5CSimpleBLEPeripheral.hex" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex</a>
+    can be flashed, so let's start there.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560775"></a>Arduino</h2></div></div></div>
-<p>The CC2540's serial port is connected to the ATA6614Q pins PD2 (RX) and PD3 (TX), which require a "soft" serial port, like what Arduino provides in their <span class="bold"><strong>SoftwareSerial</strong></span>. <a href="https://www.arduino.cc/en/Reference/SoftwareSerial" target="_top">https://www.arduino.cc/en/Reference/SoftwareSerial</a> and <a href="http://arduiniana.org/libraries/newsoftserial/" target="_top">http://arduiniana.org/libraries/newsoftserial/</a>.</p>
-<p>Switching back to the Arduino software requires burning their bootloader, and Atmel Studio. <a href="http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html" target="_top">http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html</a> has: Tool: Select AVRISP mkII and Device: ATA6614Q for Atmel Studio setup, but can't get the mkII to show up there yet. My customer support ticket was at: <a href="https://atmelsupport.force.com/customers/500G000000ohYDZ" target="_top">https://atmelsupport.force.com/customers/500G000000ohYDZ</a>, but it's gone now. I can't remember what it was, but install issues are usually fixed with Atmel's help.</p>
+<a name="id536439"></a>Arduino</h2></div></div></div>
+<p>The CC2540's serial port is connected to the ATA6614Q pins PD2 (RX)
+    and PD3 (TX), which require a "soft" serial port, like what Arduino
+    provides in their <span class="bold"><strong>SoftwareSerial</strong></span>. <a href="https://www.arduino.cc/en/Reference/SoftwareSerial" target="_top">https://www.arduino.cc/en/Reference/SoftwareSerial</a> and <a href="http://arduiniana.org/libraries/newsoftserial/" target="_top">http://arduiniana.org/libraries/newsoftserial/</a>.</p>
+<p>Switching back to the Arduino software requires burning their
+    bootloader, and Atmel Studio. <a href="http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html" target="_top">http://ross-arduinoprojects.blogspot.com/2014/04/setting-up-coin-ble-dev-kit.html</a>
+    has: Tool: Select AVRISP mkII and Device: ATA6614Q for Atmel Studio setup,
+    but can't get the mkII to show up there yet. My customer support ticket
+    was at: <a href="https://atmelsupport.force.com/customers/500G000000ohYDZ" target="_top">https://atmelsupport.force.com/customers/500G000000ohYDZ</a>, but it's
+    gone now. I can't remember what it was, but install issues are usually
+    fixed with Atmel's help.</p>
 <pre class="programlisting">C:\Users\Dennis\Documents&gt;atprogram -t avrispmk2 selftest
 Firmware check OK
 [ERROR] No self tests to perform for this tool. (TCF Error code: 1)</pre>
 <p>Under the Arduino source, burn the following bootloader:</p>
 <p><a href="./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex" target="_top">./hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex</a></p>
-<p>Change the fuse: HIGH: 0XDA from 0XD9, which is used by eForth.</p>
-<p>Inside Arduino 1.6.5, File -&gt; Examples -&gt; 01.Basics -&gt; Blink, then Sketch -&gt; Upload and the LED under the reset button starts blinking.</p>
+<p>Change the fuse: HIGH: 0XDA from 0XD9, which is used by
+    eForth.</p>
+<p>Inside Arduino 1.6.5, File -&gt; Examples -&gt; 01.Basics -&gt;
+    Blink, then Sketch -&gt; Upload and the LED under the reset button starts
+    blinking.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560802"></a>Yet Another Forth For Arduino</h2></div></div></div>
-<p><a href="https://github.com/sdwood68/YAFFA" target="_top">https://github.com/sdwood68/YAFFA</a> Yet Another Forth For Arduino</p>
+<a name="id536514"></a>Yet Another Forth For Arduino</h2></div></div></div>
+<p><a href="https://github.com/sdwood68/YAFFA" target="_top">https://github.com/sdwood68/YAFFA</a> Yet Another Forth
+    For Arduino</p>
 <p>Using Arduino's Serial Monitor @ 19200 baud, I get:</p>
 <pre class="programlisting"> YAFFA - Yet Another Forth For Arduino, Version 0.6
  Copyright (C) 2012 Stuart Wood
@@ -110,8 +150,12 @@ Firmware check OK
 &gt;&gt;
 &gt;&gt;
 &gt;&gt; words5 .</pre>
-<p>Looks like there is some work to do. Later, Stuart Wood (<a href="https://github.com/sdwood68" target="_top">https://github.com/sdwood68</a>) got back to me and told me that "The Arduino Serial Monitor needs to be set up to send Carriage Returns per line. Line Feeds are stripped out." So that method works too.</p>
-<p>Then again, using my 328eForth setup in HyperAccess (or whatever you favorite terminal emulator is, setup for 19200 @ 8-None-1), it's working fine!</p>
+<p>Looks like there is some work to do. Later, Stuart Wood (<a href="https://github.com/sdwood68" target="_top">https://github.com/sdwood68</a>) got back to me and told me that "The
+    Arduino Serial Monitor needs to be set up to send Carriage Returns per
+    line. Line Feeds are stripped out." So that method works too.</p>
+<p>Then again, using my 328eForth setup in HyperAccess (or whatever you
+    favorite terminal emulator is, setup for 19200 @ 8-None-1), it's working
+    fine!</p>
 <pre class="programlisting">&gt;&gt; 5 .
 5  OK
 &gt;&gt; : junk 5 0 do [char] * emit loop ;
@@ -121,60 +165,134 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560831"></a>UART Pins</h2></div></div></div>
-<div><img src="schematic.jpg"></div>
-<p>Now, to line up the UART pins with each other, I reference <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.0%5CDocuments%5Cswru191f.pdf" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf</a> which is available here <a href="http://www.ti.com/lit/ug/swru191f/swru191f.pdf" target="_top">http://www.ti.com/lit/ug/swru191f/swru191f.pdf</a>. Table 7-1. Peripheral I/O Pin Mapping
-tells me that what is called AR_TX on the schematic is connected to P0_5 (pin 14), is USART 1 RX Alt. 1 configuration. The same is true for AR_RX on P0_4 (pin 15), which is TX for that same configuration. However, this means that, in <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.1.43908%5CComponents%5Chal%5Ctarget%5CCC2540EB%5C_hal_uart_isr.c" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.1.43908\Components\hal\target\CC2540EB\_hal_uart_isr.c</a>,  this is wrong:</p>
+<a name="id536521"></a>UART Pins</h2></div></div></div>
+<p>Now, to line up the UART pins with each other, I reference <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.0%5CDocuments%5Cswru191f.pdf" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf</a> which
+    is available here <a href="http://www.ti.com/lit/ug/swru191f/swru191f.pdf" target="_top">http://www.ti.com/lit/ug/swru191f/swru191f.pdf</a>. Table 7-1.
+    Peripheral I/O Pin Mapping tells me that what is called AR_TX on the
+    schematic is connected to P0_5 (pin 14), is USART 1 RX Alt. 1
+    configuration. The same is true for AR_RX on P0_4 (pin 15), which is TX
+    for that same configuration. However, this means that, in <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.1.43908%5CComponents%5Chal%5Ctarget%5CCC2540EB%5C_hal_uart_isr.c" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.1.43908\Components\hal\target\CC2540EB\_hal_uart_isr.c</a>,
+    this is wrong:</p>
 <pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.</pre>
 <p>It needs to be:</p>
 <pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</pre>
-<p>So, I added a BLE_ARDUINO configuration option to switch and keep track of these changes to TI's code.</p>
-<p>Since I'm starting to make some significant changes to the BLE-CC254x stack, I've added it to my coinForth repository <a href="https://github.com/DRuffer/coinForth" target="_top">https://github.com/DRuffer/coinForth</a>. This also allowed me to update to BLE-CC254x-1.4.1.43908b which is the latest release from TI. Opening this in IAR's EW8051 v 9.10.3 reminded me that you have to select the <span class="bold"><strong>CC2540F128DK-MINI Keyfob</strong></span> workspace.</p>
+<p>So, I added a BLE_ARDUINO configuration option to switch and keep
+    track of these changes to TI's code.</p>
+<div><img src="schematic.jpg"></div>
+<p>Since I'm starting to make some significant changes to the
+    BLE-CC254x stack, I've added it to my coinForth repository <a href="https://github.com/DRuffer/coinForth" target="_top">https://github.com/DRuffer/coinForth</a>. This also allowed me to
+    update to BLE-CC254x-1.4.1.43908b which is the latest release from TI.
+    Opening this in IAR's EW8051 v 9.10.3 reminded me that you have to select
+    the <span class="bold"><strong>CC2540F128DK-MINI Keyfob</strong></span>
+    workspace.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560908"></a>Testing</h2></div></div></div>
-<p>Trying IForth (<a href="https://github.com/jdfreder/iforth" target="_top">https://github.com/jdfreder/iforth</a>), even with "conda create -n snakes python=3.4" from <a href="http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf" target="_top">http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf</a>, I got:</p>
+<a name="id536590"></a>Testing</h2></div></div></div>
+<p>Trying IForth (<a href="https://github.com/jdfreder/iforth" target="_top">https://github.com/jdfreder/iforth</a>),
+    even with "conda create -n snakes python=3.4" from <a href="http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf" target="_top">http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf</a>, I
+    got:</p>
 <pre class="programlisting">Notebook Validation failed: u'name' is a required property:
 {}</pre>
-<p>So, now I'm trying forth-notebooks (<a href="https://github.com/ozayn/forth-notebooks" target="_top">https://github.com/ozayn/forth-notebooks</a>), with help from <a href="http://ipython.readthedocs.org/en/stable/config/intro.html" target="_top">http://ipython.readthedocs.org/en/stable/config/intro.html</a>. In <span class="bold"><strong>source setup.sh</strong></span>
-I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VMware Workstation 12 Pro, but then I also found that it's in cygwin 64-bit.</p>
+<p>So, now I'm trying forth-notebooks (<a href="https://github.com/ozayn/forth-notebooks" target="_top">https://github.com/ozayn/forth-notebooks</a>), with help from <a href="http://ipython.readthedocs.org/en/stable/config/intro.html" target="_top">http://ipython.readthedocs.org/en/stable/config/intro.html</a>. In
+    <span class="bold"><strong>source setup.sh</strong></span> I see that it's trying to
+    use mkfifo, so I updated my Ubuntu 64-bit system to VMware Workstation 12
+    Pro, but then I also found that it's in cygwin 64-bit.</p>
+<pre class="programlisting">Dennis@DaRPC /cygdrive/c/Users/Dennis/Documents/Atmel Studio/7.0/coinForth/doc
+$ ipython profile create
+[ProfileCreate] Generating default config file: u'C:\\cygwin64\\home\\Dennis\\.ipython\\profile_default\\ipython_config.py'
+[ProfileCreate] Generating default config file: u'C:\\cygwin64\\home\\Dennis\\.ipython\\profile_default\\ipython_kernel_config.py'</pre>
+<p>Added forth-notebook's cell magic, with the following
+    modification:</p>
+<pre class="programlisting">c.ScriptMagics.script_paths = {
+    'gforth' : 'python /usr/src/forth-notebooks_ozayn/forth-client.py' 
+}</pre>
+<p>When I run hello-forth.ipynb I get:</p>
+<pre class="programlisting">python: can't open file '/usr/src/forth-notebooks_ozayn/forth-client.py': [Errno 2] No such file or directory</pre>
+<p>On every code cell.</p>
+<p>Added "C:/cygwin64" to the cell magic path, and now I get:</p>
+<pre class="programlisting">Traceback (most recent call last):
+  File "C:/cygwin64/usr/src/forth-notebooks_ozayn/forth-client.py", line 26, in &lt;module&gt;
+    forth_out=open("forth-out","rb")
+IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
+<p>Back over in VMware® Workstation 12.1 Pro w/ Ubuntu 15.10, that much works fine:</p>
+<pre class="programlisting">0 Hello, IPython notebook world with Forth.
+1 Hello, IPython notebook world with Forth.
+2 Hello, IPython notebook world with Forth.
+3 Hello, IPython notebook world with Forth. ok</pre>
+<p>I could only do the "<span class="bold"><strong>source setup.sh</strong></span>" on the Linux file system, so it's going to be cumbersome to share. However, it's possible and I've got a working example. Now, I have to see what I will do with it, if anything. My prior notebook experience has been with using python's serial interface to talk to the target. I will have to figure out if my gforth serial code still works and then design an umbilical-like extension to <a href="https://github.com/gerryjackson/forth2012-test-suite/tree/master" target="_top">https://github.com/gerryjackson/forth2012-test-suite/tree/master</a>.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560944"></a>Conclusion</h2></div></div></div>
+<a name="id536676"></a>Conclusion</h2></div></div></div>
+<p>The December 2015 SVFIG Meeting on Saturday, December 19, 2015 is driving me to whip this document into shape, which, of course, takes away from what's supposed to be the fun part. The layout of the UART Pins is a major setback, since the BLE-STACK doesn't account for it. The The forth-notebooks is also the latest shinny object to distract me, but that was more for the SVFIG meeting than any real need yet.</p>
+<p>For the moment, this is enough</p>
 <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning:</h3>
-<p>The rest of this doc are the original contents, which I'll delete from the final doc, but for now, provide easy reference for things I want to do in my content.</p>
+<p>The rest of this doc are the original contents, which I'll
+        delete from the final doc, but for now, provide easy reference for
+        things I want to do in my content.</p>
 </div>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560940"></a>Draft Areas</h2></div></div></div>
-<p>Note the presence of gray "Draft Areas" in the document. They are necessary because Docbook stylesheet rules are often intricate. For instance, <code class="sgmltag-element">title</code> in <code class="sgmltag-element">section</code> can be specified within <code class="sgmltag-element">section</code> itself and within <code class="sgmltag-element">sectioninfo</code>. If you specify both, one of them becomes hidden. To avoid this, all such meta-information is shown also in Draft Areas. They can be turned off by changing value of <em class="parameter"><code>show-preamble-editing</code></em> parameter to 0 in <code class="filename">parameters.xsl</code> file in Docbook stylesheet.</p>
-<p>Serna Docbook stylesheet also takes special care of empty content. For example, when you make new article, it provides you with "Title: " inscription where you can enter article title.</p>
+<a name="id536720"></a>Draft Areas</h2></div></div></div>
+<p>Note the presence of gray "Draft Areas" in the document. They are
+    necessary because Docbook stylesheet rules are often intricate. For
+    instance, <code class="sgmltag-element">title</code> in <code class="sgmltag-element">section</code> can be
+    specified within <code class="sgmltag-element">section</code> itself and within
+    <code class="sgmltag-element">sectioninfo</code>. If you specify both, one of them becomes
+    hidden. To avoid this, all such meta-information is shown also in Draft
+    Areas. They can be turned off by changing value of
+    <em class="parameter"><code>show-preamble-editing</code></em> parameter to 0 in
+    <code class="filename">parameters.xsl</code> file in Docbook stylesheet.</p>
+<p>Serna Docbook stylesheet also takes special care of empty content.
+    For example, when you make new article, it provides you with "Title: "
+    inscription where you can enter article title.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id560990"></a>Basic editing</h2></div></div></div>
-<p>Editing of Docbook documents in Serna is quite straightforward, much like in a traditional word-processor. One difference is that you must use "InsertElement" command (<span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>) to insert new elements. Serna will suggest you a list of elements which you can insert at any given location. Other element operations are listed in "Element" menu.</p>
-<p>By default <span><strong class="keycap">ENTER</strong></span> splits the current element. For example, if you are within <code class="sgmltag-element">a para</code>, it will be split in two. If you are at the end of paragraph, new paragraph will be added.</p>
-<p>You can see current editing context in the bottom status bar. Navigation commands from "<span class="guimenu">Go</span>" menu should be use for easier navigation in "tagless" mode. Also, pay attention to the two modes of selection: <em class="firstterm">balanced</em> and <em class="firstterm">unbalanced</em> (they can be toggled from Edit menu or with <span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">B</strong></span>). In unbalanced mode, selection is more distinct, but it sometimes can be difficult to correctly place ends of selection. In balanced mode selection is automatically adjusted, so it is easier to select list items, etc.</p>
+<a name="id536769"></a>Basic editing</h2></div></div></div>
+<p>Editing of Docbook documents in Serna is quite straightforward, much
+    like in a traditional word-processor. One difference is that you must use
+    "InsertElement" command (<span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>) to insert new elements. Serna will suggest you a list of
+    elements which you can insert at any given location. Other element
+    operations are listed in "Element" menu.</p>
+<p>By default <span><strong class="keycap">ENTER</strong></span> splits the current element. For
+    example, if you are within <code class="sgmltag-element">a para</code>, it will be split in
+    two. If you are at the end of paragraph, new paragraph will be
+    added.</p>
+<p>You can see current editing context in the bottom status bar.
+    Navigation commands from "<span class="guimenu">Go</span>" menu should be use for
+    easier navigation in "tagless" mode. Also, pay attention to the two modes
+    of selection: <em class="firstterm">balanced</em> and
+    <em class="firstterm">unbalanced</em> (they can be toggled from Edit menu or
+    with <span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">B</strong></span>). In unbalanced mode, selection is more distinct, but it
+    sometimes can be difficult to correctly place ends of selection. In
+    balanced mode selection is automatically adjusted, so it is easier to
+    select list items, etc.</p>
 <p>To edit element attributes, press <span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id561096"></a>Images</h2></div></div></div>
-<p>Inserting images is easy: just insert <code class="sgmltag-element">figure</code> or <code class="sgmltag-element">graphic</code> elements, invoke <em class="glossterm">Element Attributes Dialog</em> for corresponding element, and choose an image file by pressing Browse button for the <code class="literal">fileref</code> attribute in Element Attributes Dialog.</p>
+<a name="id536842"></a>Images</h2></div></div></div>
+<p>Inserting images is easy: just insert <code class="sgmltag-element">figure</code> or
+    <code class="sgmltag-element">graphic</code> elements, invoke <em class="glossterm">Element Attributes Dialog</em> for corresponding element, and choose an image file by
+    pressing Browse button for the <code class="literal">fileref</code> attribute in
+    Element Attributes Dialog.</p>
 <div class="figure">
-<a name="id561118"></a><p class="title"><b>Figure 1. An example figure</b></p>
+<a name="id536829"></a><p class="title"><b>Figure 1. An example figure</b></p>
 <div align="center"><img src="serna_cycle.png" align="middle" alt="An example figure"></div>
 </div>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id561129"></a>Program listings</h2></div></div></div>
-<p>Serna supports whitespace stripping policies, as defined by the stylesheet. Editing behavior within whitespace-preserved ares like Docbook <code class="sgmltag-element">programlisting</code> is different. Within those elements <span><strong class="keycap">ENTER</strong></span> means newline, and you can mix white-spaces and newlines freely.</p>
+<a name="id536884"></a>Program listings</h2></div></div></div>
+<p>Serna supports whitespace stripping policies, as defined by the
+    stylesheet. Editing behavior within whitespace-preserved ares like Docbook
+    <code class="sgmltag-element">programlisting</code> is different. Within those elements
+    <span><strong class="keycap">ENTER</strong></span> means newline, and you can mix white-spaces and
+    newlines freely.</p>
 <pre class="programlisting">     SubscriberPtr(SubscriberPtrWatcher* watcher, T* ptr)
           : SubscriberPtrBase(watcher, ptr), P(ptr) {}
     SubscriberPtr&lt;T&gt;&amp; operator=(T* ptr)
@@ -191,7 +309,7 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id561152"></a>Lists and tables</h2></div></div></div>
+<a name="id536904"></a>Lists and tables</h2></div></div></div>
 <p>There are two types of lists in Docbook:</p>
 <div class="orderedlist">
 <p class="title"><b>Ordered list. A list may have optional title.</b></p>
@@ -209,10 +327,10 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
 <li><p>Third item.</p></li>
 </ul>
 </div>
-<p>In Serna, CALS tables are supported by Docbook stylesheet. </p>
+<p>In Serna, CALS tables are supported by Docbook stylesheet.</p>
 <div class="table">
-<a name="id561236"></a><p class="title"><b>Table 1.  An example of complex table</b></p>
-<table summary=" An example of complex table" border="1">
+<a name="id536973"></a><p class="title"><b>Table 1. An example of complex table</b></p>
+<table summary="An example of complex table" border="1">
 <colgroup>
 <col>
 <col>
@@ -230,19 +348,23 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
 <thead>
 <tr>
 <th colspan="2" valign="top">
-              <p>Title 1</p>
+              <p>Title
+            1</p>
             </th>
 <th rowspan="2" colspan="2" valign="middle">
               <p>Title 2</p>
             </th>
 <th colspan="2" valign="top">
-              <p>Title 3</p>
+              <p>Title
+            3</p>
             </th>
 <th colspan="2" valign="top">
-              <p>Title 4</p>
+              <p>Title
+            4</p>
             </th>
 <th colspan="4" valign="top">
-              <p>Title 5</p>
+              <p>Title
+            5</p>
             </th>
 </tr>
 <tr>
@@ -265,10 +387,12 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
               <p>Sub6 </p>
             </th>
 <th colspan="2" valign="middle">
-              <p>Sub7 </p>
+              <p>Sub7
+            </p>
             </th>
 <th colspan="2" valign="middle">
-              <p>Sub8 </p>
+              <p>Sub8
+            </p>
             </th>
 </tr>
 </thead>
@@ -276,7 +400,8 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
 <tr>
 <td rowspan="2" colspan="2" valign="top">
               <div align="center"><img src="syntext_logo.png" align="middle"></div>
-              <p>A B C D E F G </p>
+              <p>A B C D E F G
+            </p>
             </td>
 <td colspan="4" valign="top">
               <div class="orderedlist"><ol type="1">
@@ -296,7 +421,8 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
               <p>Contents....</p>
             </td>
 <td colspan="4" valign="top">
-              <p>This is another horizontal span.</p>
+              <p>This is another
+            horizontal span.</p>
             </td>
 </tr>
 </tbody>
@@ -305,8 +431,12 @@ I see that it's trying to use mkfifo, so I updated my Ubuntu 64-bit system to VM
 </div>
 <div class="section" lang="de">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id561543"></a>Localization</h2></div></div></div>
-<p>It is possible to localize your docbook documents or their parts by simply changing <em class="parameter"><code>lang</code></em> parameter of the compound element. For example, this section's attribute <em class="parameter"><code>lang</code></em> is set to <code class="literal">de</code>, that is why you see German inscriptions for this section.</p>
+<a name="id537288"></a>Localization</h2></div></div></div>
+<p>It is possible to localize your docbook documents or their parts by
+    simply changing <em class="parameter"><code>lang</code></em> parameter of the compound
+    element. For example, this section's attribute <em class="parameter"><code>lang</code></em>
+    is set to <code class="literal">de</code>, that is why you see German inscriptions
+    for this section.</p>
 </div>
 </div></body>
 </html>
