@@ -8,7 +8,7 @@
 <div class="titlepage">
 <div>
 <div><h2 class="title">
-<a name="id536197"></a>The CoinForth Documentation</h2></div>
+<a name="id543465"></a>The CoinForth Documentation</h2></div>
 <div><h3 class="subtitle"><i>Arduino Simple BLE Peripheral</i></h3></div>
 <div><p class="releaseinfo">Version 0.4</p></div>
 <div><p class="copyright">Copyright © 2015 Dennis Ruffer</p></div>
@@ -18,18 +18,19 @@
 <div class="toc">
 <p><b>Table of Contents</b></p>
 <dl>
-<dt><span class="section"><a href="#id536326">BLE-STACK</a></span></dt>
-<dt><span class="section"><a href="#id536439">Arduino</a></span></dt>
-<dt><span class="section"><a href="#id536514">Yet Another Forth For Arduino</a></span></dt>
-<dt><span class="section"><a href="#id536521">UART Pins</a></span></dt>
-<dt><span class="section"><a href="#id536590">Testing</a></span></dt>
-<dt><span class="section"><a href="#id536676">Conclusion</a></span></dt>
-<dt><span class="section"><a href="#id536720">Draft Areas</a></span></dt>
-<dt><span class="section"><a href="#id536769">Basic editing</a></span></dt>
-<dt><span class="section"><a href="#id536842">Images</a></span></dt>
-<dt><span class="section"><a href="#id536884">Program listings</a></span></dt>
-<dt><span class="section"><a href="#id536904">Lists and tables</a></span></dt>
-<dt><span class="section"><a href="#id537288">Localization</a></span></dt>
+<dt><span class="section"><a href="#id543591">BLE-STACK</a></span></dt>
+<dt><span class="section"><a href="#id543704">Arduino</a></span></dt>
+<dt><span class="section"><a href="#id543801">Yet Another Forth For Arduino</a></span></dt>
+<dt><span class="section"><a href="#id543813">UART Pins</a></span></dt>
+<dt><span class="section"><a href="#id543891">Gabtronics XMEGA Xprotolab </a></span></dt>
+<dt><span class="section"><a href="#id543960">Testing</a></span></dt>
+<dt><span class="section"><a href="#id544000">Conclusion</a></span></dt>
+<dt><span class="section"><a href="#id544059">Draft Areas</a></span></dt>
+<dt><span class="section"><a href="#id544106">Basic editing</a></span></dt>
+<dt><span class="section"><a href="#id544174">Images</a></span></dt>
+<dt><span class="section"><a href="#id544229">Program listings</a></span></dt>
+<dt><span class="section"><a href="#id544239">Lists and tables</a></span></dt>
+<dt><span class="section"><a href="#id544630">Localization</a></span></dt>
 </dl>
 </div>
 <div class="abstract">
@@ -55,7 +56,7 @@
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536326"></a>BLE-STACK</h2></div></div></div>
+<a name="id543591"></a>BLE-STACK</h2></div></div></div>
 <p>This software is usually available at <a href="http://www.ti.com/tool/ble-stack" target="_top">http://www.ti.com/tool/ble-stack</a>, but is being updated from time
     to time, so the version may change or disappear when it is being updated.
     Since the CC2540 is pretty old at this point. By default, it installs to
@@ -107,7 +108,7 @@ Error while running Linker </pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536439"></a>Arduino</h2></div></div></div>
+<a name="id543704"></a>Arduino</h2></div></div></div>
 <p>The CC2540's serial port is connected to the ATA6614Q pins PD2 (RX)
     and PD3 (TX), which require a "soft" serial port, like what Arduino
     provides in their <span class="bold"><strong>SoftwareSerial</strong></span>. <a href="https://www.arduino.cc/en/Reference/SoftwareSerial" target="_top">https://www.arduino.cc/en/Reference/SoftwareSerial</a> and <a href="http://arduiniana.org/libraries/newsoftserial/" target="_top">http://arduiniana.org/libraries/newsoftserial/</a>.</p>
@@ -131,7 +132,7 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536514"></a>Yet Another Forth For Arduino</h2></div></div></div>
+<a name="id543801"></a>Yet Another Forth For Arduino</h2></div></div></div>
 <p><a href="https://github.com/sdwood68/YAFFA" target="_top">https://github.com/sdwood68/YAFFA</a> Yet Another Forth
     For Arduino</p>
 <p>Using Arduino's Serial Monitor @ 19200 baud, I get:</p>
@@ -165,7 +166,7 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536521"></a>UART Pins</h2></div></div></div>
+<a name="id543813"></a>UART Pins</h2></div></div></div>
 <p>Now, to line up the UART pins with each other, I reference <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.0%5CDocuments%5Cswru191f.pdf" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf</a> which
     is available here <a href="http://www.ti.com/lit/ug/swru191f/swru191f.pdf" target="_top">http://www.ti.com/lit/ug/swru191f/swru191f.pdf</a>. Table 7-1.
     Peripheral I/O Pin Mapping tells me that what is called AR_TX on the
@@ -175,9 +176,11 @@ Firmware check OK
     this is wrong:</p>
 <pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.</pre>
 <p>It needs to be:</p>
-<pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</pre>
+<pre class="programlisting">#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P0, Alt-1; so clear this bit.</pre>
 <p>So, I added a BLE_ARDUINO configuration option to switch and keep
     track of these changes to TI's code.</p>
+<p>Section 7.6.5 USART 1 of the User's Guide says that "the <span class="bold"><strong>SFR</strong></span> register bit <span class="bold"><strong>PERCFG.U1CFG</strong></span> (0xF1 Peripheral Control bit 1 set to 0) selects whether to use alternative 1 or alternative 2 locations" and that "<span class="bold"><strong>P2DIR.PRIP0</strong></span> (0xFF Port 0 Peripheral Priority Control bits 7:6 set to 0x01) selects the order of precedence when assigning several peripherals to Port 0. When set to
+01, USART 1 has precedence."</p>
 <div><img src="schematic.jpg"></div>
 <p>Since I'm starting to make some significant changes to the
     BLE-CC254x stack, I've added it to my coinForth repository <a href="https://github.com/DRuffer/coinForth" target="_top">https://github.com/DRuffer/coinForth</a>. This also allowed me to
@@ -188,7 +191,14 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536590"></a>Testing</h2></div></div></div>
+<a name="id543891"></a>Gabtronics XMEGA Xprotolab </h2></div></div></div>
+<p>I've gotten a few of these little devices, and blown up, at least, one of them, but they do prove to be useful when you are trying to see if something in the "real" world is doing something useful. You can find them yourself at: <a href="http://www.gabotronics.com/development-boards/xmega-xprotolab.htm" target="_top">http://www.gabotronics.com/development-boards/xmega-xprotolab.htm</a>.</p>
+<p>I hooked the the scope channels up to the AR_RX and AR_TX pins on the Arduino. At this point, I see that the RX pin goes high (3.2v) when the CC2540 is in reset, which is what I'd expect, but otherwise, no activity.</p>
+<div><img src="CC2540_reset.jpg"></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="id543960"></a>Testing</h2></div></div></div>
 <p>Trying IForth (<a href="https://github.com/jdfreder/iforth" target="_top">https://github.com/jdfreder/iforth</a>),
     even with "conda create -n snakes python=3.4" from <a href="http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf" target="_top">http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf</a>, I
     got:</p>
@@ -224,7 +234,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536676"></a>Conclusion</h2></div></div></div>
+<a name="id544000"></a>Conclusion</h2></div></div></div>
 <p>The December 2015 SVFIG Meeting on Saturday, December 19, 2015 is driving me to whip this document into shape, which, of course, takes away from what's supposed to be the fun part. The layout of the UART Pins is a major setback, since the BLE-STACK doesn't account for it. The The forth-notebooks is also the latest shinny object to distract me, but that was more for the SVFIG meeting than any real need yet.</p>
 <p>For the moment, this is enough</p>
 <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
@@ -236,7 +246,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536720"></a>Draft Areas</h2></div></div></div>
+<a name="id544059"></a>Draft Areas</h2></div></div></div>
 <p>Note the presence of gray "Draft Areas" in the document. They are
     necessary because Docbook stylesheet rules are often intricate. For
     instance, <code class="sgmltag-element">title</code> in <code class="sgmltag-element">section</code> can be
@@ -252,7 +262,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536769"></a>Basic editing</h2></div></div></div>
+<a name="id544106"></a>Basic editing</h2></div></div></div>
 <p>Editing of Docbook documents in Serna is quite straightforward, much
     like in a traditional word-processor. One difference is that you must use
     "InsertElement" command (<span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>) to insert new elements. Serna will suggest you a list of
@@ -275,19 +285,19 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536842"></a>Images</h2></div></div></div>
+<a name="id544174"></a>Images</h2></div></div></div>
 <p>Inserting images is easy: just insert <code class="sgmltag-element">figure</code> or
     <code class="sgmltag-element">graphic</code> elements, invoke <em class="glossterm">Element Attributes Dialog</em> for corresponding element, and choose an image file by
     pressing Browse button for the <code class="literal">fileref</code> attribute in
     Element Attributes Dialog.</p>
 <div class="figure">
-<a name="id536829"></a><p class="title"><b>Figure 1. An example figure</b></p>
+<a name="id544221"></a><p class="title"><b>Figure 1. An example figure</b></p>
 <div align="center"><img src="serna_cycle.png" align="middle" alt="An example figure"></div>
 </div>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536884"></a>Program listings</h2></div></div></div>
+<a name="id544229"></a>Program listings</h2></div></div></div>
 <p>Serna supports whitespace stripping policies, as defined by the
     stylesheet. Editing behavior within whitespace-preserved ares like Docbook
     <code class="sgmltag-element">programlisting</code> is different. Within those elements
@@ -309,7 +319,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id536904"></a>Lists and tables</h2></div></div></div>
+<a name="id544239"></a>Lists and tables</h2></div></div></div>
 <p>There are two types of lists in Docbook:</p>
 <div class="orderedlist">
 <p class="title"><b>Ordered list. A list may have optional title.</b></p>
@@ -329,7 +339,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <p>In Serna, CALS tables are supported by Docbook stylesheet.</p>
 <div class="table">
-<a name="id536973"></a><p class="title"><b>Table 1. An example of complex table</b></p>
+<a name="id544317"></a><p class="title"><b>Table 1. An example of complex table</b></p>
 <table summary="An example of complex table" border="1">
 <colgroup>
 <col>
@@ -431,7 +441,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="de">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id537288"></a>Localization</h2></div></div></div>
+<a name="id544630"></a>Localization</h2></div></div></div>
 <p>It is possible to localize your docbook documents or their parts by
     simply changing <em class="parameter"><code>lang</code></em> parameter of the compound
     element. For example, this section's attribute <em class="parameter"><code>lang</code></em>

@@ -2525,7 +2525,6 @@
           <state>CC2540_MINIDK</state>
           <state>HAL_UART=TRUE</state>
           <state>HAL_UART_DMA=2</state>
-          <state>HAL_UART_ISR=2</state>
           <state>BLE_ARDUINO</state>
         </option>
         <option>

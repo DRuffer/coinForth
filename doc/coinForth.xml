@@ -147,9 +147,11 @@ Firmware check OK
     this is wrong:</para>
     <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.</programlisting></para>
     <para>It needs to be:</para>
-    <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-1; so clear this bit.</programlisting></para>
+    <para><programlisting>#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P0, Alt-1; so clear this bit.</programlisting></para>
     <para>So, I added a BLE_ARDUINO configuration option to switch and keep
     track of these changes to TI&apos;s code.</para>
+    <para>Section 7.6.5 USART 1 of the User&apos;s Guide says that &quot;the <emphasis role="bold">SFR</emphasis> register bit <emphasis role="bold">PERCFG.U1CFG</emphasis> (0xF1 Peripheral Control bit 1 set to 0) selects whether to use alternative 1 or alternative 2 locations&quot; and that &quot;<emphasis role="bold">P2DIR.PRIP0</emphasis> (0xFF Port 0 Peripheral Priority Control bits 7:6 set to 0x01) selects the order of precedence when assigning several peripherals to Port 0. When set to
+01, USART 1 has precedence.&quot;</para>
     <graphic fileref="schematic.jpg" scalefit="page"/>
     <para>Since I&apos;m starting to make some significant changes to the
     BLE-CC254x stack, I&apos;ve added it to my coinForth repository <ulink url="https://github.com/DRuffer/coinForth"/>. This also allowed me to
@@ -157,6 +159,12 @@ Firmware check OK
     Opening this in IAR&apos;s EW8051 v 9.10.3 reminded me that you have to select
     the <emphasis role="bold">CC2540F128DK-MINI Keyfob</emphasis>
     workspace.</para>
+  </section>
+  <section>
+    <title>Gabtronics XMEGA Xprotolab </title>
+    <para>I&apos;ve gotten a few of these little devices, and blown up, at least, one of them, but they do prove to be useful when you are trying to see if something in the &quot;real&quot; world is doing something useful. You can find them yourself at: <ulink url="http://www.gabotronics.com/development-boards/xmega-xprotolab.htm"/>.</para>
+    <para>I hooked the the scope channels up to the AR_RX and AR_TX pins on the Arduino. At this point, I see that the RX pin goes high (3.2v) when the CC2540 is in reset, which is what I&apos;d expect, but otherwise, no activity.</para>
+    <para><graphic fileref="CC2540_reset.jpg"/></para>
   </section>
   <section>
     <title>Testing</title>

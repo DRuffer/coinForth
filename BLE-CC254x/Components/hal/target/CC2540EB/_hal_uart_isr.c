@@ -172,12 +172,14 @@
 #define HAL_UART_Px_RX             0x04         // Peripheral I/O Select for Rx.
 #define HAL_UART_Px_RTS            0x20         // Peripheral I/O Select for RTS.
 #define HAL_UART_Px_CTS            0x10         // Peripheral I/O Select for CTS.
-#else
-#ifdef BLE_ARDUINO
+#elif defined(BLE_ARDUINO)
 #define HAL_UART_PERCFG_BIT        0x02         // USART1 on P0, Alt-1; so clear this bit.
+#define HAL_UART_Px_RTS            0x08         // Peripheral I/O Select for RTS.
+#define HAL_UART_Px_CTS            0x04         // Peripheral I/O Select for CTS.
+#define HAL_UART_Px_RX_TX          0x30         // Peripheral I/O Select for Rx/Tx.
+#define HAL_UART_Px_RX             0x20         // Peripheral I/O Select for Rx.
 #else
 #define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.
-#endif
 #define HAL_UART_Px_RTS            0x20         // Peripheral I/O Select for RTS.
 #define HAL_UART_Px_CTS            0x10         // Peripheral I/O Select for CTS.
 #define HAL_UART_Px_RX_TX          0xC0         // Peripheral I/O Select for Rx/Tx.
@@ -204,6 +206,7 @@
  * TYPEDEFS
  */
 
+#if (HAL_UART_ISR != 0)
 #if HAL_UART_ISR_RX_MAX <= 256
 typedef uint8 rxIdx_t;
 #else
@@ -214,6 +217,7 @@ typedef uint16 rxIdx_t;
 typedef uint8 txIdx_t;
 #else
 typedef uint16 txIdx_t;
+#endif
 #endif
 
 typedef struct
@@ -263,18 +267,22 @@ static void HalUARTResumeISR(void);
  *****************************************************************************/
 static void HalUARTInitISR(void)
 {
+#ifdef BLE_ARDUINO
+  // Set P2 priority - USART1 over USART0 if both are defined.
+  P2DIR &= ~P2DIR_PRIPO;
+  P2DIR |= HAL_UART_PRIPO; // should be set to 0x40
+#else
   // Set P2 priority - USART0 over USART1 if both are defined.
   P2DIR &= ~P2DIR_PRIPO;
   P2DIR |= HAL_UART_PRIPO;
+#endif // BLE_ARDUINO
 
 #if (HAL_UART_ISR == 1)
   PERCFG &= ~HAL_UART_PERCFG_BIT;    // Set UART0 I/O location to P0.
-#else
-#ifdef BLE_ARDUINO
-  PERCFG &= ~HAL_UART_PERCFG_BIT;     // Set UART1 I/O location to P0.
+#elif defined(BLE_ARDUINO)
+  PERCFG &= ~HAL_UART_PERCFG_BIT;    // Set UART1 I/O location to P0.
 #else
   PERCFG |= HAL_UART_PERCFG_BIT;     // Set UART1 I/O location to P1.
-#endif
 #endif
   PxSEL  |= HAL_UART_Px_RX_TX;       // Enable Tx and Rx on P1.
   ADCCFG &= ~HAL_UART_Px_RX_TX;      // Make sure ADC doesnt use this.

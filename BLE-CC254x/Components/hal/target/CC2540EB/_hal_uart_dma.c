@@ -128,6 +128,13 @@
 #define HAL_UART_Px_CTS            0x10         // Peripheral I/O Select for CTS flow control.
 #define HAL_UART_Px_RTS            0x20         // Peripheral I/O Select for RTS must be manual.
 #define HAL_UART_Px_SEL            0x0C         // Peripheral I/O Select for Rx/Tx.
+#elif   defined(BLE_ARDUINO)
+#define PxSEL                      P0SEL
+#define HAL_UART_PERCFG_BIT        0x02         // USART1 on P0, Alt-1; so clear this bit.
+#define HAL_UART_PRIPO             0x40         // USART1 priority over UART0.
+#define HAL_UART_Px_CTS            0x04         // Peripheral I/O Select for CTS flow control.
+#define HAL_UART_Px_RTS            0x08         // Peripheral I/O Select for RTS must be manual.
+#define HAL_UART_Px_SEL            0x30         // Peripheral I/O Select for Rx/Tx.
 #elif  (HAL_UART_DMA == 2)
 #define PxSEL                      P1SEL
 #define HAL_UART_PERCFG_BIT        0x02         // USART1 on P1, Alt-2; so set this bit.
@@ -239,6 +246,7 @@
  * ------------------------------------------------------------------------------------------------
  */
 
+#if (HAL_UART_DMA != 0)
 #if HAL_UART_DMA_RX_MAX <= 256
 typedef uint8 rxIdx_t;
 #else
@@ -249,6 +257,7 @@ typedef uint16 rxIdx_t;
 typedef uint8 txIdx_t;
 #else
 typedef uint16 txIdx_t;
+#endif
 #endif
 
 typedef struct
@@ -372,6 +381,8 @@ static void HalUARTInitDMA(void)
   halDMADesc_t *ch;
 #if (HAL_UART_DMA == 1)
   PERCFG &= ~HAL_UART_PERCFG_BIT;    // Set UART0 I/O to Alt. 1 location on P0.
+#elif defined(BLE_ARDUINO)
+  PERCFG &= ~HAL_UART_PERCFG_BIT;    // Set UART1 I/O to Alt. 1 location on P0.
 #else
   PERCFG |= HAL_UART_PERCFG_BIT;     // Set UART1 I/O to Alt. 2 location on P1.
 #endif
