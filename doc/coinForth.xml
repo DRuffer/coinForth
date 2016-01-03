@@ -79,6 +79,190 @@ Error while running Linker </programlisting></para>
     compiles and</para>
     <para><ulink url=".\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex"/>
     can be flashed, so let&apos;s start there.</para>
+    <para>Bummer, I just crashed out of Serna Free, so I have to type in some stuff about what I&apos;m doing, got lost. The additions are starting to jump around a bit, but it makes more sense to talk about this here, than in any other section.</para>
+    <para>I do not see any serial activity between the 2 CPUs yet, and I&apos;ve seen in the TI CC254x Bluetooth Low Energy Software Developer’s Guide (SWRU271G Version 1.4.1), Section 2.1 Configurations, Subsection 2. Network Processor: &quot;To use the network processor, the Host Test Release project must be used.&quot;</para>
+    <para>It&apos;s time to start looking at the memory differences:</para>
+    <table>
+      <title>Canned Binary Libraries</title>
+      <tgroup cols="3">
+        <colspec colname="c1" colwidth="4cm"/>
+        <colspec colname="c2" colwidth="6.1cm"/>
+        <colspec colname="c3" colwidth="1.9cm"/>
+        <thead>
+          <row>
+            <entry namest="c1" nameend="c1" valign="top">
+              <para>Project</para>
+            </entry>
+            <entry namest="c2" nameend="c2" morerows="" valign="middle">
+              <para>Library</para>
+            </entry>
+            <entry namest="c3" nameend="c3" align="right" valign="middle">
+              <para>Size</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry namest="c1" nameend="c1" morerows="1" valign="middle">
+              <para>Host Test Release
+            </para>
+            </entry>
+            <entry namest="c2" nameend="c2" valign="top">
+              <para>CC2540_BLE.lib</para>
+            </entry>
+            <entry namest="c3" nameend="c3" align="right" valign="top">5,986,524</entry>
+          </row>
+          <row>
+            <entry>
+              <para>CC254x_BLE_HCI_TL_Full.lib</para>
+            </entry>
+            <entry align="right">
+              <para>1,961,35</para>
+            </entry>
+          </row>
+          <row>
+            <entry namest="c1" nameend="c1" morerows="1" valign="middle">
+              <para>Simple BLE Peripheral</para>
+            </entry>
+            <entry namest="c2" nameend="c2" valign="middle">
+              <para>CC2540_BLE_peri.lib</para>
+            </entry>
+            <entry align="right">
+              <para>4,955,505</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>CC254x_BLE_HCI_TL_None.lib</para>
+            </entry>
+            <entry align="right">
+              <para>11,835</para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <para>Straight out of the box, the Host Test Release does compile, but as we saw earlier, it&apos;s compiled for the CC2540F256 and this board has got a CC2540F128. Now, I will count down the memory overflow as I change the CPU and start taking away pieces:</para>
+    <table>
+      <title>Memory Trimming</title>
+      <tgroup cols="3">
+        <colspec colname="c1" colwidth="11cm"/>
+        <colspec colname="c2" colwidth="2cm"/>
+        <colspec colname="c3" colwidth="2cm"/>
+        <thead>
+          <row>
+            <entry>
+              <para>Element</para>
+            </entry>
+            <entry align="right">
+              <para>Overage</para>
+            </entry>
+            <entry align="right">
+              <para>Delta</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>CC2540F128</para>
+            </entry>
+            <entry align="right">
+              <para>27,854</para>
+            </entry>
+            <entry align="right">
+              <para>N/A</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>$PROJ_DIR$\..\..\common\cc2540\ti_51ew_cc2540f128b.xcl</para>
+            </entry>
+            <entry align="right">
+              <para> *4,096</para>
+            </entry>
+            <entry align="right">
+              <para>23,758</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>-DHOST_CONFIG=PERIPHERAL_CFG</para>
+            </entry>
+            <entry align="right">
+              <para>21,066</para>
+            </entry>
+            <entry align="right">
+              <para>6,788</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>-DGATT_DB_OFF_CHIP</para>
+            </entry>
+            <entry align="right">
+              <para>11,339</para>
+            </entry>
+            <entry align="right">
+              <para>9,727</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>HAL_LCD=FALSE</para>
+            </entry>
+            <entry align="right">
+              <para>*10,458</para>
+            </entry>
+            <entry align="right">
+              <para>881</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>HAL_LED=FALSE</para>
+            </entry>
+            <entry align="right">
+              <para>*9,497</para>
+            </entry>
+            <entry align="right">
+              <para>961</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>CodeBankNrOfs 0x03</para>
+            </entry>
+            <entry align="right">
+              <para>2,519</para>
+            </entry>
+            <entry align="right">
+              <para>*6,978</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>INT_HEAP_LEN=1000</para>
+            </entry>
+            <entry align="right">
+              <para>*513</para>
+            </entry>
+            <entry align="right">
+              <para>2,006</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>INT_HEAP_LEN=588</para>
+            </entry>
+            <entry align="right">
+              <para>9,489</para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <para>The asterisks in the previous table indicate some anomalies in how that number was calculated. There seems to be some sequence affected issues and the effects are not necessarily reproducible yet. I will have to see if I can do them again, at some point, but at the moment, I&apos;m still a little over 9K beyond what will fit on the chip. I&apos;m out of ideas and no where nearer to being done.</para>
   </section>
   <section>
     <title>Arduino</title>

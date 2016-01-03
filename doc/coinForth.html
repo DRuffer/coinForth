@@ -8,7 +8,7 @@
 <div class="titlepage">
 <div>
 <div><h2 class="title">
-<a name="id543465"></a>The CoinForth Documentation</h2></div>
+<a name="id562744"></a>The CoinForth Documentation</h2></div>
 <div><h3 class="subtitle"><i>Arduino Simple BLE Peripheral</i></h3></div>
 <div><p class="releaseinfo">Version 0.4</p></div>
 <div><p class="copyright">Copyright © 2015 Dennis Ruffer</p></div>
@@ -18,19 +18,19 @@
 <div class="toc">
 <p><b>Table of Contents</b></p>
 <dl>
-<dt><span class="section"><a href="#id543591">BLE-STACK</a></span></dt>
-<dt><span class="section"><a href="#id543704">Arduino</a></span></dt>
-<dt><span class="section"><a href="#id543801">Yet Another Forth For Arduino</a></span></dt>
-<dt><span class="section"><a href="#id543813">UART Pins</a></span></dt>
-<dt><span class="section"><a href="#id543891">Gabtronics XMEGA Xprotolab </a></span></dt>
-<dt><span class="section"><a href="#id543960">Testing</a></span></dt>
-<dt><span class="section"><a href="#id544000">Conclusion</a></span></dt>
-<dt><span class="section"><a href="#id544059">Draft Areas</a></span></dt>
-<dt><span class="section"><a href="#id544106">Basic editing</a></span></dt>
-<dt><span class="section"><a href="#id544174">Images</a></span></dt>
-<dt><span class="section"><a href="#id544229">Program listings</a></span></dt>
-<dt><span class="section"><a href="#id544239">Lists and tables</a></span></dt>
-<dt><span class="section"><a href="#id544630">Localization</a></span></dt>
+<dt><span class="section"><a href="#id562824">BLE-STACK</a></span></dt>
+<dt><span class="section"><a href="#id563457">Arduino</a></span></dt>
+<dt><span class="section"><a href="#id563514">Yet Another Forth For Arduino</a></span></dt>
+<dt><span class="section"><a href="#id563555">UART Pins</a></span></dt>
+<dt><span class="section"><a href="#id563600">Gabtronics XMEGA Xprotolab </a></span></dt>
+<dt><span class="section"><a href="#id563670">Testing</a></span></dt>
+<dt><span class="section"><a href="#id563780">Conclusion</a></span></dt>
+<dt><span class="section"><a href="#id563783">Draft Areas</a></span></dt>
+<dt><span class="section"><a href="#id563816">Basic editing</a></span></dt>
+<dt><span class="section"><a href="#id563901">Images</a></span></dt>
+<dt><span class="section"><a href="#id563906">Program listings</a></span></dt>
+<dt><span class="section"><a href="#id563950">Lists and tables</a></span></dt>
+<dt><span class="section"><a href="#id568933">Localization</a></span></dt>
 </dl>
 </div>
 <div class="abstract">
@@ -56,7 +56,7 @@
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id543591"></a>BLE-STACK</h2></div></div></div>
+<a name="id562824"></a>BLE-STACK</h2></div></div></div>
 <p>This software is usually available at <a href="http://www.ti.com/tool/ble-stack" target="_top">http://www.ti.com/tool/ble-stack</a>, but is being updated from time
     to time, so the version may change or disappear when it is being updated.
     Since the CC2540 is pretty old at this point. By default, it installs to
@@ -105,10 +105,195 @@ Error while running Linker </pre>
     compiles and</p>
 <p><a href=".%5CProjects%5Cble%5CSimpleBLEPeripheral%5CCC2540DB%5CCC2540F128DK-MINI%20Keyfob%5CExe%5CSimpleBLEPeripheral.hex" target="_top">.\Projects\ble\SimpleBLEPeripheral\CC2540DB\CC2540F128DK-MINI Keyfob\Exe\SimpleBLEPeripheral.hex</a>
     can be flashed, so let's start there.</p>
+<p>Bummer, I just crashed out of Serna Free, so I have to type in some stuff about what I'm doing, got lost. The additions are starting to jump around a bit, but it makes more sense to talk about this here, than in any other section.</p>
+<p>I do not see any serial activity between the 2 CPUs yet, and I've seen in the TI CC254x Bluetooth Low Energy Software Developer&#8217;s Guide (SWRU271G Version 1.4.1), Section 2.1 Configurations, Subsection 2. Network Processor: "To use the network processor, the Host Test Release project must be used."</p>
+<p>It's time to start looking at the memory differences:</p>
+<div class="table">
+<a name="id562944"></a><p class="title"><b>Table 1. Canned Binary Libraries</b></p>
+<table summary="Canned Binary Libraries" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th valign="top">
+              <p>Project</p>
+            </th>
+<th valign="middle">
+              <p>Library</p>
+            </th>
+<th align="right" valign="middle">
+              <p>Size</p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td rowspan="2" valign="middle">
+              <p>Host Test Release
+            </p>
+            </td>
+<td valign="top">
+              <p>CC2540_BLE.lib</p>
+            </td>
+<td align="right" valign="top">5,986,524</td>
+</tr>
+<tr>
+<td>
+              <p>CC254x_BLE_HCI_TL_Full.lib</p>
+            </td>
+<td align="right">
+              <p>1,961,35</p>
+            </td>
+</tr>
+<tr>
+<td rowspan="2" valign="middle">
+              <p>Simple BLE Peripheral</p>
+            </td>
+<td valign="middle">
+              <p>CC2540_BLE_peri.lib</p>
+            </td>
+<td align="right">
+              <p>4,955,505</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>CC254x_BLE_HCI_TL_None.lib</p>
+            </td>
+<td align="right">
+              <p>11,835</p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Straight out of the box, the Host Test Release does compile, but as we saw earlier, it's compiled for the CC2540F256 and this board has got a CC2540F128. Now, I will count down the memory overflow as I change the CPU and start taking away pieces:</p>
+<div class="table">
+<a name="id563136"></a><p class="title"><b>Table 2. Memory Trimming</b></p>
+<table summary="Memory Trimming" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>Element</p>
+            </th>
+<th align="right">
+              <p>Overage</p>
+            </th>
+<th align="right">
+              <p>Delta</p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>CC2540F128</p>
+            </td>
+<td align="right">
+              <p>27,854</p>
+            </td>
+<td align="right">
+              <p>N/A</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>$PROJ_DIR$\..\..\common\cc2540\ti_51ew_cc2540f128b.xcl</p>
+            </td>
+<td align="right">
+              <p> *4,096</p>
+            </td>
+<td align="right">
+              <p>23,758</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>-DHOST_CONFIG=PERIPHERAL_CFG</p>
+            </td>
+<td align="right">
+              <p>21,066</p>
+            </td>
+<td align="right">
+              <p>6,788</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>-DGATT_DB_OFF_CHIP</p>
+            </td>
+<td align="right">
+              <p>11,339</p>
+            </td>
+<td align="right">
+              <p>9,727</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>HAL_LCD=FALSE</p>
+            </td>
+<td align="right">
+              <p>*10,458</p>
+            </td>
+<td align="right">
+              <p>881</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>HAL_LED=FALSE</p>
+            </td>
+<td align="right">
+              <p>*9,497</p>
+            </td>
+<td align="right">
+              <p>961</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>CodeBankNrOfs 0x03</p>
+            </td>
+<td align="right">
+              <p>2,519</p>
+            </td>
+<td align="right">
+              <p>*6,978</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>INT_HEAP_LEN=1000</p>
+            </td>
+<td align="right">
+              <p>*513</p>
+            </td>
+<td align="right">
+              <p>2,006</p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>INT_HEAP_LEN=588</p>
+            </td>
+<td align="right">
+              <p>9,489</p>
+            </td>
+<td class="auto-generated"> </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The asterisks in the previous table indicate some anomalies in how that number was calculated. There seems to be some sequence affected issues and the effects are not necessarily reproducible yet. I will have to see if I can do them again, at some point, but at the moment, I'm still a little over 9K beyond what will fit on the chip. I'm out of ideas and no where nearer to being done.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id543704"></a>Arduino</h2></div></div></div>
+<a name="id563457"></a>Arduino</h2></div></div></div>
 <p>The CC2540's serial port is connected to the ATA6614Q pins PD2 (RX)
     and PD3 (TX), which require a "soft" serial port, like what Arduino
     provides in their <span class="bold"><strong>SoftwareSerial</strong></span>. <a href="https://www.arduino.cc/en/Reference/SoftwareSerial" target="_top">https://www.arduino.cc/en/Reference/SoftwareSerial</a> and <a href="http://arduiniana.org/libraries/newsoftserial/" target="_top">http://arduiniana.org/libraries/newsoftserial/</a>.</p>
@@ -132,7 +317,7 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id543801"></a>Yet Another Forth For Arduino</h2></div></div></div>
+<a name="id563514"></a>Yet Another Forth For Arduino</h2></div></div></div>
 <p><a href="https://github.com/sdwood68/YAFFA" target="_top">https://github.com/sdwood68/YAFFA</a> Yet Another Forth
     For Arduino</p>
 <p>Using Arduino's Serial Monitor @ 19200 baud, I get:</p>
@@ -166,7 +351,7 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id543813"></a>UART Pins</h2></div></div></div>
+<a name="id563555"></a>UART Pins</h2></div></div></div>
 <p>Now, to line up the UART pins with each other, I reference <a href="C:%5CTexas%20Instruments%5CBLE-CC254x-1.4.0%5CDocuments%5Cswru191f.pdf" target="_top">C:\Texas Instruments\BLE-CC254x-1.4.0\Documents\swru191f.pdf</a> which
     is available here <a href="http://www.ti.com/lit/ug/swru191f/swru191f.pdf" target="_top">http://www.ti.com/lit/ug/swru191f/swru191f.pdf</a>. Table 7-1.
     Peripheral I/O Pin Mapping tells me that what is called AR_TX on the
@@ -191,14 +376,14 @@ Firmware check OK
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id543891"></a>Gabtronics XMEGA Xprotolab </h2></div></div></div>
+<a name="id563600"></a>Gabtronics XMEGA Xprotolab </h2></div></div></div>
 <p>I've gotten a few of these little devices, and blown up, at least, one of them, but they do prove to be useful when you are trying to see if something in the "real" world is doing something useful. You can find them yourself at: <a href="http://www.gabotronics.com/development-boards/xmega-xprotolab.htm" target="_top">http://www.gabotronics.com/development-boards/xmega-xprotolab.htm</a>.</p>
 <p>I hooked the the scope channels up to the AR_RX and AR_TX pins on the Arduino. At this point, I see that the RX pin goes high (3.2v) when the CC2540 is in reset, which is what I'd expect, but otherwise, no activity.</p>
 <div><img src="CC2540_reset.jpg"></div>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id543960"></a>Testing</h2></div></div></div>
+<a name="id563670"></a>Testing</h2></div></div></div>
 <p>Trying IForth (<a href="https://github.com/jdfreder/iforth" target="_top">https://github.com/jdfreder/iforth</a>),
     even with "conda create -n snakes python=3.4" from <a href="http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf" target="_top">http://conda.pydata.org/docs/_downloads/conda-cheatsheet.pdf</a>, I
     got:</p>
@@ -234,7 +419,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544000"></a>Conclusion</h2></div></div></div>
+<a name="id563780"></a>Conclusion</h2></div></div></div>
 <p>The December 2015 SVFIG Meeting on Saturday, December 19, 2015 is driving me to whip this document into shape, which, of course, takes away from what's supposed to be the fun part. The layout of the UART Pins is a major setback, since the BLE-STACK doesn't account for it. The The forth-notebooks is also the latest shinny object to distract me, but that was more for the SVFIG meeting than any real need yet.</p>
 <p>For the moment, this is enough</p>
 <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
@@ -246,7 +431,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544059"></a>Draft Areas</h2></div></div></div>
+<a name="id563783"></a>Draft Areas</h2></div></div></div>
 <p>Note the presence of gray "Draft Areas" in the document. They are
     necessary because Docbook stylesheet rules are often intricate. For
     instance, <code class="sgmltag-element">title</code> in <code class="sgmltag-element">section</code> can be
@@ -262,7 +447,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544106"></a>Basic editing</h2></div></div></div>
+<a name="id563816"></a>Basic editing</h2></div></div></div>
 <p>Editing of Docbook documents in Serna is quite straightforward, much
     like in a traditional word-processor. One difference is that you must use
     "InsertElement" command (<span><strong class="keycap">Ctrl</strong></span>-<span><strong class="keycap">Enter</strong></span>) to insert new elements. Serna will suggest you a list of
@@ -285,19 +470,19 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544174"></a>Images</h2></div></div></div>
+<a name="id563901"></a>Images</h2></div></div></div>
 <p>Inserting images is easy: just insert <code class="sgmltag-element">figure</code> or
     <code class="sgmltag-element">graphic</code> elements, invoke <em class="glossterm">Element Attributes Dialog</em> for corresponding element, and choose an image file by
     pressing Browse button for the <code class="literal">fileref</code> attribute in
     Element Attributes Dialog.</p>
 <div class="figure">
-<a name="id544221"></a><p class="title"><b>Figure 1. An example figure</b></p>
+<a name="id563914"></a><p class="title"><b>Figure 1. An example figure</b></p>
 <div align="center"><img src="serna_cycle.png" align="middle" alt="An example figure"></div>
 </div>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544229"></a>Program listings</h2></div></div></div>
+<a name="id563906"></a>Program listings</h2></div></div></div>
 <p>Serna supports whitespace stripping policies, as defined by the
     stylesheet. Editing behavior within whitespace-preserved ares like Docbook
     <code class="sgmltag-element">programlisting</code> is different. Within those elements
@@ -319,7 +504,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="en">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544239"></a>Lists and tables</h2></div></div></div>
+<a name="id563950"></a>Lists and tables</h2></div></div></div>
 <p>There are two types of lists in Docbook:</p>
 <div class="orderedlist">
 <p class="title"><b>Ordered list. A list may have optional title.</b></p>
@@ -339,7 +524,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <p>In Serna, CALS tables are supported by Docbook stylesheet.</p>
 <div class="table">
-<a name="id544317"></a><p class="title"><b>Table 1. An example of complex table</b></p>
+<a name="id564027"></a><p class="title"><b>Table 3. An example of complex table</b></p>
 <table summary="An example of complex table" border="1">
 <colgroup>
 <col>
@@ -441,7 +626,7 @@ IOError: [Errno 2] No such file or directory: 'forth-out'</pre>
 </div>
 <div class="section" lang="de">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id544630"></a>Localization</h2></div></div></div>
+<a name="id568933"></a>Localization</h2></div></div></div>
 <p>It is possible to localize your docbook documents or their parts by
     simply changing <em class="parameter"><code>lang</code></em> parameter of the compound
     element. For example, this section's attribute <em class="parameter"><code>lang</code></em>
